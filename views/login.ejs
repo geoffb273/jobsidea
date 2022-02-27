@@ -1,0 +1,22 @@
+<style>
+	
+	#login {background: #afb8c2; padding: 0.25rem; width: 50%; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+	#login > button {border: none; padding: 0 1rem; margin: 0.25rem;}
+
+</style>
+
+
+
+
+<form id="login" action="/handle-login" method="post">
+	<input name='username' placeholder="Username" required><br>
+	<input name='password' type="password" placeholder="Password" required><br>
+	<button type="submit">Log in</button>
+</form>
+<form id="signup-user" action="/signup-user" method="get">
+	<button type="submit">Sign Up as User</button>
+</form>
+<form id="signup-restaurant" action="/signup-restaurant" method="get">
+	<button type="submit">Sign Up as Restaurant</button>
+</form>
+

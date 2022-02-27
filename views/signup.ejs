@@ -1,0 +1,17 @@
+
+<style>
+	
+	#signup {background: #afb8c2; padding: 0.25rem; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+	#signup > button {border: none; padding: 0 1rem; margin: 0.25rem;}
+
+</style>
+
+
+<form id="signup" action="/handle-signup-user" method="post">
+	<input name='username' placeholder="Username" required><br>
+	<input name='password' type="password" placeholder="Password" required><br>
+	<input name='firstname' placeholder="First Name" required><br>
+	<input name='lastname' placeholder="Last Name" required><br>
+	<input name='email' placeholder="Email" required><br>
+	<button type="submit">Sign Up</button>
+</form>

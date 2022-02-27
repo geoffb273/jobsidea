@@ -1,0 +1,101 @@
+<header>
+
+<div id="top">
+	<form id="search" onsumbit="return false"><input placeholder="Search"></input></form>
+	<button onclick="window.location.href='/'">Jobs</button>
+	<button onclick="window.location.href='/notifications'">Notifications</button>
+	<button onclick="window.location.href='/chats'">Chats</button>
+	<button onclick="window.location.href='/profile'">My Profile</button>
+	<button onclick="window.location.href='/login'">Log Out</button>
+	
+</div>
+
+</header>
+<body>
+<style>
+
+      #table {margin: 0; padding: 0; position: relative; top: 0; width: 100%; bottom: 3rem; overflow-y: auto}
+      #table > tr { padding: 0px;}
+      #join {float:right; margin-right: 10px;}
+      tr:nth-child(even) { background-color: #e9f4ff; }
+</style>
+<p id="test">Hi</p>
+<div class="post">
+  <table id = "table"></table>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+	
+	var table = document.getElementById("table");
+	
+	var chats = [];
+	var chatIds = []
+	var username = '<%- username %>'
+	var count = 0;
+	
+	var enterChat = function() {
+		location.href = "/chat?chatId=" + this.chatId;
+	}
+	
+	var updateChats = function() {
+		
+    	$.get("/my-chats", function(data) {
+    		var chats = data
+    		for (var i = 0; i < chats.length; i++) {
+    			var chat = chats[i];
+    			var chatName = chat.id.split("@").filter(function(name) {
+					return name != username
+				})[0]
+    			if (!chatIds.includes(chat.id)) {
+    				chatIds.push(chat.id);
+    				chats.push(chat)
+    				var row = table.insertRow(i);
+					var cell1 = row.insertCell(0);
+					cell1.innerHTML = chatName;
+					var cell2 = row.insertCell(1);
+					var button = document.createElement("button");
+					button.innerHTML = "Chat";
+					button.id = "join";
+					button.chatId = chat.id;
+					button.onclick = enterChat;
+					cell2.appendChild(button);
+    			} else if (chatIds.indexOf(chat.id) != i) {
+    				var row = table.rows[i];
+    				row.cells[0].innerHTML = chatName;
+    				var button = row.cells[1].getElementsByTagName("button")[0];
+    				button.chatId = chat.id
+    			}
+    		}
+    	})
+    	if (chats.length == 0 && count < 5) {
+    		setTimeout(updateChats, 1000);
+    	} else {
+    		setTimeout(updateChats, 60000);
+    	}
+    	
+    	count += 1
+  	};
+	
+	/*chats.forEach(chat => {
+		chatIds.push(chat.id);
+		var row = table.insertRow(table.rows.length);
+		row.id = chat.id;
+		var cell1 = row.insertCell(0);
+		var chatName = chat.id.split("@").filter(function(name) {
+			return name == username
+		})[0]
+		cell1.innerHTML = chatName;
+		var cell2 = row.insertCell(1);
+		var button = document.createElement("button");
+		button.innerHTML = "Join Chat";
+		button.id = "join";
+		button.chatId = chat.id;
+		button.onclick = enterChat;
+		cell2.appendChild(button);
+	});*/
+	updateChats();
+</script>
+
+
+</body>
