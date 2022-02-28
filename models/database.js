@@ -232,7 +232,7 @@ var putStar = function(username, reviewer, stars) {
 }
 
 
-var wipe = function(username) {
+var wipeCache = function(username) {
 	
 }
 
