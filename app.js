@@ -31,10 +31,12 @@ app.all('*', function(req, res, next) {
   }
 });
 
-app.get('/', routes.home)
+app.get('/', routes.home);
+
 
 app.get('/login', routes.login);
 app.post('/handle-login', routes.handle_login);
+app.get('/logout', routes.logout)
 
 
 app.get('/signup-user', routes.signup_user);

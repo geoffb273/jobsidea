@@ -17,6 +17,11 @@ var getLogin = function(req, res) {
 	res.render("login.ejs");
 };
 
+var logout = function(req, res) {
+	req.session.destroy();
+	res.redirect("/login");
+}
+
 var handleLogin = function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = req.body.password;
@@ -296,7 +301,8 @@ var routes = {
 	notifications_page: getNotificationsPage,
 	experience: getExperience,
 	reviews: getReviews,
-	stars: getStars
+	stars: getStars,
+	logout: logout
 };
 
 module.exports = routes;
