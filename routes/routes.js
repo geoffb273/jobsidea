@@ -9,9 +9,7 @@ var getHome = function(req, res) {
 var getLogin = function(req, res) {
 	var username = req.session.username
 	if (username) {
-		req.session.destroy( _ => {
-			db.wipe(username);
-		});
+		req.session.destroy();
 	}
 	
 	res.render("login.ejs");
@@ -279,6 +277,10 @@ var getStars = function(req, res) {
 		}
 		res.send(String(stars));
 	})
+}
+
+var getPosts = function(req, res) {
+	
 }
 
 

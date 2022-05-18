@@ -232,10 +232,6 @@ var putStar = function(username, reviewer, stars) {
 }
 
 
-var wipeCache = function(username) {
-	
-}
-
 module.exports = {
 	addUser: addUser,
 	getUser: getUser,
@@ -259,6 +255,5 @@ module.exports = {
 	getReviews: getReviews,
 	putReview: putReview,
 	getStars: getStars,
-	putStar: putStar,
-	wipe: wipeCache
+	putStar: putStar
 };

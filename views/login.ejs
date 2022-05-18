@@ -1,22 +1,80 @@
 <style>
 	
-	#login {background: #afb8c2; padding: 0.25rem; width: 50%; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-	#login > button {border: none; padding: 0 1rem; margin: 0.25rem;}
+	#container {
+		position: fixed;
+		padding: 0.25rem;
+		top: 15vh;
+		bottom: 30vh;
+		left: 40vw;
+		right: 40vw;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		
+		
+	}
+	
+	#login {
+		box-sizing: border-box; 
+		backdrop-filter: blur(10px); 
+		background: #afb8c2; 
+		width: 50vmin;
+		height: 30vmin;
+		display: flex;
+		border-radius: 2vmin;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	#login > input {
+		border-radius: 1vmin;
+		width: 30vmin;
+		font-size: 4vmin;
+	}
+	
+	#login > #top {
+		margin-top: 3vmin;
+	}
+	
+	#login > button {
+		border-radius: 1vmin;
+		border: none; 
+		margin: 0.5vmin;
+		font-size: 4vmin;
+		
+	}
+	
+	#signup {
+		display: flex;
+	}
+	
+	#signup > form > button {
+		border-radius: 0.5vmin;
+		border: none; 
+		margin: 0.5vmin;
+		font-size: 2vmin;
+	}
 
 </style>
 
 
 
 
-<form id="login" action="/handle-login" method="post">
-	<input name='username' placeholder="Username" required><br>
-	<input name='password' type="password" placeholder="Password" required><br>
-	<button type="submit">Log in</button>
-</form>
-<form id="signup-user" action="/signup-user" method="get">
-	<button type="submit">Sign Up as User</button>
-</form>
-<form id="signup-restaurant" action="/signup-restaurant" method="get">
-	<button type="submit">Sign Up as Restaurant</button>
-</form>
+<div id="container">
+	<form id="login" action="/handle-login" method="post">
+		<input id="top" name='username' placeholder="Username" required><br>
+		<input name='password' type="password" placeholder="Password" required><br>
+		<button id="login-button" type="submit">Log in</button>
+	</form>
+	<div id="signup">
+		<form id="signup-user" action="/signup-user" method="get">
+			<button type="submit">Sign Up as User</button>
+		</form>
+		<form id="signup-restaurant" action="/signup-restaurant" method="get">
+			<button type="submit">Sign Up as Restaurant</button>
+		</form>
+	</div>
+</div>
 

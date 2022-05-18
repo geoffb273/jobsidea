@@ -1,12 +1,54 @@
 
 <style>
+	#container {
+		position: fixed;
+		padding: 0.25rem;
+		top: 15vh;
+		bottom: 30vh;
+		left: 40vw;
+		right: 40vw;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		
+		
+	}
 	
-	#signup {background: #afb8c2; padding: 0.25rem; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-	#signup > button {border: none; padding: 0 1rem; margin: 0.25rem;}
+	#signup {
+		box-sizing: border-box; 
+		backdrop-filter: blur(10px); 
+		background: #afb8c2; 
+		width: 50vmin;
+		height: 30vmin;
+		display: flex;
+		border-radius: 2vmin;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	#signup > input {
+		border-radius: 1vmin;
+		width: 30vmin;
+		font-size: 4vmin;
+	}
+	
+	#signup > #top {
+		margin-top: 3vmin;
+	}
+	
+	#signup > button {
+		border-radius: 1vmin;
+		border: none; 
+		margin: 0.5vmin;
+		font-size: 4vmin;
+		
+	}
 
 </style>
 
-
+<div id="container">
 <form id="signup" action="/handle-signup-user" method="post">
 	<input name='username' placeholder="Username" required><br>
 	<input name='password' type="password" placeholder="Password" required><br>
@@ -15,3 +57,4 @@
 	<input name='email' placeholder="Email" required><br>
 	<button type="submit">Sign Up</button>
 </form>
+<div>
