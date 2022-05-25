@@ -1,0 +1,117 @@
+<body>
+<p id="test">Hi</p>
+<div id="info">
+	<%if (username) {%>
+		<p id="username"><b>&#64<%= username %></b></p>
+	<%}%>
+	<%if (firstname && lastname) {%>
+		<p id="username"><%= firstname %> <%= lastname %></p>
+	<%}%>
+	<%if (email) {%>
+		<p id="username"><i><%= email %></i></p>
+	<%}%>
+	<p id="rating">Not enough reviews</p>
+</div>
+
+<div id="experience-div">
+	<b><u>Experience</u></b>
+</div>
+
+<div id="reviews-div">
+	<b><u>Reviews</u></b>
+	<table id="reviews"></table>
+</div>
+<script>
+	var username = '<%- username%>'
+	var reviewsTable = document.getElementById("reviews");
+	var experienceElement = document.getElementById("experience-div")
+	var count = 0;
+	var reviews = [];
+	var experiences = {};
+	var experienceTables = {}
+	var types = [];
+	var rating = document.getElementById("rating");
+	
+	var makeExperience = function() {
+		$.get("/experience?username=" + username, function(data) {
+			for(var type in data) {
+				if (!types.includes(type)) {
+					types.push(type);
+					experiences[type] = []
+					
+					var table = document.createElement("table");
+					experienceElement.appendChild(table);
+					experienceTables[type] = table;
+					
+					var hrow = table.insertRow(0);
+					hrow.insertCell(0).innerHTML = "<u>" + type + "</u>";
+					
+					data[type].forEach(function(experience) {
+						experiences[type].push(experience.id);
+						var numRows = table.rows.length
+						var row = table.insertRow(numRows);
+						var cell0 = row.insertCell(0);
+						var cell1 = row.insertCell(1);
+						var cell2 = row.insertCell(2);
+						cell1.innerHTML = experience.location;
+						cell2.innerHTML = experience.time;
+					});
+					
+				} else {
+					data[type].forEach(function(experience) {
+						if (!experiences[type].includes(experience.id)) {
+							experiences[type].push(experience.id)
+							var table = experienceTables[type];
+							var numRows = table.rows.length;
+							var row = table.insertRow(numRows);
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							cell1.innerHTML = experience.location;
+							cell2.innerHTML = experience.time;
+						}
+						
+					})
+				}
+				
+			}
+		});
+	}
+	
+	var updateReviews = function() {
+		$.get("/reviews?username=" + username, function(data) {
+			data.forEach(function(review) {
+				if (!reviews.includes(review.id)) {
+					reviews.push(review.id);
+					var rows = reviewsTable.rows;
+					var row;
+					if (rows.length > 0) {
+						row = reviewsTable.insertRow(rows.length - 1);
+					} else {
+						row = reviewsTable.insertRow(0);
+					}
+					
+					var cell1 = row.insertCell(0);
+					var cell2 = row.insertCell(1);
+					cell1.innerHTML = "<b>&#64" + review.author + "</b>";
+					cell2.innerHTML = review.content;
+				}
+				
+			});
+		});
+		
+		$.get("/stars?username=" + username, function(data) {
+			if (data && data != "undefined") {
+				rating.innerHTML = data + " stars";
+			}
+		});
+		
+	}
+	
+	updateReviews();
+	makeExperience();
+	
+	
+</script>
+
+</body>
