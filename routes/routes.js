@@ -24,8 +24,9 @@ var handleLogin = function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = req.body.password;
 	db.getUser(username).then(snapshot => {
-		if (snapshot.exists()) {
-			var user = snapshot.val();
+		console.log(snapshot)
+		if (snapshot) {
+			var user = snapshot;
 			var userPassword = user.password;
 			if (password == userPassword) {
 				req.session.username = user.username;
@@ -89,13 +90,13 @@ var handleSignUpRestaurant = function(req, res) {
 };
 
 var getProfile = function(req, res) {
-	var username = req.query.username;
+	var username = req.params.username;
 	if (!username) {
 		username = req.session.username;
 	}
 	db.getUser(username).then(snapshot => {
-		if (snapshot.exists()) {
-			var user = snapshot.val();
+		if (snapshot) {
+			var user = snapshot;
 			var email = user.email;
 			/*
 			var phone = user.phone;
@@ -106,15 +107,15 @@ var getProfile = function(req, res) {
 				var lastname = user.lastname;
 				/**var birthday = user.birthday */
 				res.render("profile.ejs", {username: username, email: email, 
-					firstname: firstname, lastname: lastname})
+					firstname: firstname, lastname: lastname, user: true})
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
 				var street = user.street;
 				var city = user.city;
 				var state = user.state;
 				var zipCode = user.zipCode;
-				res.render("restaurant.ejs", {username: username, email: email, name: name, street: street, 
-					city: city, state: state, zipCode: zipCode})
+				res.render("profile.ejs", {username: username, email: email, name: name, street: street, 
+					city: city, state: state, zipCode: zipCode, user: false});
 			}
 			
 		} else {
@@ -134,8 +135,9 @@ var getChats = function(req, res) {
 		req.session.chats = []
 		var first = true
 		db.getChats(username, snapshot => {
+			console.log(snapshot)
 			snapshot.forEach(child => {
-				var chat = child.val();
+				var chat = child
 				req.session.chats.push(chat);
 			});
 			if (first) {
@@ -159,16 +161,14 @@ var getChat = function(req, res) {
 	var promises = [];
 	promises.push(db.getChat(username, chatId));
 	promises.push(db.getMessages(chatId));
-	promises.push(db.changeUnread(username, chatId, false));
 	Promise.all(promises).then(snapshots => {
-		if (snapshots[0].exists()) {
-			var chat = snapshots[0].val();
+		if (snapshots[0]) {
+			var chat = snapshots[0];
 			var messages = [];
-			if (snapshots[1].exists()) {
+			if (snapshots[1]) {
 				snapshots[1].forEach(child => {
-					messages.push(child.val())
+					messages.push(child)
 				});
-				console.log(messages);
 			} 
 			res.render('chat.ejs', {username: username, chat: JSON.stringify(chat), messages: JSON.stringify(messages)})
 		} else {
@@ -198,21 +198,15 @@ var putMessage = function(req, res) {
 
 var getNotifications = function(req, res) {
 	var username = req.session.username;
+	var limit = parseInt(req.query.limit)
+	db.getNotifications(username, limit, snapshot => {
+		var nots = []
+		if (snapshot) {
+			var nots = snapshot;
+		}
+		res.send(nots);
+	});
 	
-	if (req.session.notifications == undefined) {
-		req.session.notifications = []
-		var first = true;
-		db.getNotifications(username, snapshot => {
-			snapshot.forEach(child => {
-				req.session.notifications.push(child.val());
-			});
-			if (first) {
-				res.send(req.session.notifications);
-			}
-		});
-	} else {
-		res.send(req.session.notifications);
-	}
 	
 	
 }
@@ -226,8 +220,8 @@ var getExperience = function(req, res) {
 	var username = req.query.username;
 	db.getExperience(username).then(snapshot => {
 		var experience = {}
-		if (snapshot.exists()) {
-			var unclean = snapshot.val();
+		if (snapshot) {
+			var unclean = snapshot;
 			for(var k in unclean) {
 				experience[k] = []
 				for(var id in unclean[k]) {
@@ -246,7 +240,7 @@ var getReviews = function(req, res) {
 		var first = true
 		db.getReviews(username, snapshot => {
 			snapshot.forEach(child => {
-				req.session.reviews.push(child.val())
+				req.session.reviews.push(child)
 			});
 			if (first) {
 				res.send(req.session.reviews);
@@ -263,8 +257,8 @@ var getStars = function(req, res) {
 	var username = req.query.username;
 	db.getStars(username).then(snapshot => {
 		var stars = undefined;
-		if (snapshot.exists()) {
-			var unclean = snapshot.val();
+		if (snapshot) {
+			var unclean = snapshot;
 			var sum = 0
 			var num = 0
 			for(var k in unclean) {
@@ -283,10 +277,13 @@ var getPosts = function(req, res) {
 	
 }
 
-
+var connect = function() {
+	db.connect()
+}
 
 
 var routes = {
+	connect: connect,
 	home: getHome,
 	login: getLogin,
 	handle_login: handleLogin,

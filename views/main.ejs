@@ -1,13 +1,16 @@
-
+<head>
+	<%- include('css/style'); %>
+	
+</head>
 <header>
 
 <div id="top">
 	<form id="search" onsumbit="return false"><input placeholder="Search"></input></form>
-	<button onclick="window.location.href='/'">Jobs</button>
+	<button id="pressed" onclick="window.location.href='/'">Jobs</button>
 	<button onclick="window.location.href='/notifications'">Notifications</button>
 	<button onclick="window.location.href='/chats'">Chats</button>
 	<button onclick="window.location.href='/profile'">My Profile</button>
-	
+	<button onclick="window.location.href='/login'">Log Out</button>
 </div>
 
 </header>

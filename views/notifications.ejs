@@ -1,9 +1,14 @@
+<head>
+	<%- include('css/style'); %>
+	
+</head>
+
 <header>
 
 <div id="top">
 	<form id="search" onsumbit="return false"><input placeholder="Search"></input></form>
 	<button onclick="window.location.href='/'">Jobs</button>
-	<button onclick="window.location.href='/notifications'">Notifications</button>
+	<button id="pressed" onclick="window.location.href='/notifications'">Notifications</button>
 	<button onclick="window.location.href='/chats'">Chats</button>
 	<button onclick="window.location.href='/profile'">My Profile</button>
 	<button onclick="window.location.href='/login'">Log Out</button>
@@ -13,39 +18,47 @@
   <table id = "table"></table>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
+	var socket = io();
+	document.getElementById("test").innerHTML = "Bye"
 	var username = '<%- username%>'
 	var table = document.getElementById("table");
 	var count = 0;
 	var notifications = []
 	var notificationIds = []
+	var limit = 10;
+	
 	var getNotifications = function() {
 		
-		$.get("/my-notifications", function(notifications) {
+		$.get("/my-notifications?limit=" + limit, function(nots) {
 			
-			for (var i = 0; i < notifications.length; i++) {
-    			var notification = notifications[i];
+			for (var i = 0; i < nots.length; i++) {
+			
+    			var notification = nots[i];
     			var content = notification.content
     			if (!notificationIds.includes(notification.id)) {
+    				
     				notificationIds.push(notification.id);
     				notifications.push(notification)
-    				var row = table.insertRow(i);
+    				var row = table.insertRow(0);
 					var cell1 = row.insertCell(0);
 					cell1.innerHTML = content;
+					var cell2 = row.insertCell(1);
+					cell2.innerHTML = "<button onclick='window.location.href=\"/chats\"'>Chats</button>"
     			} else if (notificationIds.indexOf(notification.id) != i) {
+    			
     				var row = table.rows[i];
     				row.cells[0].innerHTML = content;
     			}
     		}
 		});
-		if (notifications.length == 0 && count < 5) {
-			setTimeout(getNotifications, 1000);
-		} else {
-			setTimeout(getNotifications, 60000);
-		}
-		count += 1;
 	}
 	getNotifications()
+	socket.emit('notification page', {username: username})
+	socket.on("notification", function() {
+		getNotifications()
+	})
 </script>
 
 </header>

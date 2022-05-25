@@ -46,6 +46,7 @@ app.get('/signup-restaurant', routes.signup_restaurant);
 app.post('/handle-signup-restaurant', routes.handle_signup_restaurant);
 
 app.get('/profile', routes.profile);
+app.get('/profile/:username', routes.profile);
 
 app.get('/chats', routes.chats_page);
 app.get('/my-chats', routes.chats);
@@ -71,8 +72,8 @@ io.on('connection', (socket) => {
 				return name != msg.username
 			})[0]
 			var promises = []
+			socket.to(missingUser).emit('notification')
 			promises.push(db.putNotification(missingUser, msg.username + " has sent you a message", "New Message"))
-			promises.push(db.changeUnread(missingUser, msg.chatId, true));
 			Promise.all(promises);
 		}
 	});
@@ -88,10 +89,18 @@ io.on('connection', (socket) => {
 	socket.on('user left', (msg) => {
 		socket.leave(msg.chatId);
 	});
+	socket.on('notification page', (msg) => {
+		 Array.from(socket.rooms).filter(room => room !== socket.id).forEach(id => { 
+			socket.leave(id);
+			socket.removeAllListeners('notification');
+		});
+		socket.join(msg.username);
+	})
 });
 
 
 /* Run the server */
 http.listen(8000, function(){  
+	routes.connect();
     console.log('listening on :8000');
 });

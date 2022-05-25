@@ -2,17 +2,13 @@
 <style>
 	#container {
 		position: fixed;
-		padding: 0.25rem;
 		top: 15vh;
-		bottom: 30vh;
 		left: 40vw;
 		right: 40vw;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		
-		
 	}
 	
 	#signup {
@@ -20,29 +16,30 @@
 		backdrop-filter: blur(10px); 
 		background: #afb8c2; 
 		width: 50vmin;
-		height: 30vmin;
+		height: 55vmin;
 		display: flex;
 		border-radius: 2vmin;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: space-around;
 		align-items: center;
 	}
 	
 	#signup > input {
 		border-radius: 1vmin;
 		width: 30vmin;
-		font-size: 4vmin;
+		font-size: 3.5vmin;
+		margin: -10px;
 	}
 	
 	#signup > #top {
-		margin-top: 3vmin;
+		margin-top: 3.5vmin;
 	}
 	
 	#signup > button {
 		border-radius: 1vmin;
 		border: none; 
 		margin: 0.5vmin;
-		font-size: 4vmin;
+		font-size: 3vmin;
 		
 	}
 
@@ -50,7 +47,7 @@
 
 <div id="container">
 <form id="signup" action="/handle-signup-user" method="post">
-	<input name='username' placeholder="Username" required><br>
+	<input id="top" name='username' placeholder="Username" required><br>
 	<input name='password' type="password" placeholder="Password" required><br>
 	<input name='firstname' placeholder="First Name" required><br>
 	<input name='lastname' placeholder="Last Name" required><br>

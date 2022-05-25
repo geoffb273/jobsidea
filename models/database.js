@@ -1,14 +1,20 @@
 var utils = require('./utils.js');
 var { v4: uuidv4 } = require('uuid');
 
+var db
+var connect = async function() {
+	db = await utils.connect("mongodb+srv://geoff:brandt@cluster0.znowy.mongodb.net/jobsidea?retryWrites=true&w=majority")
+	console.log("Connected to database")
+}
+
 
 var addUser = async function(username, password, firstname, lastname, email) {//, phone, birthday, profilePic = undefined) {
 	var p = []
 	p.push(getUser(username));
-	p.push(utils.getItem("emails", username));
+	p.push(utils.getItem(db, "Emails", {username: username}));
 	
 	return Promise.all(p).then(snapshots => {
-		if (!snapshots[0].exists() && (!snapshots[1].exists() || email != snapshots[1].val())) {
+		if (!snapshots[0] && (!snapshots[1] || email != snapshots[1])) {
 			var obj = {
 				username: username,
 				password: password,
@@ -22,8 +28,8 @@ var addUser = async function(username, password, firstname, lastname, email) {//
 			}
 			
 			var promises = []
-			promises.push(utils.putItem("users", username, obj));
-			promises.push(utils.putItem("emails", username, email));
+			promises.push(utils.postItem(db, "Users", obj));
+			promises.push(utils.postItem(db, "Emails", {username: email}));
 			Promise.all(promises);
 		} else {
 			reject("Email or Username already in use");
@@ -33,16 +39,16 @@ var addUser = async function(username, password, firstname, lastname, email) {//
 }
 
 var getUser = function(username) {
-	return utils.getItem("users", username)
+	return utils.getItem(db, "Users", {username: username})
 }
 
 
 var addRestaurant = async function(username, password, name, email, street, city, state, zipCode) {
 	var p = []
 	p.push(getUser(username));
-	p.push(utils.getItem("emails", username));
+	p.push(utils.getItem(db, "Emails", {username: username}));
 	return Promise.all(p).then(snapshots => {
-		if (!snapshots[0].exists() && (!snapshots[1].exists() || email != snapshots[1].val())) {
+		if (!snapshots[0] && (!snapshots[1] || email != snapshots[1])) {
 			var obj = {
 				username: username,
 				name: name,
@@ -58,8 +64,8 @@ var addRestaurant = async function(username, password, name, email, street, city
 			}
 			
 			var promises = []
-			promises.push(utils.putItem("users", username, obj));
-			promises.push(utils.putItem("emails", username, email));
+			promises.push(utils.postItem(db, "Users", obj));
+			promises.push(utils.postItem(db, "Emails", {username: email}));
 			Promise.all(promises);
 		} else {
 			reject("Email or Username already in use");
@@ -67,22 +73,18 @@ var addRestaurant = async function(username, password, name, email, street, city
 	})
 }
 
-var getChats = function(username, callback) {
-	var reference = utils.orderedQuery("chats", username, "lastAccessed")
-	utils.onValueReference(reference, snapshot => {
-		if (snapshot.exists()) {
-			callback(snapshot)
-		}
-	});
+var getChats = async function(username, callback) {
+	
+	var snapshot = await utils.getList(db, "Chats", {users: username}, {lastAccessed: -1})
+	callback(snapshot)
 }
 
 var getChat = function(username, chatId) {
-	return utils.getItem("chats", username + "/" + chatId);
+	return utils.getItem(db, "Chats", {id: chatId});
 }
 
 var getMessages = function(chatId) {
-	var reference = utils.orderedQuery("messages", chatId, "created");
-	return utils.getItemReference(reference);
+	return utils.getList(db, "Messages", {chatId: chatId}, {created: -1})
 }
 
 var putChat = function(username1, username2) {
@@ -99,14 +101,9 @@ var putChat = function(username1, username2) {
 		id: chatId,
 		unread: false
 	}
-	promises.push(utils.putItem("chats", username1 + "/" + chatId, chatObj));
-	promises.push(utils.putItem("chats", username2+ "/" + chatId, chatObj));
+	promises.push(utils.postItem(db, "Chats", chatObj));
 	promises.push(putNotification(username2, username1 + " has created a chat with you", "New Chat"));
 	return Promise.all(promises);
-}
-
-var changeUnread = function(username, chatId, val) {
-	return utils.putItem("chats", username + "/" + chatId + "/unread", val);
 }
 
 var putMessage = function(chatId, author, msg) {
@@ -114,30 +111,23 @@ var putMessage = function(chatId, author, msg) {
 	var msgObj ={
 		created: (new Date()).toISOString(),
 		author: author,
-		content: msg
+		content: msg,
+		id: msgId,
+		chatId: chatId
 	}
 	var promises = [];
-	promises.push(utils.putItem("messages", chatId + "/" + msgId, msgObj));
+	promises.push(utils.postItem(db, "Messages", msgObj));
 	return Promise.all(promises);
 }
 
 var updateTime = function(chatId) {
-	var arr = chatId.split("@");
-	var username1 = arr[0];
-	var username2 = arr[1];
-	var promises = [];
-	promises.push(utils.putItem("chats", username1 + "/" + chatId +"/lastAccessed", (new Date()).toISOString()))
-	promises.push(utils.putItem("chats", username2 + "/" + chatId +"/lastAccessed", (new Date()).toISOString()))
-	return Promise.all(promises);
+	return utils.updateItem(db, "Chats", {id: chatId}, { $set: { lastAccessed: (new Date()).toISOString()} } )
 }
 
-var getNotifications = function(username, callback) {
-	var reference = utils.query("notifications", username);
-	utils.onValueReference(reference, snapshot => {
-		if (snapshot.exists()) {
-			callback(snapshot)
-		}
-	})
+var getNotifications = async function(username, limit, callback) {
+	
+	var snapshot = await utils.getList(db, "Notifications", {username: username}, {created: -1})
+	callback(snapshot);
 }
 
 var putNotification = function(username, msg, type) {
@@ -146,17 +136,18 @@ var putNotification = function(username, msg, type) {
 		content: msg,
 		created: (new Date()).toISOString(),
 		id: notificationId,
-		type: type
+		type: type,
+		username: username
 	}
-	return utils.putItem("notifications", username + "/" + notificationId, notificationObj)
+	return utils.postItem(db, "Notifications", notificationObj)
 }
 
 var getComments = function(postId) {
-	return utils.query("comments", postId);
+	return utils.getList(db, "Comments", {postId: postId}, {created: -1})
 }
 
 var getPostsByRestaurant = function(username) {
-	return utils.query("postsByRestaurant", username);
+	return utils.getList(db, "Posts", {username: username}, {created: -1})
 }
 
 var putPost = function(username, message, time) {
@@ -167,16 +158,20 @@ var putPost = function(username, message, time) {
 		created: date.toISOString(),
 		content: message,
 		expireDate: expireDate.toISOString(),
-		author: username
+		username: username,
+		id: postId
 	}
 	var promises = []
-	promises.push(utils.putItem("posts", postId, postObj));
-	promises.push(utils.putItem("postsByRestaurant", username + "/" + postId, true));
+	promises.push(utils.postItem(db, "Posts", postObj));
 	return Promise.all(promises);
 }
 
-var getPosts = function() {
-	return utils.query("posts", "");
+var getPosts = function(limit, search = undefined) {
+	var find = {}
+	if (search && search != undefined) {
+		find["username"] = search
+	}
+	return utils.getList(db, "Posts", find, {created: -1})
 }
 
 var putComment = function(postId, username, message) {
@@ -184,13 +179,14 @@ var putComment = function(postId, username, message) {
 	var commentObj = {
 		author: username,
 		content: message,
-		created: time
+		created: time,
+		postId: postId
 	}
-	return utils.putItem("comments", postId + "/" + time, commentObj);
+	return utils.postItem(db, "Comments", commentObj);
 }
 
 var getExperience = function(username) {
-	return utils.getItem("experience", username);
+	return utils.getItem(db, "Experience", {username: username});
 }
 
 var putExperience = function(username, type, time, location) {
@@ -198,19 +194,19 @@ var putExperience = function(username, type, time, location) {
 	var expObj = {
 		time: time,
 		location: location,
-		id: expId
+		id: expId,
+		username: username,
+		type: type
 	}
-	return utils.putItem("experience", username + "/" + type + "/" + expId, expObj);
+	return utils.postItem(db, "Experience", expObj);
 }
 
-var getReviews = function(username, callback) {
-	var reference = utils.query("reviews", username);
+var getReviews = async function(username, callback) {
+	var snapshot = await utils.getList(db, "Reviews", {username: username}, {created: -1})
 	
-	utils.onValueReference(reference, snapshot => {
-		if (snapshot.exists()) {
-			callback(snapshot);
-		}
-	});
+	
+	callback(snapshot);
+	
 }
 
 var putReview = function(username, author, message) {
@@ -218,21 +214,23 @@ var putReview = function(username, author, message) {
 	var reviewObj = {
 		author: author,
 		content: message,
-		id: reviewId
+		id: reviewId,
+		username: username
 	}
-	return utils.putItem("reviews", username + "/" + reviewId, reviewObj);
+	return utils.postItem(db, "Reviews", reviewObj);
 }
 
 var getStars = function(username) {
-	return utils.getItem("stars", username);
+	return utils.getItem(db, "Stars", {username: username});
 }
 
 var putStar = function(username, reviewer, stars) {
-	return utils.putItem("stars", username + "/" + reviewer, stars);
+	return utils.replaceItem("Stars", {username: username, reviewer: reviewer}, {username: username, reviewer: reviewer, stars: stars});
 }
 
 
 module.exports = {
+	connect: connect,
 	addUser: addUser,
 	getUser: getUser,
 	addRestaurant: addRestaurant,
@@ -240,7 +238,6 @@ module.exports = {
 	getChat: getChat,
 	getMessages: getMessages,
 	putChat: putChat,
-	changeUnread: changeUnread,
 	putMessage: putMessage,
 	updateTime: updateTime,
 	getComments: getComments,
