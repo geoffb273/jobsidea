@@ -1,20 +1,88 @@
 <style>
-
+body {
+	text-align: center;
+	justify-content: center;
+}
 #top {
 	width: 100%;
 	background: #afb8c2;
-	padding-left: 2vw;
 	margin: 0;
+	display: flex;
+	justify-content: center;
 }
 #top > button {
 	width: 19vw;
 	border-radius: 0;
 	background: white;
-	margin: 0px 0px 10px -2px;
-		
+	margin: 10px 0px 10px 0.2vw;
 }
-#top > #pressed {
-	background: bottom;
-	border-style:inset
+
+
+
+#top > #dropdown {
+	margin: 10px 0px 10px 0.2vw;
+	width: 19vw;
+	
 }
+
+#top > #dropdown > input {
+	width: 100%;
+}
+
+#top > #dropdown > #results {
+	display: none;
+	z-index: 1;
+	position: absolute;
+	background: black;
+	width: 19vw;
+	
+}
+
+#dropdown-btn {
+	display: block;
+	left: 0;
+	width: 100%;
+}
+
 </style>
+
+<div id="top">
+	<button onclick="window.location.href='/'">Jobs</button>
+	<button onclick="window.location.href='/notifications'">Notifications</button>
+	<button onclick="window.location.href='/chats'">Chats</button>
+	<button onclick="window.location.href='/profile'">My Profile</button>
+	<div id="dropdown">
+		<input id="search" placeholder="Search" onkeyup="searchChange()"></input>
+		<div id="results"></div>
+	</div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+	var searchChange = function() {
+		var searchEl = document.getElementById("search")
+		var resultsEl = document.getElementById("results")
+		resultsEl.innerHTML = ""
+		var search = searchEl.value;
+		console.log(search)
+		if (search && search.length > 0) {
+			$.get("/search-users/" + search, function(data) {
+				var usernames = JSON.parse(data)
+				for (var i = 0; i < usernames.length; i++) {
+					var username = usernames[i]
+					var btn = document.createElement("button")
+					btn.onclick = (e) => { window.location.href = "/profile/" + e.target.username }
+					btn.innerHTML = username;
+					btn.username = username;
+					btn.id = "dropdown-btn"
+					resultsEl.appendChild(btn)
+					resultsEl.style.display = "block"
+				}
+				
+			})
+		} else {
+			resultsEl.style.display = "none"
+		}
+		
+	}
+	
+</script>

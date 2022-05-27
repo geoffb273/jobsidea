@@ -2,17 +2,50 @@
 	<%- include('css/style'); %>
 	
 </head>
+
+<style>
+body {
+	text-align: center;
+	justify-content: center;
+}
+</style>
+
 <header>
 
-<div id="top">
-	<form id="search" onsumbit="return false"><input placeholder="Search"></input></form>
-	<button id="pressed" onclick="window.location.href='/'">Jobs</button>
-	<button onclick="window.location.href='/notifications'">Notifications</button>
-	<button onclick="window.location.href='/chats'">Chats</button>
-	<button onclick="window.location.href='/profile'">My Profile</button>
-	<button onclick="window.location.href='/login'">Log Out</button>
-</div>
+
 
 </header>
 
 <h1>Main Page</h1>
+<p id="test">Hi</p>
+<ul id="posts">
+
+</ul>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src = "post.js"></script>
+<script>
+document.getElementById("test").innerHTML = "Hey"
+var postsEl = document.getElementById("posts")
+var limit = 10
+var getPosts = function() {
+	
+	$.get("/posts?limit=" + limit, function(data) {
+		
+			postsEl.innerHTML = ""
+    		var posts = JSON.parse(data)
+    		
+    		for (var i = 0; i < posts.length; i++) {
+    			var post = posts[i];
+    			var el = createPost(document, post)
+    			postsEl.appendChild(el);
+    			
+    			
+    		}
+    		
+    	})
+}
+
+getPosts()
+
+</script>

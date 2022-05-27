@@ -3,21 +3,7 @@
 	<%- include('css/style'); %>
 	
 </head>
-<header>
 
-
-<div id="top">
-	<form id="search" onsumbit="return false"><input placeholder="Search"></input></form>
-	<button onclick="window.location.href='/'">Jobs</button>
-	<button onclick="window.location.href='/notifications'">Notifications</button>
-	<button id="pressed" onclick="window.location.href='/chats'">Chats</button>
-	<button onclick="window.location.href='/profile'">My Profile</button>
-	<button onclick="window.location.href='/login'">Log Out</button>
-	
-</div>
-
-
-</header>
 <body>
 <style>
 
@@ -56,7 +42,7 @@
     			var chatName = chat.id.split("@").filter(function(name) {
 					return name != username
 				})[0]
-    			if (!chatIds.includes(chat.id)) {
+    			if (!chatIds.includes(chat.id) || (chatIds.indexOf(chat.id) != i && i >= table.rows)) {
     				chatIds.push(chat.id);
     				chats.push(chat)
     				var row = table.insertRow(i);
@@ -69,7 +55,7 @@
 					button.chatId = chat.id;
 					button.onclick = enterChat;
 					cell2.appendChild(button);
-    			} else if (chatIds.indexOf(chat.id) != i) {
+    			} else if (chatIds.indexOf(chat.id) != i && i < table.rows) {
     				var row = table.rows[i];
     				row.cells[0].innerHTML = chatName;
     				var button = row.cells[1].getElementsByTagName("button")[0];
