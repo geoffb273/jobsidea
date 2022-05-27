@@ -34,9 +34,9 @@ var getItem = async function(db, collection, find) {
 	
 }
 
-var getList = async function(db, collection, find, sort) {
+var getList = async function(db, collection, find, sort, limit = 0) {
 	try {
-		return (await db.collection(collection).find(find).sort(sort)).toArray()
+		return (await db.collection(collection).find(find).sort(sort).limit(limit)).toArray()
 	} catch(err) {
 		console.error(err)
         throw new Error("Could not get list from collection " + collection)

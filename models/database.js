@@ -42,6 +42,10 @@ var getUser = function(username) {
 	return utils.getItem(db, "Users", {username: username})
 }
 
+var getUsers = function(search) {
+	return utils.getList(db, "Users", {username: new RegExp(search, "gi")}, {username: 1}, 3)
+}
+
 
 var addRestaurant = async function(username, password, name, email, street, city, state, zipCode) {
 	var p = []
@@ -126,7 +130,7 @@ var updateTime = function(chatId) {
 
 var getNotifications = async function(username, limit, callback) {
 	
-	var snapshot = await utils.getList(db, "Notifications", {username: username}, {created: -1})
+	var snapshot = await utils.getList(db, "Notifications", {username: username}, {created: -1}, limit)
 	callback(snapshot);
 }
 
@@ -166,12 +170,25 @@ var putPost = function(username, message, time) {
 	return Promise.all(promises);
 }
 
+var updatePost = function(post) {
+	return utils.updateItem(db, "Posts", {id: post.id}, post)
+}
+
 var getPosts = function(limit, search = undefined) {
 	var find = {}
 	if (search && search != undefined) {
-		find["username"] = search
+		//find["username"] = new RegExp(search, "gi")
+		find["content"] = new RegExp(search, "gi")
 	}
-	return utils.getList(db, "Posts", find, {created: -1})
+	return utils.getList(db, "Posts", find, {created: -1}, parseInt(limit))
+}
+
+var deletePost = function(id) {
+	return utils.deleteItem(db, "Posts", {id: id})
+}
+
+var getPost = function(id) {
+	return utils.getItem(db, "Posts", {id: id})
 }
 
 var putComment = function(postId, username, message) {
@@ -203,8 +220,6 @@ var putExperience = function(username, type, time, location) {
 
 var getReviews = async function(username, callback) {
 	var snapshot = await utils.getList(db, "Reviews", {username: username}, {created: -1})
-	
-	
 	callback(snapshot);
 	
 }
@@ -233,6 +248,7 @@ module.exports = {
 	connect: connect,
 	addUser: addUser,
 	getUser: getUser,
+	getUsers: getUsers,
 	addRestaurant: addRestaurant,
 	getChats: getChats,
 	getChat: getChat,
@@ -244,6 +260,9 @@ module.exports = {
 	getPostsByRestaurant: getPostsByRestaurant,
 	putPost: putPost,
 	getPosts: getPosts,
+	getPost: getPost,
+	deletePost: deletePost,
+	updatePost: updatePost,
 	putComment: putComment,
 	getNotifications: getNotifications,
 	putNotification: putNotification,

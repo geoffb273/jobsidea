@@ -12,6 +12,7 @@ var cookieParser = require('cookie-parser');
 var MemoryStore = require('memorystore')(session)
 
 app.use(express.urlencoded());
+app.use(express.static(__dirname + "/views/"));
 app.use(session({
     cookie: { maxAge: 86400000 },
     store: new MemoryStore({
@@ -38,6 +39,7 @@ app.get('/login', routes.login);
 app.post('/handle-login', routes.handle_login);
 app.get('/logout', routes.logout)
 
+app.get('/search-users/:search', routes.search_users);
 
 app.get('/signup-user', routes.signup_user);
 app.post('/handle-signup-user', routes.handle_signup_user);
@@ -61,6 +63,10 @@ app.get('/my-notifications', routes.notifications)
 app.get('/reviews', routes.reviews);
 app.get('/experience', routes.experience);
 app.get('/stars', routes.stars);
+app.get('/posts', routes.posts)
+app.get('/posts/:id', routes.post)
+app.post('/posts', routes.add_post)
+app.delete('/posts/:id', routes.delete_post)
 
 io.on('connection', (socket) => {
 	

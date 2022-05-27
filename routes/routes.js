@@ -24,7 +24,6 @@ var handleLogin = function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = req.body.password;
 	db.getUser(username).then(snapshot => {
-		console.log(snapshot)
 		if (snapshot) {
 			var user = snapshot;
 			var userPassword = user.password;
@@ -42,6 +41,17 @@ var handleLogin = function(req, res) {
 		res.redirect("/login");
 	})
 };
+
+var searchUsers = function(req, res) {
+	var search = req.params.search
+	db.getUsers(search).then(snapshot => {
+		var usernames = []
+		for(var i = 0; i < snapshot.length; i++) {
+			usernames.push(snapshot[i].username)
+		}
+		res.send(JSON.stringify(usernames));
+	})
+}
 
 var getSignUpUser = function(req, res) {
 	res.render("signup.ejs")
@@ -129,13 +139,11 @@ var getProfile = function(req, res) {
 
 var getChats = function(req, res) {
 	var username = req.session.username;
-	var start = req.query.start ? req.query.start : null;
 	
 	if (req.session.chats == undefined) {
 		req.session.chats = []
 		var first = true
 		db.getChats(username, snapshot => {
-			console.log(snapshot)
 			snapshot.forEach(child => {
 				var chat = child
 				req.session.chats.push(chat);
@@ -235,22 +243,9 @@ var getExperience = function(req, res) {
 
 var getReviews = function(req, res) {
 	var username = req.query.username;
-	if (req.session.reviews == undefined) {
-		req.session.reviews = []
-		var first = true
-		db.getReviews(username, snapshot => {
-			snapshot.forEach(child => {
-				req.session.reviews.push(child)
-			});
-			if (first) {
-				res.send(req.session.reviews);
-				first = false;
-			}
-			
-		});
-	} else {
-		res.send(req.session.reviews);
-	}
+	db.getReviews(username, snapshot => {
+		res.send(snapshot)
+	});
 }
 
 var getStars = function(req, res) {
@@ -274,7 +269,45 @@ var getStars = function(req, res) {
 }
 
 var getPosts = function(req, res) {
+	var limit = req.query.limit ? req.query.limit : 10
+	var search = req.query.search ? req.query.search : undefined
+	var p = search ? db.getPosts(limit, search) : db.getPosts(limit);
 	
+	p.then(snapshot => {
+		console.log(snapshot)
+		if (snapshot) {
+			res.send(JSON.stringify(snapshot))
+		}
+	})
+}
+
+var getPost = function(req, res) {
+	var id = req.params.id
+	
+	db.getPost(id).then(snapshot => {
+		res.send(JSON.stringify(snapshot))
+	})
+}
+
+var newPost = function(req, res) {
+	var post = req.body.post
+	db.putPost(post.username, post.content, post.time).then(_ => {
+		res.send("Done")
+	})
+}
+
+var updatePost = function(req, res) {
+	var post = req.body.post
+	db.updatePost(post).then(_ => {
+		res.send("Done")
+	})
+}
+
+var deletePost = function(req, res) {
+	var id = req.params.id
+	db.deletePost(id).then(_ => {
+		res.send("Done")
+	})
 }
 
 var connect = function() {
@@ -289,6 +322,7 @@ var routes = {
 	handle_login: handleLogin,
 	signup_user: getSignUpUser,
 	handle_signup_user: handleSignUpUser,
+	search_users: searchUsers,
 	signup_restaurant: getSignUpRestaurant,
 	handle_signup_restaurant: handleSignUpRestaurant,
 	profile: getProfile,
@@ -301,7 +335,12 @@ var routes = {
 	experience: getExperience,
 	reviews: getReviews,
 	stars: getStars,
-	logout: logout
+	logout: logout,
+	posts: getPosts,
+	add_post: newPost,
+	update_post: updatePost,
+	delete_post: deletePost,
+	post: getPost
 };
 
 module.exports = routes;
