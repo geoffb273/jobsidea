@@ -55,6 +55,7 @@ app.get('/my-chats', routes.chats);
 
 app.get('/chat', routes.chat);
 app.post('/handle-message', routes.handle_message);
+app.get('/messages', routes.messages)
 
 app.get('/notifications', routes.notifications_page);
 app.get('/my-notifications', routes.notifications)

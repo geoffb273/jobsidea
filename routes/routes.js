@@ -139,23 +139,11 @@ var getProfile = function(req, res) {
 
 var getChats = function(req, res) {
 	var username = req.session.username;
+	var limit = parseInt(req.query.limit);
+	db.getChats(username, limit, snapshot => {
+		res.send(snapshot);
+	});
 	
-	if (req.session.chats == undefined) {
-		req.session.chats = []
-		var first = true
-		db.getChats(username, snapshot => {
-			snapshot.forEach(child => {
-				var chat = child
-				req.session.chats.push(chat);
-			});
-			if (first) {
-				res.send(req.session.chats);
-				first = false
-			}
-		});
-	} else {
-		res.send(req.session.chats);
-	}
 };
 
 var getChatsPage = function(req, res) {
@@ -166,9 +154,10 @@ var getChatsPage = function(req, res) {
 var getChat = function(req, res) {
 	var chatId = req.query.chatId;
 	var username = req.session.username;
+	
 	var promises = [];
-	promises.push(db.getChat(username, chatId));
-	promises.push(db.getMessages(chatId));
+	promises.push(db.getChat(chatId));
+	promises.push(db.getMessages(chatId, 20));
 	Promise.all(promises).then(snapshots => {
 		if (snapshots[0]) {
 			var chat = snapshots[0];
@@ -187,6 +176,14 @@ var getChat = function(req, res) {
 		console.log(err)
 		res.redirect('/chats');
 	});
+}
+
+var getMessages = function(req, res) {
+	var chatId = req.query.chatId;
+	var limit = req.query.limit ? parseInt(req.query.limit) : 20;
+	db.getMessages(chatId, limit).then(snapshot => {
+		res.send(JSON.stringify(snapshot))
+	})
 }
 
 var putMessage = function(req, res) {
@@ -329,6 +326,7 @@ var routes = {
 	chats_page: getChatsPage,
 	chats: getChats,
 	chat: getChat,
+	messages: getMessages,
 	handle_message: putMessage,
 	notifications: getNotifications,
 	notifications_page: getNotificationsPage,

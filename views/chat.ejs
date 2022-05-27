@@ -46,17 +46,45 @@
   		var msgs = JSON.parse('<%- messages%>');
   		
   		var missing = []
+  		var limit = 20;
   		
   		var username = '<%- username%>'
   		
-  		for(var i = 0; i < msgs.length; i++) {
+  		for(var i = msgs.length - 1; i >= 0 ; i--) {
   			var item = document.createElement('li');
     		item.textContent = msgs[i].author + ": " + msgs[i].content;
     		messages.appendChild(item);
     		messages.scrollTo(0, messages.scrollHeight);
   		}
   		
+  		var getMessages = function() {
+  			$.get("/messages?chatId=" + chat.id + "&limit=" + limit , function(data) {
+  				var newMessages = (data)
+  				var amt = newMessages.length - msgs.length;
+  				var i = newMessages.length - amt;
+  				var stay = messages.scrollHeight;
+  				while (i < newMessages.length) {
+  					var item = document.createElement('li');
+    				item.textContent = newMessages[i].author + ": " + newMessages[i].content;
+  					messages.insertBefore(item, messages.firstChild);
+  					msgs.unshift(newMessages[i]);
+  					i += 1
+  					messages.scrollTo(0, messages.scrollHeight - stay - 10);
+  				}
+  				
+  			})
+  			
+  		}
   		
+  		var checkEnd = function() {
+  			if (messages.scrollTop == 0) {
+  				limit += 10;
+      			getMessages()
+    		}
+  		}
+  		
+  		
+  		messages.onscroll = checkEnd
 		socket.emit('joined', {username: username, chatId: chat.id});
 		
 		
@@ -79,6 +107,10 @@
   		var leave = function() {
   			socket.emit('user left', {message: username, chatId: chat.id});
   		};
+  		
+  		var refresh = function() {
+  			
+  		}
   		
   		socket.on('chat message', function(msg) {
   			

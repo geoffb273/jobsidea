@@ -77,18 +77,18 @@ var addRestaurant = async function(username, password, name, email, street, city
 	})
 }
 
-var getChats = async function(username, callback) {
+var getChats = async function(username, limit, callback) {
 	
-	var snapshot = await utils.getList(db, "Chats", {users: username}, {lastAccessed: -1})
+	var snapshot = await utils.getList(db, "Chats", {users: username}, {lastAccessed: -1}, limit)
 	callback(snapshot)
 }
 
-var getChat = function(username, chatId) {
+var getChat = function(chatId) {
 	return utils.getItem(db, "Chats", {id: chatId});
 }
 
-var getMessages = function(chatId) {
-	return utils.getList(db, "Messages", {chatId: chatId}, {created: -1})
+var getMessages = function(chatId, limit) {
+	return utils.getList(db, "Messages", {chatId: chatId}, {created: -1}, limit)
 }
 
 var putChat = function(username1, username2) {

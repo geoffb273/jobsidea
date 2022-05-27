@@ -27,7 +27,7 @@
 	var chats = [];
 	var chatIds = []
 	var username = '<%- username %>'
-	var count = 0;
+	var limit = 10;
 	
 	var enterChat = function() {
 		location.href = "/chat?chatId=" + this.chatId;
@@ -35,7 +35,7 @@
 	
 	var updateChats = function() {
 		
-    	$.get("/my-chats", function(data) {
+    	$.get("/my-chats?limit=" + limit, function(data) {
     		var chats = data
     		for (var i = 0; i < chats.length; i++) {
     			var chat = chats[i];
@@ -63,14 +63,12 @@
     			}
     		}
     	})
-    	if (chats.length == 0 && count < 5) {
-    		setTimeout(updateChats, 1000);
-    	} else {
-    		setTimeout(updateChats, 60000);
-    	}
-    	
-    	count += 1
   	};
+  	
+  	var refresh = function() {
+  		limit += 10
+  		updateChats();
+  	}
 	
 	/*chats.forEach(chat => {
 		chatIds.push(chat.id);
