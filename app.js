@@ -79,30 +79,39 @@ io.on('connection', (socket) => {
 				return name != msg.username
 			})[0]
 			var promises = []
-			socket.to(missingUser).emit('notification')
+			socket.to(missingUser).emit('notification', {})
+			socket.to(missingUser).emit('update chats', {chatId: msg.chatId})
 			promises.push(db.putNotification(missingUser, msg.username + " has sent you a message", "New Message"))
 			Promise.all(promises);
 		}
 	});
 	
 	socket.on('joined', (msg) => { 
-		 Array.from(socket.rooms).filter(room => room !== socket.id).forEach(id => { 
+		 Array.from(socket.rooms).filter(room => room !== socket.id && room !== msg.username).forEach(id => { 
 			socket.leave(id);
 			socket.removeAllListeners('chat message');
 		});
 		socket.join(msg.chatId);
+		socket.to(msg.chatId).emit('joined', {username: msg.username})
 	});
 	
 	socket.on('user left', (msg) => {
 		socket.leave(msg.chatId);
+		socket.to(msg.chatId).emit('user left', msg.username)
 	});
-	socket.on('notification page', (msg) => {
+	socket.on('self room', (msg) => {
 		 Array.from(socket.rooms).filter(room => room !== socket.id).forEach(id => { 
 			socket.leave(id);
-			socket.removeAllListeners('notification');
 		});
 		socket.join(msg.username);
-	})
+	});
+	
+	socket.on('logged out', () => {
+		 Array.from(socket.rooms).filter(room => room !== socket.id).forEach(id => { 
+			socket.leave(id);
+			socket.removeAllListeners('self room');
+		});
+	});
 });
 
 

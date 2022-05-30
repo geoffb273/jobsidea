@@ -69,7 +69,7 @@ var handleSignUpUser = function(req, res) {
 	db.addUser(username, password, firstname, lastname, email /*phone, birthday*/).then(_ => {
 		req.session.username = username;
 		req.session.type = "User";
-		res.redirect("/profile?username=" + username);
+		res.redirect("/profile");
 	}).catch(_ => {
 		res.redirect("/signup-user");
 	});
@@ -101,8 +101,10 @@ var handleSignUpRestaurant = function(req, res) {
 
 var getProfile = function(req, res) {
 	var username = req.params.username;
+	var ownProfile = false
 	if (!username) {
 		username = req.session.username;
+		ownProfile = true
 	}
 	db.getUser(username).then(snapshot => {
 		if (snapshot) {
@@ -116,8 +118,9 @@ var getProfile = function(req, res) {
 				var firstname = user.firstname;
 				var lastname = user.lastname;
 				/**var birthday = user.birthday */
+				
 				res.render("profile.ejs", {username: username, email: email, 
-					firstname: firstname, lastname: lastname, user: true})
+					firstname: firstname, lastname: lastname, user: true, own: ownProfile})
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
 				var street = user.street;
@@ -125,7 +128,7 @@ var getProfile = function(req, res) {
 				var state = user.state;
 				var zipCode = user.zipCode;
 				res.render("profile.ejs", {username: username, email: email, name: name, street: street, 
-					city: city, state: state, zipCode: zipCode, user: false});
+					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
 			}
 			
 		} else {
@@ -154,7 +157,11 @@ var getChatsPage = function(req, res) {
 var getChat = function(req, res) {
 	var chatId = req.query.chatId;
 	var username = req.session.username;
-	
+	var users = chatId.split("@")
+	if (username != users[0] && username != users[1]) {
+		res.redirect("/chats")
+		return
+	}
 	var promises = [];
 	promises.push(db.getChat(chatId));
 	promises.push(db.getMessages(chatId, 20));
@@ -271,7 +278,6 @@ var getPosts = function(req, res) {
 	var p = search ? db.getPosts(limit, search) : db.getPosts(limit);
 	
 	p.then(snapshot => {
-		console.log(snapshot)
 		if (snapshot) {
 			res.send(JSON.stringify(snapshot))
 		}

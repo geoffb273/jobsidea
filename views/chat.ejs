@@ -59,7 +59,10 @@
   		
   		var getMessages = function() {
   			$.get("/messages?chatId=" + chat.id + "&limit=" + limit , function(data) {
-  				var newMessages = (data)
+  				
+  				var newMessages = JSON.parse(data)
+  				console.log(newMessages.length)
+  				console.log(msgs.length)
   				var amt = newMessages.length - msgs.length;
   				var i = newMessages.length - amt;
   				var stay = messages.scrollHeight;
@@ -71,6 +74,7 @@
   					i += 1
   					messages.scrollTo(0, messages.scrollHeight - stay - 10);
   				}
+  				
   				
   			})
   			
@@ -105,7 +109,7 @@
   		};
   		
   		var leave = function() {
-  			socket.emit('user left', {message: username, chatId: chat.id});
+  			socket.emit('user left', {username: username, chatId: chat.id});
   		};
   		
   		var refresh = function() {
@@ -119,8 +123,8 @@
     		messages.appendChild(item);
     		messages.scrollTo(0, messages.scrollHeight);
   		});
-  		socket.on('join', function(obj) {
-  			document.getElementById("test").innerHTML = "THE QUICK SLY FOX JUMPED OVER THE LAZY BROWN DOG"
+  		socket.on('joined', function(obj) {
+  			
    	 		var item = document.createElement('li');
     		item.textContent = obj.username + " joined";
     		messages.appendChild(item);
@@ -129,9 +133,11 @@
   		
   		
   		socket.on('user left', function(username) {
-  			missing.append(username);
+  			missing.unshift(username);
+  			document.getElementById("test").innerHTML = missing.length
    	 		var item = document.createElement('li');
-    		item.textContent = username + " left chat";
+   	 		
+    		item.textContent = username + " left the chat";
     		messages.appendChild(item);
     		messages.scrollTo(0, messages.scrollHeight);
   		});

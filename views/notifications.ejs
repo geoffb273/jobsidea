@@ -7,46 +7,63 @@
 <div class="post">
   <table id = "table"></table>
 </div>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
 	var socket = io();
-	document.getElementById("test").innerHTML = "Bye"
+	
 	var username = '<%- username%>'
 	var table = document.getElementById("table");
 	var count = 0;
 	var notifications = []
 	var notificationIds = []
-	var limit = 10;
+	var limit = 30;
 	
 	var getNotifications = function() {
 		
 		$.get("/my-notifications?limit=" + limit, function(nots) {
 			
 			for (var i = 0; i < nots.length; i++) {
-			
     			var notification = nots[i];
     			var content = notification.content
     			if (!notificationIds.includes(notification.id)) {
-    				
     				notificationIds.push(notification.id);
     				notifications.push(notification)
-    				var row = table.insertRow(0);
+    				var row = table.insertRow(i);
 					var cell1 = row.insertCell(0);
-					cell1.innerHTML = content;
+					var date = (Date.now() - new Date(notification.created)) / 1000
+					var dateString = Math.round(date + 1) + " seconds ago"
+					if (date >= 59 && date < 60 * 60) {
+						dateString = Math.round(date / 60) + " minutes ago"
+					} else if (date >= 60 * 60 && date < 60 * 60 * 24) {
+						dateString = Math.round(date / (60 * 60)) + " hours ago"
+					} else if (date >= 60 * 60 * 24 && date < 60 * 60 * 24 * (365 + 0.25)) {
+						dateString = Math.round(date / (60 * 60 * 24)) + " days ago"
+					} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
+						dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
+					}
+					cell1.innerHTML = content + ": " + dateString
 					var cell2 = row.insertCell(1);
 					cell2.innerHTML = "<button onclick='window.location.href=\"/chats\"'>Chats</button>"
-    			} else if (notificationIds.indexOf(notification.id) != i) {
-    			
-    				var row = table.rows[i];
-    				row.cells[0].innerHTML = content;
     			}
     		}
 		});
 	}
 	getNotifications()
-	socket.emit('notification page', {username: username})
+	
+	var checkEnd = function() {
+		
+  		if (document.body.scrollTop + window.innerHeight - document.body.scrollHeight == 0) {
+  			limit += 10;
+      		getNotifications()
+    	}
+  	}
+  	document.body.onscroll = checkEnd
+	
+	socket.emit('self room', {username: username})
 	socket.on("notification", function() {
+		limit += 1;
 		getNotifications()
 	})
 </script>

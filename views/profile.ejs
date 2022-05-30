@@ -10,3 +10,14 @@
 <% } else { %>
 <%- include('restaurant'); %>
 <% } %>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+	var own = '<%- own%>';
+	var username = '<%- username%>'
+	if (own) {
+		var socket = io()
+		socket.emit('logged in', {username: username});
+	}
+</script>
