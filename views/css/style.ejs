@@ -63,7 +63,6 @@ body {
 		var resultsEl = document.getElementById("results")
 		resultsEl.innerHTML = ""
 		var search = searchEl.value;
-		console.log(search)
 		if (search && search.length > 0) {
 			$.get("/search-users/" + search, function(data) {
 				var usernames = JSON.parse(data)

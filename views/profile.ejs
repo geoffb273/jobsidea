@@ -18,6 +18,6 @@
 	var username = '<%- username%>'
 	if (own) {
 		var socket = io()
-		socket.emit('logged in', {username: username});
+		socket.emit('self room', {username: username});
 	}
 </script>

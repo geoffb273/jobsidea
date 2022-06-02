@@ -119,7 +119,7 @@ var getProfile = function(req, res) {
 				var lastname = user.lastname;
 				/**var birthday = user.birthday */
 				
-				res.render("profile.ejs", {username: username, email: email, 
+				res.render("profile.ejs", {username: username, email: email, picId: user.pic,
 					firstname: firstname, lastname: lastname, user: true, own: ownProfile})
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
@@ -127,7 +127,7 @@ var getProfile = function(req, res) {
 				var city = user.city;
 				var state = user.state;
 				var zipCode = user.zipCode;
-				res.render("profile.ejs", {username: username, email: email, name: name, street: street, 
+				res.render("profile.ejs", {username: username, email: email, name: name, street: street, pic: user.pic,
 					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
 			}
 			
@@ -329,15 +329,12 @@ var uploadProfilePic = function(req, res) {
 			})
 		}
 	})
-	
-	
-	
 }
 
 var getProfilePic = function(req, res) {
 	var id = req.params.id
 	db.getProfilePic(id).then(url => {
-		res.send({url: url})
+		res.send(url)
 	})
 }
 
