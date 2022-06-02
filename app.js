@@ -69,6 +69,10 @@ app.get('/posts/:id', routes.post)
 app.post('/posts', routes.add_post)
 app.delete('/posts/:id', routes.delete_post)
 
+app.get('/pics/:id', routes.pic)
+app.put('/pics/:username', routes.handle_pic)
+app.delete('/pics/:username/:id', routes.delete_pic)
+
 io.on('connection', (socket) => {
 	
 	socket.on('chat message', (msg) => {

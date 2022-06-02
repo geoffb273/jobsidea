@@ -26,7 +26,7 @@ var handleLogin = function(req, res) {
 	db.getUser(username).then(snapshot => {
 		if (snapshot) {
 			var user = snapshot;
-			var userPassword = user.password;
+			var userPassword = user.password; //TODO Encryption
 			if (password == userPassword) {
 				req.session.username = user.username;
 				req.session.type = user.type;
@@ -313,6 +313,42 @@ var deletePost = function(req, res) {
 	})
 }
 
+var uploadProfilePic = function(req, res) {
+	var file = req.body.file
+	var username = req.params.username
+	db.getUser(username).then(user => {
+		if (user.pic) {
+			db.deleteProfilePic(user.pic, username).then(_ => {
+				db.uploadProfilePic(username, file).then(_ => {
+					res.send("Done")
+				})
+			})
+		} else {
+			db.uploadProfilePic(username, file).then(_ => {
+				res.send("Done")
+			})
+		}
+	})
+	
+	
+	
+}
+
+var getProfilePic = function(req, res) {
+	var id = req.params.id
+	db.getProfilePic(id).then(url => {
+		res.send({url: url})
+	})
+}
+
+var deleteProfilePic = function(req, res) {
+	var id = req.params.id
+	var username = req.params.username
+	db.deleteProfilePic(id, username).then(_ => {
+		res.send("Done")
+	})
+}
+
 var connect = function() {
 	db.connect()
 }
@@ -344,7 +380,10 @@ var routes = {
 	add_post: newPost,
 	update_post: updatePost,
 	delete_post: deletePost,
-	post: getPost
+	post: getPost,
+	pic: getProfilePic,
+	handle_pic: uploadProfilePic,
+	delete_pic: deleteProfilePic
 };
 
 module.exports = routes;

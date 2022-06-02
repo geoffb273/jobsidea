@@ -17,7 +17,7 @@ var addUser = async function(username, password, firstname, lastname, email) {//
 		if (!snapshots[0] && (!snapshots[1] || email != snapshots[1])) {
 			var obj = {
 				username: username,
-				password: password,
+				password: password, //TODO Encryption
 				firstname: firstname,
 				lastname: lastname,
 				email: email,
@@ -171,7 +171,7 @@ var putPost = function(username, message, time) {
 }
 
 var updatePost = function(post) {
-	return utils.updateItem(db, "Posts", {id: post.id}, post)
+	return utils.replaceItem(db, "Posts", {id: post.id}, post)
 }
 
 var getPosts = function(limit, search = undefined) {
@@ -207,7 +207,7 @@ var getExperience = function(username) {
 }
 
 var putExperience = function(username, type, time, location) {
-	var expId = uuiv4();
+	var expId = uuidv4();
 	var expObj = {
 		time: time,
 		location: location,
@@ -225,7 +225,7 @@ var getReviews = async function(username, callback) {
 }
 
 var putReview = function(username, author, message) {
-	var reviewId = uuiv4()
+	var reviewId = uuidv4();
 	var reviewObj = {
 		author: author,
 		content: message,
@@ -241,6 +241,25 @@ var getStars = function(username) {
 
 var putStar = function(username, reviewer, stars) {
 	return utils.replaceItem("Stars", {username: username, reviewer: reviewer}, {username: username, reviewer: reviewer, stars: stars});
+}
+
+var getProfilePic = function(id) {
+	return utils.getImage("profiles", id)
+}
+
+var uploadProfilePic = function(username, file) {
+	var id = uuidv4();
+	var promises = []
+	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {pic: id}}))
+	promises.push(utils.uploadImage("profiles", id, file))
+	return Promise.all(promises)
+}
+
+var deleteProfilePic = function(id, username) {
+	var promises = []
+	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {pic: undefined}}))
+	promises.push(utils.deleteImage("profiles", id))
+	return Promise.all(promises)
 }
 
 
@@ -271,5 +290,8 @@ module.exports = {
 	getReviews: getReviews,
 	putReview: putReview,
 	getStars: getStars,
-	putStar: putStar
+	putStar: putStar,
+	getProfilePic: getProfilePic,
+	uploadProfilePic: uploadProfilePic,
+	deleteProfilePic: deleteProfilePic
 };
