@@ -6,15 +6,54 @@
 
 <body>
 <style>
-
-      #table {margin: 0; padding: 0; position: relative; top: 0; width: 100%; bottom: 3rem; overflow-y: auto}
-      #table > tr { padding: 0px;}
-      #join {float:right; margin-right: 10px;}
-      tr:nth-child(even) { background-color: #e9f4ff; }
+	.post {
+		position: static;
+		margin-1op; 5vh;
+		margin-left: 15vw;
+		height: 85vh;
+		width: 70vw;
+		background: white;
+	}
+   	#table {
+      	padding: 0; 
+      	position: relative; 
+      	top: 0; 
+      	width: 70vw; 
+      	bottom: 3rem; 
+      	overflow-y: auto;
+      	margin-left: 0vw;
+      	
+   	}
+      
+  	#table > tr {
+      	padding: 0px;
+  	}
+      
+  	#join { 
+      	float:right; margin-right: 10px;
+   	}
+      
+  	tr:nth-child(even) { 
+      	background-color: #e9f4ff; 
+   	}
+  	.chatButton {
+      	padding-top: 1vmin;
+      	width: 10vmin;
+      	height: 5vmin;
+      	border-radius: 5vmin;
+      	font-size: 3vmin;
+   	}
+      
+  	.profilePic {
+      	border-radius: 5vmin;
+      	width: 5vmin;
+      	height: 5vmin;
+      	font-size: 2vmin;
+   	}
 </style>
-<p id="test">Hi</p>
+
 <title>Chats</title>
-<h1>Chats</h1>
+
 <div class="post">
   <table id = "table"></table>
 </div>
@@ -29,7 +68,7 @@
 	var limit = 10;
 	
 	var enterChat = function() {
-		location.href = "/chat?chatId=" + this.chatId;
+		location.href = "/chat/" + this.chatId;
 	}
 	
 	var updateChats = function() {
@@ -37,8 +76,8 @@
     	$.get("/my-chats?limit=" + limit, function(data) {
     		var chats = data
     		table.innerHTML = ""
-    		for (var i = 0; i < chats.length; i++) {
-    			var chat = chats[i];
+    		chats.forEach(chat => {
+    			var i = chats.findIndex( curr => { curr.id == chat.id })
     			var date = (Date.now() - new Date(chat.lastAccessed)) / 1000
 				var dateString = Math.round(date + 1) + " seconds ago"
 				if (date >= 59 && date < 60 * 60) {
@@ -55,20 +94,35 @@
 				})[0]
     			
     			var row = table.insertRow(i);
-				var cell1 = row.insertCell(0);
+    			var cell0 = row.insertCell(0);
+    			
+				$.get("/user-pic/" + chatName, function(data) {
+					if (data) {
+						cell0.innerHTML = "<img src=" + data + " class='profilePic'></img>"
+					} else {
+						cell0.innerHTML = "<span class='profilePic'><i class='fa fa-user fa-xl'></i></span>"
+					}
+					
+					cell0.style.alignSelf = "flex-end"
+				})
+    			
+				var cell1 = row.insertCell(1);
 				cell1.innerHTML = chatName;
 				
-				var cell2 = row.insertCell(1);
+				var cell2 = row.insertCell(2);
 				cell2.innerHTML = dateString
-				var cell3 = row.insertCell(2);
+				
+				var cell3 = row.insertCell(3);
 				var button = document.createElement("button");
-				button.innerHTML = "Chat";
+				
+				button.className = "fa-solid fa-message fa-2xl chatButton"
+				
 				button.id = "join";
 				button.chatId = chat.id;
 				button.onclick = enterChat;
 				cell3.appendChild(button);
     			
-    		}
+    		})
     	})
   	};
   	

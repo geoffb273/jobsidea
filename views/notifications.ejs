@@ -3,7 +3,25 @@
 	
 </head>
 
-<p id="test">Hi</p>
+<style>
+	tr:nth-child(even) { 
+		background-color: #e9f4ff; 
+	}
+	
+	.post {
+		background: white;
+		margin-left: 15vw;
+		width: 70vw;
+	}
+	
+	#table {
+		font-size: max(16px, 1.5vw);
+		width: 70vw;
+	}
+	
+</style>
+
+
 <div class="post">
   <table id = "table"></table>
 </div>
@@ -43,9 +61,13 @@
 					} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
 						dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
 					}
-					cell1.innerHTML = content + ": " + dateString
+					cell1.innerHTML = content
 					var cell2 = row.insertCell(1);
-					cell2.innerHTML = "<button onclick='window.location.href=\"/chats\"'>Chats</button>"
+					cell2.innerHTML = dateString;
+					var cell3 = row.insertCell(2)
+					var u2 = notification.content.split(" ")[0]
+					var chatId = username < u2 ? username + "@" + u2 : u2 + "@" + username
+					cell3.innerHTML = "<button onclick='window.location.href=\"/chat/" + chatId + "\"'>Chat</button>"
     			}
     		}
 		});

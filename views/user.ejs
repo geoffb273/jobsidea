@@ -1,58 +1,7 @@
-<style>
-	#profilePic {
-		height: 25vmin;
-		width: 25vmin;
-		border-radius: 20vmin;
-		margin-top: 2.5vmin;
-		margin-bottom: 2.5vmin;
-		margin-left: 2vmin;
-		background: #afb8c2;
-		border: solid 0.1vmin;
-	}
-	
-	#header {
-		display: flex;
-		width: 100%;
-		background: #afb8c2;
-		margin: 0;
-		justify-content: space-between;
-	}
-	
-	#header > #info {
-		
-	}
-	
-	#header > #rightheader {
-		
-	}
-	
-	
-</style>
+
 
 <body>
-<p id="test">Hi</p>
-<div id="header">
-	<img id="profilePic"></img>
-	<div id="info">
-	<%if (username) {%>
-		<p id="username"><b>&#64<%= username %></b></p>
-	<%}%>
-	<%if (firstname && lastname) {%>
-		<p id="username"><%= firstname %> <%= lastname %></p>
-	<%}%>
-	<%if (email) {%>
-		<p id="username"><i><%= email %></i></p>
-	<%}%>
-	</div>
-	<div id="rightheader">
-		<%if (own) {%>
-			<button>Edit Profile</button>
-		<%} else {%>
-			<button>Chat</button>
-		<%}%>
-	</div>
-	
-</div>
+
 
 <div id="experience-div">
 	<b><u>Experience</u></b>
@@ -68,7 +17,7 @@
 	var picId = '<%- picId %>'
 	var reviewsTable = document.getElementById("reviews");
 	var experienceElement = document.getElementById("experience-div")
-	var count = 0;
+	
 	var reviews = [];
 	var experiences = {};
 	var experienceTables = {}
@@ -149,16 +98,6 @@
 			}
 		});
 		
-	}
-	
-	var getProfilePic = function() {
-		$.get("/pics/" + picId, function(url) {
-			var image = document.getElementById("profilePic")
-			image.src = url
-		});
-	}
-	if (picId) {
-		getProfilePic()
 	}
 	
 	updateReviews();

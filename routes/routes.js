@@ -30,7 +30,7 @@ var handleLogin = function(req, res) {
 			if (password == userPassword) {
 				req.session.username = user.username;
 				req.session.type = user.type;
-				res.redirect("/profile?username=" + user.username);
+				res.redirect("/profile");
 			} else {
 				res.redirect("/login");
 			}
@@ -120,14 +120,14 @@ var getProfile = function(req, res) {
 				/**var birthday = user.birthday */
 				
 				res.render("profile.ejs", {username: username, email: email, picId: user.pic,
-					firstname: firstname, lastname: lastname, user: true, own: ownProfile})
+					name: firstname + " " + lastname, user: true, own: ownProfile})
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
 				var street = user.street;
 				var city = user.city;
 				var state = user.state;
 				var zipCode = user.zipCode;
-				res.render("profile.ejs", {username: username, email: email, name: name, street: street, pic: user.pic,
+				res.render("profile.ejs", {username: username, email: email, name: name, street: street, picId: user.pic,
 					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
 			}
 			
@@ -144,6 +144,7 @@ var getChats = function(req, res) {
 	var username = req.session.username;
 	var limit = parseInt(req.query.limit);
 	db.getChats(username, limit, snapshot => {
+		console.log(snapshot)
 		res.send(snapshot);
 	});
 	
@@ -155,7 +156,7 @@ var getChatsPage = function(req, res) {
 }
 
 var getChat = function(req, res) {
-	var chatId = req.query.chatId;
+	var chatId = req.params.chatId;
 	var username = req.session.username;
 	var users = chatId.split("@")
 	if (username != users[0] && username != users[1]) {
@@ -183,6 +184,28 @@ var getChat = function(req, res) {
 		console.log(err)
 		res.redirect('/chats');
 	});
+}
+
+var handleChats = function(req, res) {
+	var username = req.session.username;
+	var username2 = req.params.username;
+	var chatId = username + "@" + username2
+	if (username > username2) {
+		chatId = username2 + "@" + username
+	}
+	db.getChat(chatId).then(chat => {
+		if (chat) {
+			res.redirect("/chat/" + chatId)
+		} else {
+			db.putChat(username, username2).then(_ => {
+				res.redirect("/chat/" + chatId)
+			}).catch(_ => {
+				res.redirect("/chats")
+			})
+		}
+	}).catch(_ => {
+		res.redirect("/chats")
+	})
 }
 
 var getMessages = function(req, res) {
@@ -346,6 +369,19 @@ var deleteProfilePic = function(req, res) {
 	})
 }
 
+var getUserProfilePic = function(req, res) {
+	var username = req.params.username
+	db.getUser(username).then(user => {
+		if (user.pic) {
+			db.getProfilePic(user.pic).then(url => {
+				res.send(url)
+			})
+		} else {
+			res.send("")
+		}
+	})
+}
+
 var connect = function() {
 	db.connect()
 }
@@ -365,6 +401,7 @@ var routes = {
 	chats_page: getChatsPage,
 	chats: getChats,
 	chat: getChat,
+	handle_chats: handleChats,
 	messages: getMessages,
 	handle_message: putMessage,
 	notifications: getNotifications,
@@ -380,7 +417,8 @@ var routes = {
 	post: getPost,
 	pic: getProfilePic,
 	handle_pic: uploadProfilePic,
-	delete_pic: deleteProfilePic
+	delete_pic: deleteProfilePic,
+	user_pic: getUserProfilePic
 };
 
 module.exports = routes;

@@ -93,7 +93,7 @@ var getMessages = function(chatId, limit) {
 
 var putChat = function(username1, username2) {
 	var chatId;
-	if (username1 <= username2) {
+	if (username1 < username2) {
 		chatId = username1 + "@" + username2;
 	} else {
 		chatId = username2 + "@" + username1;
@@ -103,7 +103,8 @@ var putChat = function(username1, username2) {
 		created: (new Date()).toISOString(),
 		lastAccessed: (new Date()).toISOString(),
 		id: chatId,
-		unread: false
+		unread: false,
+		users: [username1, username2]
 	}
 	promises.push(utils.postItem(db, "Chats", chatObj));
 	promises.push(putNotification(username2, username1 + " has created a chat with you", "New Chat"));

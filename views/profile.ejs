@@ -1,23 +1,125 @@
-
+<style>
+	body {
+		justify-content: center;
+	}
+	#profilePic {
+		height: 25vmin;
+		width: 25vmin;
+		border-radius: 150px;
+		margin-top: 2.5vmin;
+		margin-bottom: 2.5vmin;
+		margin-left: 3vmin;
+		margin-right: 2vmin;
+		background: #afb8c2;
+		border: solid 0.1vmin;
+		min-width: 150px;
+		min-height: 150px;
+	}
+	
+	#header {
+		position: relative;
+		left: 10vw;
+		display: flex;
+		width: 80vw;
+		border-bottom: 0.5px solid;
+		margin-top: 5vmin;
+		background: white;
+		border-radius: 5vmin;
+		
+	}
+	
+	#header > #info {
+		font-size: max(16px, 2vmin);
+	}
+	
+	#header > #rightheader {
+		position: absolute;
+		right: 0px;
+		display: flex;
+		flex-direction: column;
+	}
+	#header > #rightheader > button {
+		background: black;
+		color: white;
+		border-radius: 5vmin;
+		margin-right: 1.5vw;
+		font-size: max(12px, 2vmin);
+	}
+	
+	#header > #rightheader > form > #chatButton {
+		background: black;
+		color: white;
+		border-radius: 5vmin;
+		margin-right: 1.5vw;
+		font-size: max(12px, 2vmin);
+		margin-top: max(10vmin, 40px);
+	}
+	
+	#header > #rightheader > #edit {
+		margin-top: max(10vmin, 40px);
+	}
+	
+	
+	
+</style>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <head>
 	<%- include('css/style'); %>
 </head>
-<button onclick="window.location.href='/login'">Log Out</button>
-
-<% if(user) { %>
-<%- include('user'); %>
-<% } else { %>
-<%- include('restaurant'); %>
-<% } %>
 
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
 	var own = '<%- own%>';
 	var username = '<%- username%>'
+	var picId = '<%- picId %>'
 	if (own) {
 		var socket = io()
 		socket.emit('self room', {username: username});
 	}
+	
+	var getProfilePic = function() {
+		$.get("/pics/" + picId, function(url) {
+			var image = document.getElementById("profilePic")
+			image.src = url
+		});
+	}
+	if (picId) {
+		getProfilePic()
+	}
 </script>
+
+
+<div id="header">
+	<img id="profilePic"></img>
+	<div id="info">
+	<%if (name) {%>
+		<p id="name" style="font-size: max(26px, 3vw); text-align:left;"><%= name %></p>
+	<%}%>
+	<%if (username) {%>
+		<p id="username"><i>&#64<%= username %></i></p>
+	<%}%>
+	<%if (email) {%>
+		<p id="email"><%= email %></p>
+	<%}%>
+	</div>
+	<div id="rightheader">
+		<%if (own) {%>
+			
+				<button id="edit">Edit Profile</button>
+				<button id="logout" onclick="window.location.href='/login'">Log Out</button>
+			
+		<%} else {%>
+			<form action="/chats/<%- username %>" method="post">
+				<input type="submit" id="chatButton" value="Chat">
+			</form>
+		<%}%>
+	</div>
+	
+</div>
+
+<% if(user) { %>
+<%- include('user'); %>
+<% } else { %>
+<%- include('restaurant'); %>
+<% } %>

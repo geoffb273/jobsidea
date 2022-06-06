@@ -52,8 +52,9 @@ app.get('/profile/:username', routes.profile);
 
 app.get('/chats', routes.chats_page);
 app.get('/my-chats', routes.chats);
+app.post('/chats/:username', routes.handle_chats)
 
-app.get('/chat', routes.chat);
+app.get('/chat/:chatId', routes.chat);
 app.post('/handle-message', routes.handle_message);
 app.get('/messages', routes.messages)
 
@@ -69,6 +70,7 @@ app.get('/posts/:id', routes.post)
 app.post('/posts', routes.add_post)
 app.delete('/posts/:id', routes.delete_post)
 
+app.get('/user-pic/:username', routes.user_pic)
 app.get('/pics/:id', routes.pic)
 app.put('/pics/:username', routes.handle_pic)
 app.delete('/pics/:username/:id', routes.delete_pic)
@@ -85,7 +87,7 @@ io.on('connection', (socket) => {
 			var promises = []
 			socket.to(missingUser).emit('notification', {})
 			socket.to(missingUser).emit('update chats', {chatId: msg.chatId})
-			promises.push(db.putNotification(missingUser, msg.username + " has sent you a message", "New Message"))
+			promises.push(db.putNotification(missingUser, msg.username + " sent you a message", "New Message"))
 			Promise.all(promises);
 		}
 	});
@@ -100,8 +102,9 @@ io.on('connection', (socket) => {
 	});
 	
 	socket.on('user left', (msg) => {
+		console.log(msg)
+		socket.to(msg.chatId).emit('user left', {username: msg.username})
 		socket.leave(msg.chatId);
-		socket.to(msg.chatId).emit('user left', msg.username)
 	});
 	socket.on('self room', (msg) => {
 		 Array.from(socket.rooms).filter(room => room !== socket.id).forEach(id => { 
