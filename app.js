@@ -67,6 +67,7 @@ app.get('/experience', routes.experience);
 app.get('/stars', routes.stars);
 app.get('/posts', routes.posts)
 app.get('/posts/:id', routes.post)
+app.get('/post-page/:id', routes.post_page)
 app.post('/posts', routes.add_post)
 app.delete('/posts/:id', routes.delete_post)
 
@@ -88,6 +89,7 @@ io.on('connection', (socket) => {
 			socket.to(missingUser).emit('notification', {})
 			socket.to(missingUser).emit('update chats', {chatId: msg.chatId})
 			promises.push(db.putNotification(missingUser, msg.username + " sent you a message", "New Message"))
+			promises.push(db.changeUnread(msg.chatId, missingUser))
 			Promise.all(promises);
 		}
 	});
@@ -99,10 +101,12 @@ io.on('connection', (socket) => {
 		});
 		socket.join(msg.chatId);
 		socket.to(msg.chatId).emit('joined', {username: msg.username})
+		if (msg.unread == msg.username) {
+			db.changeUnread(msg.chatId, "read");
+		}
 	});
 	
 	socket.on('user left', (msg) => {
-		console.log(msg)
 		socket.to(msg.chatId).emit('user left', {username: msg.username})
 		socket.leave(msg.chatId);
 	});

@@ -7,19 +7,15 @@
 <body>
 <style>
 	.post {
-		position: static;
-		margin-1op; 5vh;
 		margin-left: 15vw;
-		height: 85vh;
+		min-height: 90vh;
 		width: 70vw;
 		background: white;
 	}
    	#table {
-      	padding: 0; 
-      	position: relative; 
-      	top: 0; 
+      	padding: 0;
       	width: 70vw; 
-      	bottom: 3rem; 
+      	font-size: max(16px, 1.5vw);
       	overflow-y: auto;
       	margin-left: 0vw;
       	
@@ -60,7 +56,6 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
-	// document.getElementById("test").innerHTML = "Bye";
 	var table = document.getElementById("table");
 	var socket = io();
 	var chats = [];
@@ -107,7 +102,12 @@
 				})
     			
 				var cell1 = row.insertCell(1);
-				cell1.innerHTML = chatName;
+				if (chat.unread == username) {
+					cell1.innerHTML = chatName + ' <span style="color:lightblue;font-size:max(0.75vw, 8px)"><i class="fa-solid fa-circle"></i></span>';
+				} else {
+					cell1.innerHTML = chatName;
+				}
+				
 				
 				var cell2 = row.insertCell(2);
 				cell2.innerHTML = dateString

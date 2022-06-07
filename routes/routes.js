@@ -144,7 +144,6 @@ var getChats = function(req, res) {
 	var username = req.session.username;
 	var limit = parseInt(req.query.limit);
 	db.getChats(username, limit, snapshot => {
-		console.log(snapshot)
 		res.send(snapshot);
 	});
 	
@@ -315,6 +314,14 @@ var getPost = function(req, res) {
 	})
 }
 
+var getPostPage = function(req, res) {
+	var id = req.params.id
+	db.getPost(id).then(post => {
+		console.log(post)
+		res.render('postpage.ejs', {post: JSON.stringify(post)})
+	})
+}
+
 var newPost = function(req, res) {
 	var post = req.body.post
 	db.putPost(post.username, post.content, post.time).then(_ => {
@@ -415,6 +422,7 @@ var routes = {
 	update_post: updatePost,
 	delete_post: deletePost,
 	post: getPost,
+	post_page: getPostPage,
 	pic: getProfilePic,
 	handle_pic: uploadProfilePic,
 	delete_pic: deleteProfilePic,

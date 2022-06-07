@@ -103,12 +103,16 @@ var putChat = function(username1, username2) {
 		created: (new Date()).toISOString(),
 		lastAccessed: (new Date()).toISOString(),
 		id: chatId,
-		unread: false,
+		unread: username2,
 		users: [username1, username2]
 	}
 	promises.push(utils.postItem(db, "Chats", chatObj));
 	promises.push(putNotification(username2, username1 + " has created a chat with you", "New Chat"));
 	return Promise.all(promises);
+}
+
+var changeUnread = function(chatId, reciever) {
+	return utils.updateItem(db, "Chats", {id : chatId}, {$set: {unread: reciever}})
 }
 
 var putMessage = function(chatId, author, msg) {
@@ -274,6 +278,7 @@ module.exports = {
 	getChat: getChat,
 	getMessages: getMessages,
 	putChat: putChat,
+	changeUnread: changeUnread,
 	putMessage: putMessage,
 	updateTime: updateTime,
 	getComments: getComments,

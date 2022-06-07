@@ -79,7 +79,7 @@
   		var limit = 20;
   		
   		var username = '<%- username%>'
-  		
+  		var last = msgs[msgs.length - 1].author;
   		for(var i = msgs.length - 1; i >= 0 ; i--) {
   			var item = document.createElement('li');
     		item.textContent = msgs[i].author + ": " + msgs[i].content;
@@ -87,13 +87,17 @@
     			//item.style.textAlign = "right"
     			item.style.background = "#e9f4ff"
     		}
+    		if (last != msgs[i].author) {
+    			item.style.borderTop = "0.1px solid"
+    		}
+    		last = msgs[i].author;
     		messages.appendChild(item);
     		messages.scrollTo(0, messages.scrollHeight);
   		}
   		
   		var getMessages = function() {
+  			last = msgs[0].author
   			$.get("/messages?chatId=" + chat.id + "&limit=" + limit , function(data) {
-  				
   				var newMessages = JSON.parse(data)
   				var amt = newMessages.length - msgs.length;
   				var i = newMessages.length - amt;
@@ -105,6 +109,10 @@
     					//item.style.textAlign = "right"
     					item.style.background = "#e9f4ff"
     				}
+    				if (last != newMessages[i].author) {
+    					item.style.borderBottom = "0.1px solid"
+    				}
+    				last = newMessages[i].author;
   					messages.insertBefore(item, messages.firstChild);
   					msgs.unshift(newMessages[i]);
   					i += 1
@@ -125,7 +133,7 @@
   		
   		
   		messages.onscroll = checkEnd
-		socket.emit('joined', {username: username, chatId: chat.id});
+		socket.emit('joined', {username: username, chatId: chat.id, unread: chat.unread});
 		
 		
   		var sendMessage = function() {
@@ -136,6 +144,10 @@
       			$.post('/handle-message', obj);
    	 			var item = document.createElement('li');
     			item.textContent = username + ": " + message.value;
+    			if (last != username) {
+    				item.style.borderTop = "0.1px solid"
+    			}
+    			last = username;
     			messages.appendChild(item);
     			messages.scrollTo(0, messages.scrollHeight);
       			
@@ -152,6 +164,10 @@
   			
    	 		var item = document.createElement('li');
     		item.textContent = msg.username + ": " + msg.message;
+    		if (last != msg.username) {
+    			item.style.borderTop = "0.1px solid"
+    		}
+    		last = msg.username
     		//item.style.textAlign = "right"
     		item.style.background = "#e9f4ff"
     		messages.appendChild(item);
@@ -160,7 +176,11 @@
   		socket.on('joined', function(obj) {
   			
    	 		var item = document.createElement('li');
-    		item.textContent = obj.username + " joined";
+    		item.innerHTML = "<b>" + obj.username + " joined</b>";
+    		if (last != obj.username) {
+    			item.style.borderTop = "0.1px solid"
+    		}
+    		last = obj.username
     		item.style.background = "#e9f4ff"
     		messages.appendChild(item);
     		messages.scrollTo(0, messages.scrollHeight);
@@ -170,7 +190,11 @@
   		socket.on('user left', function(msg) {
   			missing.unshift(msg.username);
    	 		var item = document.createElement('li');
-    		item.textContent = msg.username + " left the chat";
+    		item.innerHTML = "<b>" + msg.username + " left the chat</b>";
+    		if (last != msg.username) {
+    			item.style.borderTop = "0.1px solid"
+    		}
+    		last = msg.username
     		item.style.background = "#e9f4ff"
     		messages.appendChild(item);
     		messages.scrollTo(0, messages.scrollHeight);

@@ -4,28 +4,22 @@
 </head>
 
 <style>
-body {
-	text-align: center;
-	justify-content: center;
+
+
+#posts {
+	margin-left: 15vw;
+	min-height: 90vh;
+	width: 70vw;
 }
 </style>
 
-<header>
 
-
-
-</header>
-
-<h1>Main Page</h1>
-<p id="test">Hi</p>
-<ul id="posts">
-
-</ul>
+<div id="posts"></div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src = "post.js"></script>
 <script>
-document.getElementById("test").innerHTML = "Hey"
+
 var postsEl = document.getElementById("posts")
 var limit = 10
 var getPosts = function() {
@@ -37,7 +31,7 @@ var getPosts = function() {
     		
     		for (var i = 0; i < posts.length; i++) {
     			var post = posts[i];
-    			var el = createPost(document, post)
+    			var el = createPost(document, post, () => {location.href = '/post-page/' + post.id})
     			postsEl.appendChild(el);
     			
     			

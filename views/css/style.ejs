@@ -14,7 +14,7 @@ body {
 	position: sticky;
 	top: 0;
 	border-bottom: 0.5px solid;
-	font-size: 2.5vw;
+	font-size: max(2.5vw, 20px);
 }
 #top > button {
 	width: 16vw;
@@ -66,10 +66,10 @@ body {
 
 <div id="top">
 	<a id="logo" href='/'>Waiter</a>
-	<button onclick="window.location.href='/'" class="fa-solid fa-home fa-sm"></button>
-	<button onclick="window.location.href='/notifications'" class="fa-solid fa-bell fa-sm"></button>
-	<button onclick="window.location.href='/chats'" class="fa-solid fa-envelope fa-sm"></button>
-	<button onclick="window.location.href='/profile'" class="fa-solid fa-user fa-sm"></button>
+	<button onclick="location.href='/'" class="fa-solid fa-home fa-sm"></button>
+	<button onclick="location.href='/notifications'" class="fa-solid fa-bell fa-sm"></button>
+	<button onclick="location.href='/chats'" class="fa-solid fa-envelope fa-sm"></button>
+	<button onclick="location.href='/profile'" class="fa-solid fa-user fa-sm"></button>
 	<div id="dropdown">
 		<input id="search" placeholder="Search" onkeyup="searchChange()"></input>
 		<div id="results"></div>
