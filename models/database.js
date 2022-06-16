@@ -107,7 +107,7 @@ var putChat = function(username1, username2) {
 		users: [username1, username2]
 	}
 	promises.push(utils.postItem(db, "Chats", chatObj));
-	promises.push(putNotification(username2, username1 + " has created a chat with you", "New Chat"));
+	promises.push(putNotification(username2, username1, username1 + " has created a chat with you", "New Chat"));
 	return Promise.all(promises);
 }
 
@@ -139,36 +139,37 @@ var getNotifications = async function(username, limit, callback) {
 	callback(snapshot);
 }
 
-var putNotification = function(username, msg, type) {
+var putNotification = function(username, sender, msg, type) {
 	var notificationId = uuidv4();
 	var notificationObj = {
 		content: msg,
 		created: (new Date()).toISOString(),
 		id: notificationId,
 		type: type,
-		username: username
+		username: username,
+		sender: sender
 	}
 	return utils.postItem(db, "Notifications", notificationObj)
 }
 
-var getComments = function(postId) {
-	return utils.getList(db, "Comments", {postId: postId}, {created: -1})
-}
+
 
 var getPostsByRestaurant = function(username) {
 	return utils.getList(db, "Posts", {username: username}, {created: -1})
 }
 
-var putPost = function(username, message, time) {
+var putPost = function(p) {
 	var date = new Date();
-	var expireDate = new Date().setTime(date.now() + time);
+	var expireDate = new Date().setTime(date.now() + p.time);
 	var postId = uuidv4();
 	var postObj = {
 		created: date.toISOString(),
-		content: message,
+		content: p.content,
 		expireDate: expireDate.toISOString(),
-		username: username,
-		id: postId
+		username: p.username,
+		id: postId,
+		name: p.name,
+		zipCode: p.zipCode
 	}
 	var promises = []
 	promises.push(utils.postItem(db, "Posts", postObj));
@@ -179,12 +180,19 @@ var updatePost = function(post) {
 	return utils.replaceItem(db, "Posts", {id: post.id}, post)
 }
 
-var getPosts = function(limit, search = undefined) {
+var getPosts = function(limit, search = undefined, zipCodes = undefined) {
 	var find = {}
-	if (search && search != undefined) {
-		//find["username"] = new RegExp(search, "gi")
-		find["content"] = new RegExp(search, "gi")
+	if (search && search.length > 0) {
+		var arr = []
+		arr.push({name: new RegExp(search, "gi")})
+		arr.push({username: new RegExp(search, "gi")})
+		arr.push({content: new RegExp(search, "gi")})
+		find["$or"] = arr
 	}
+	if (zipCodes && zipCodes.length > 0) {
+		find["zipCode"] = {$in: zipCodes}
+	}
+	
 	return utils.getList(db, "Posts", find, {created: -1}, parseInt(limit))
 }
 
@@ -194,17 +202,6 @@ var deletePost = function(id) {
 
 var getPost = function(id) {
 	return utils.getItem(db, "Posts", {id: id})
-}
-
-var putComment = function(postId, username, message) {
-	var time = (new Date()).toISOString();
-	var commentObj = {
-		author: username,
-		content: message,
-		created: time,
-		postId: postId
-	}
-	return utils.postItem(db, "Comments", commentObj);
 }
 
 var getExperience = function(username) {
@@ -267,13 +264,41 @@ var deleteProfilePic = function(id, username) {
 	return Promise.all(promises)
 }
 
+var getComments = function(postId, limit) {
+	return utils.getList(db, "Comments", {postId: postId}, {created: -1}, limit)
+}
+
+var addComment = function(comment) {
+	var c = {
+		content: comment.content,
+		author: comment.author,
+		postId: comment.postId,
+		created: comment.created
+		
+	}
+	return utils.postItem(db, "Comments", c)
+}
+
+/*var putComment = function(postId, username, message) {
+	var time = (new Date()).toISOString();
+	var commentObj = {
+		author: username,
+		content: message,
+		created: time,
+		postId: postId
+	}
+	return utils.postItem(db, "Comments", commentObj);
+}*/
+
 
 module.exports = {
 	connect: connect,
+	//User + Restaurant
 	addUser: addUser,
 	getUser: getUser,
 	getUsers: getUsers,
 	addRestaurant: addRestaurant,
+	//Chat + Messages
 	getChats: getChats,
 	getChat: getChat,
 	getMessages: getMessages,
@@ -281,23 +306,30 @@ module.exports = {
 	changeUnread: changeUnread,
 	putMessage: putMessage,
 	updateTime: updateTime,
-	getComments: getComments,
+	//Posts
 	getPostsByRestaurant: getPostsByRestaurant,
 	putPost: putPost,
 	getPosts: getPosts,
 	getPost: getPost,
 	deletePost: deletePost,
 	updatePost: updatePost,
-	putComment: putComment,
+	//Notification
 	getNotifications: getNotifications,
 	putNotification: putNotification,
+	//Experience
 	getExperience: getExperience,
 	putExperience: putExperience,
+	//Review
 	getReviews: getReviews,
 	putReview: putReview,
+	//Star
 	getStars: getStars,
 	putStar: putStar,
+	//Pics
 	getProfilePic: getProfilePic,
 	uploadProfilePic: uploadProfilePic,
-	deleteProfilePic: deleteProfilePic
+	deleteProfilePic: deleteProfilePic,
+	//Comments
+	getComments: getComments,
+	addComment: addComment
 };

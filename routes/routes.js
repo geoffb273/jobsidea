@@ -1,4 +1,7 @@
 var db = require('../models/database.js');
+const axios = require('axios')
+
+
 
 
 var getHome = function(req, res) {
@@ -49,7 +52,7 @@ var searchUsers = function(req, res) {
 		for(var i = 0; i < snapshot.length; i++) {
 			usernames.push(snapshot[i].username)
 		}
-		res.send(JSON.stringify(usernames));
+		res.send(usernames);
 	})
 }
 
@@ -240,9 +243,6 @@ var getNotifications = function(req, res) {
 		}
 		res.send(nots);
 	});
-	
-	
-	
 }
 
 var getNotificationsPage = function(req, res) {
@@ -294,37 +294,195 @@ var getStars = function(req, res) {
 	})
 }
 
-var getPosts = function(req, res) {
+var getPosts = async function(req, res) {
 	var limit = req.query.limit ? req.query.limit : 10
 	var search = req.query.search ? req.query.search : undefined
-	var p = search ? db.getPosts(limit, search) : db.getPosts(limit);
+	var zipCode = req.query.zipCode ? req.query.zipCode : undefined
+	var radius = req.query.radius ? req.query.radius : 10
+	var key = "IHIYP8RAX9QB541A2VBS"
+	var url = "https://api.zip-codes.com/ZipCodesAPI.svc/1.0/FindZipCodesInRadius?zipcode=" + zipCode + "&maximumradius=" + radius + "&country=US&key=" + key
+	var zipCodes = undefined
+	/*if (zipCode && req.session.zips && req.session.zips[zipCode] && req.session.zips[zipCode][radius]) {
+		zipCodes = req.session.zips[zipCode][radius]
+	} else if(zipCode) {
+		zipCodes = []
+		var data = await axios.get(url)
+		var list = data.data.DataList
+		for (var i = 0; i < list.length; i++) {
+			zipCodes.push(list[i].Code)
+		}
+		if (req.session.zips) {
+			if (req.session.zips[zipCode]) {
+				req.session.zips[zipCode][radius] = zipCodes
+			} else {
+				req.session.zips[zipCode] = {}
+				req.session.zips[zipCode][radius] = zipCodes
+			}
+		} else {
+			req.session.zips = {}
+			req.session.zips[zipCode] = {}
+			req.session.zips[zipCode][radius] = zipCodes
+		}
+	}*/
+	if (zipCode) {
+		zipCodes = [zipCode]
+	}
+	
+	if (req.session.searches) {
+		if (search) {
+			if (zipCode) {
+				if (req.session.searches[search]) {
+					if (req.session.searches[search][zipCode]) {
+						if (req.session.searches[search][zipCode][radius]) {
+							//console.log("Zip and search")
+							res.send(req.session.searches[search][zipCode][radius])
+							return
+						}
+					}
+				}
+			} else {
+				if (req.session.searches[search]) {
+					if (req.session.searches[search]['-1']) {
+						//console.log("no zip and search")
+						res.send(req.session.searches[search]['-1'])
+						return
+					}
+				}
+			}
+		} else {
+			if (zipCode) {
+				if (req.session.searches['-1']) {
+					if (req.session.searches['-1'][zipCode]) {
+						if (req.session.searches['-1'][zipCode][radius]) {
+							//console.log("Zip and no search")
+							res.send(req.session.searches['-1'][zipCode][radius])
+							return
+						}
+					}
+				}
+			} else {
+				if (req.session.searches['-1']) {
+					if (req.session.searches['-1']['-1']) {
+						//console.log("no zip and no search")
+						res.send(req.session.searches['-1']['-1'])
+						return
+					}
+				}
+			}
+		}
+	}
+	
+	
+	var p = search ? (zipCodes ? db.getPosts(limit, search, zipCodes): db.getPosts(limit, search)) : (zipCode ? db.getPosts(limit, undefined, zipCodes): db.getPosts(limit))
 	
 	p.then(snapshot => {
 		if (snapshot) {
-			res.send(JSON.stringify(snapshot))
+			if (req.session.searches) {
+				if (zipCode) {
+					if (search) {
+						if (req.session.searches[search]) {
+							if (req.session.searches[search][zipCode]) {
+								req.session.searches[search][zipCode][radius] = snapshot
+								//console.log("Zip and search")
+							} else {
+								req.session.searches[search][zipCode] = {}
+								req.session.searches[search][zipCode][radius] = snapshot
+								//console.log("Zip and search")
+							}
+						} else {
+							req.session.searches[search] = {}
+							req.session.searches[search][zipCode] = {}
+							req.session.searches[search][zipCode][radius] = snapshot
+							//console.log("Zip and search")
+						}
+					} else {
+						if (req.session.searches['-1']) {
+							if (req.session.searches['-1'][zipCode]) {
+								req.session.searches['-1'][zipCode][radius] = snapshot
+								//console.log("Zip and no search")
+							} else {
+								req.session.searches['-1'][zipCode] = {}
+								req.session.searches['-1'][zipCode][radius] = snapshot
+								//console.log("Zip and no search")
+							}
+						} else {
+							req.session.searches['-1'] = {}
+							req.session.searches['-1'][zipCode] = {}
+							req.session.searches['-1'][zipCode][radius] = snapshot
+							//console.log("Zip and no search")
+						}
+					}
+				} else {
+					if (search) {
+						if (req.session.searches[search]) {
+							req.session.searches[search]['-1'] = snapshot
+							//console.log("No zip and search")
+						} else {
+							req.session.searches[search] = {}
+							req.session.searches[search]['-1'] = snapshot
+							//console.log("No zip and search")
+						}
+					} else {
+						if (req.session.searches['-1']) {
+							req.session.searches['-1']['-1'] = snapshot
+							//console.log("No zip and no search")
+						} else {
+							req.session.searches['-1'] = {}
+							req.session.searches['-1']['-1'] = snapshot
+							//console.log("No zip and no search")
+						}
+					}
+				}
+				
+			} else {
+				req.session.searches = {}
+				if (zipCode) {
+					if (search) {
+						req.session.searches[search] = {}
+						req.session.searches[search][zipCode] = {}
+						req.session.searches[search][zipCode][radius] = snapshot
+						//console.log("Zip and search")
+					} else {
+						req.session.searches['-1'] = {}
+						req.session.searches['-1'][zipCode] = {}
+						req.session.searches['-1'][zipCode][radius] = snapshot
+						//console.log("Zip and no search")
+					}
+				} else {
+					if (search) {
+						req.session.searches[search] = {}
+						req.session.searches[search]['-1'] = snapshot
+						//console.log("No zip and search")
+					} else {
+						req.session.searches['-1'] = {}
+						req.session.searches['-1']['-1'] = snapshot
+						//console.log("No zip and no search")
+					}
+				}
+				
+			}
+			res.send(snapshot)
 		}
 	})
 }
 
 var getPost = function(req, res) {
 	var id = req.params.id
-	
 	db.getPost(id).then(snapshot => {
-		res.send(JSON.stringify(snapshot))
+		res.send(snapshot)
 	})
 }
 
 var getPostPage = function(req, res) {
 	var id = req.params.id
 	db.getPost(id).then(post => {
-		console.log(post)
 		res.render('postpage.ejs', {post: JSON.stringify(post)})
 	})
 }
 
 var newPost = function(req, res) {
 	var post = req.body.post
-	db.putPost(post.username, post.content, post.time).then(_ => {
+	db.putPost(post).then(_ => {
 		res.send("Done")
 	})
 }
@@ -344,21 +502,29 @@ var deletePost = function(req, res) {
 }
 
 var uploadProfilePic = function(req, res) {
-	var file = req.body.file
-	var username = req.params.username
-	db.getUser(username).then(user => {
-		if (user.pic) {
-			db.deleteProfilePic(user.pic, username).then(_ => {
+	console.log(req)
+	if (req.file) {
+		var file = req.file
+		const pathName=req.file.path;
+		console.log(pathName)
+		/*db.getUser(username).then(user => {
+			if (user.pic) {
+				db.deleteProfilePic(user.pic, username).then(_ => {
+					db.uploadProfilePic(username, file).then(_ => {
+						res.send("Done")
+					})
+				})
+			} else {
 				db.uploadProfilePic(username, file).then(_ => {
 					res.send("Done")
 				})
-			})
-		} else {
-			db.uploadProfilePic(username, file).then(_ => {
-				res.send("Done")
-			})
-		}
-	})
+			}
+		})*/
+	}
+	
+	/*var file = req.body.file
+	var username = req.params.username
+	*/
 }
 
 var getProfilePic = function(req, res) {
@@ -378,14 +544,46 @@ var deleteProfilePic = function(req, res) {
 
 var getUserProfilePic = function(req, res) {
 	var username = req.params.username
+	if (req.session.pics) {
+		if (req.session.pics[username]) {
+			res.send(req.session.pics[username])
+			return
+		}
+	}
 	db.getUser(username).then(user => {
 		if (user.pic) {
 			db.getProfilePic(user.pic).then(url => {
+				if (req.session.pics) {
+					req.session.pics[username] = url
+				} else {
+					req.session.pics = {}
+					req.session.pics[username] = url
+				}
 				res.send(url)
 			})
 		} else {
+			if (req.session.pics) {
+				req.session.pics[username] = ""
+			} else {
+				req.session.pics = {}
+				req.session.pics[username] = ""
+			}
 			res.send("")
 		}
+	})
+}
+
+var addComment = function(req, res) {
+	var comment = req.body.comment
+	db.putComment(comment).then(_ => {
+		res.send("Done")
+	})
+}
+
+var getComments = function(req, res) {
+	var postId = req.params.postId
+	db.getComments(postId).then(comments => {
+		res.send(comments)
 	})
 }
 
@@ -396,8 +594,9 @@ var connect = function() {
 
 var routes = {
 	connect: connect,
-	home: getHome,
+	//User
 	login: getLogin,
+	logout: logout,
 	handle_login: handleLogin,
 	signup_user: getSignUpUser,
 	handle_signup_user: handleSignUpUser,
@@ -405,28 +604,38 @@ var routes = {
 	signup_restaurant: getSignUpRestaurant,
 	handle_signup_restaurant: handleSignUpRestaurant,
 	profile: getProfile,
+	//Chat + Message
 	chats_page: getChatsPage,
 	chats: getChats,
 	chat: getChat,
 	handle_chats: handleChats,
 	messages: getMessages,
 	handle_message: putMessage,
+	//Notification
 	notifications: getNotifications,
 	notifications_page: getNotificationsPage,
+	//Experience
 	experience: getExperience,
+	//Review
 	reviews: getReviews,
+	//Star
 	stars: getStars,
-	logout: logout,
+	//Posts
+	home: getHome,
 	posts: getPosts,
 	add_post: newPost,
 	update_post: updatePost,
 	delete_post: deletePost,
 	post: getPost,
 	post_page: getPostPage,
+	//Pic
 	pic: getProfilePic,
 	handle_pic: uploadProfilePic,
 	delete_pic: deleteProfilePic,
-	user_pic: getUserProfilePic
+	user_pic: getUserProfilePic,
+	//Comment
+	add_comment: addComment,
+	comments: getComments,
 };
 
 module.exports = routes;

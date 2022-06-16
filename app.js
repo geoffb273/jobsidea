@@ -10,6 +10,25 @@ var db = require('./models/database.js');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var MemoryStore = require('memorystore')(session)
+var multer = require('multer');
+var storage = multer.diskStorage({
+	destination: "images",
+	filename: function(req, file, cb) {
+		cb(null, Date.now() + file.originalname)
+	}
+})
+const fileFilter = function(req, file, cb) {
+	if (file.mimeType == 'image/jpeg' || file.mimeType == 'image/jpg' || file.mimeType == 'image/png') {
+		cb(null, true)
+	} else {
+		cb(null, false)
+	}
+}
+
+var upload = multer({
+	storage: storage,
+	fileFilter: fileFilter
+})
 
 app.use(express.urlencoded());
 app.use(express.static(__dirname + "/views/"));
@@ -73,7 +92,7 @@ app.delete('/posts/:id', routes.delete_post)
 
 app.get('/user-pic/:username', routes.user_pic)
 app.get('/pics/:id', routes.pic)
-app.put('/pics/:username', routes.handle_pic)
+app.post('/pics/:username', upload.single('photo'), routes.handle_pic)
 app.delete('/pics/:username/:id', routes.delete_pic)
 
 io.on('connection', (socket) => {
@@ -88,7 +107,7 @@ io.on('connection', (socket) => {
 			var promises = []
 			socket.to(missingUser).emit('notification', {})
 			socket.to(missingUser).emit('update chats', {chatId: msg.chatId})
-			promises.push(db.putNotification(missingUser, msg.username + " sent you a message", "New Message"))
+			promises.push(db.putNotification(missingUser, msg.username, msg.username + " sent you a message", "New Message"))
 			promises.push(db.changeUnread(msg.chatId, missingUser))
 			Promise.all(promises);
 		}

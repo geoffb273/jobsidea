@@ -5,6 +5,10 @@ body {
 	background: #eeeeee;
 	font-family: Copperplate; 
 }
+button {
+	font-family: Copperplate; 
+}
+
 #top {
 	width: 100%;
 	background: white;
@@ -84,7 +88,7 @@ body {
 		var search = searchEl.value;
 		if (search && search.length > 0) {
 			$.get("/search-users/" + search, function(data) {
-				var usernames = JSON.parse(data)
+				var usernames = data
 				for (var i = 0; i < usernames.length; i++) {
 					var username = usernames[i]
 					var btn = document.createElement("button")

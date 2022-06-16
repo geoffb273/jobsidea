@@ -20,6 +20,19 @@
 		width: 70vw;
 		overflow-y: scroll;
 	}
+	.profilePic {
+		border-radius: 5vmin;
+		width: max(5vmin, 20px);
+		height: max(5vmin, 20px);
+		font-size: max(2vmin, 16px);
+	}
+	.chatButton {
+		padding-top: 1vmin;
+      	width: max(5vw, 50px);
+      	height: max(4vmin, 25px);
+      	border-radius: 5vmin;
+      	font-size: max(2vmin, 16px);
+	}
 	
 </style>
 
@@ -44,14 +57,14 @@
 		
 		$.get("/my-notifications?limit=" + limit, function(nots) {
 			
-			for (var i = 0; i < nots.length; i++) {
-    			var notification = nots[i];
+			nots.forEach(notification => {
+    			var i = nots.findIndex( curr => { curr.id == notification.id })
     			var content = notification.content
     			if (!notificationIds.includes(notification.id)) {
     				notificationIds.push(notification.id);
     				notifications.push(notification)
     				var row = table.insertRow(i);
-					var cell1 = row.insertCell(0);
+					
 					var date = (Date.now() - new Date(notification.created)) / 1000
 					var dateString = Math.round(date + 1) + " seconds ago"
 					if (date >= 59 && date < 60 * 60) {
@@ -63,15 +76,48 @@
 					} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
 						dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
 					}
-					cell1.innerHTML = content
-					var cell2 = row.insertCell(1);
-					cell2.innerHTML = dateString;
-					var cell3 = row.insertCell(2)
 					var u2 = notification.content.split(" ")[0]
+					var cell0 = row.insertCell(0);
+					
+					if (notification.sender) {
+						$.get("/user-pic/" + notification.sender, function(data) {
+							if (data) {
+								cell0.innerHTML = "<img src=" + data + " username=" + u2 + " class='profilePic'></img>"
+							} else {
+								cell0.innerHTML = "<span class='profilePic' username=" + u2 + "><i class='fa fa-user fa-xl'></i></span>"
+							}
+							cell0.style.alignSelf = "flex-end"
+							cell0.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
+							
+						})
+					} else {
+						cell0.innerHTML = "<span class='profilePic'><i class='fa fa-user fa-xl'></i></span>"
+						cell0.style.alignSelf = "flex-end"
+						cell0.username = u2
+						cell0.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
+					}
+					
+					
+					
+					var cell1 = row.insertCell(1);
+					cell1.innerHTML = content
+					var cell2 = row.insertCell(2);
+					cell2.innerHTML = dateString;
+					
+					var cell3 = row.insertCell(3)
+					
 					var chatId = username < u2 ? username + "@" + u2 : u2 + "@" + username
-					cell3.innerHTML = "<button onclick='window.location.href=\"/chat/" + chatId + "\"'>Chat</button>"
+					
+					var button = document.createElement("button");
+				
+					button.className = "fa-solid fa-message fa-sm chatButton"
+				
+					button.id = "join";
+					button.chatId = chatId
+					button.onclick = (e) => {window.location.href = "/chat/" + e.target.chatId}
+					cell3.appendChild(button);
     			}
-    		}
+    		})
 		});
 	}
 	getNotifications()

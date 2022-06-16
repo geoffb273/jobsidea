@@ -9,11 +9,76 @@
 #posts {
 	margin-left: 15vw;
 	min-height: 90vh;
-	width: 70vw;
+	width: max(70vw, 400px);
 }
+
+#searchPosts {
+	width: max(200px, 30vw);
+	height: 50px;
+	font-size: max(1.75vw, 16px);
+	margin-right: 0.5vw;
+}
+
+#searchDiv {
+	display: flex;
+	margin-top: 5px;
+	margin-left: 20vw;
+	width: 70vw;
+	margin-bottom: 5px;
+}
+
+#sortButton {
+	width: max(10vw, 75px);
+	height: 50px;
+	font-size: max(1.75vw, 16px);
+}
+
+#sortButton:hover {
+	background: gray
+}
+
+#dropdownDiv:hover #dropdownSort {
+	display: flex;
+	flex-direction: column;
+}
+
+#dropdownSort {
+	display: none;
+	z-index: 1;
+	position: absolute;
+	width: max(10vw, 75px);
+}
+
+.dropResult {
+	width: max(10vw, 75px);
+	height: 50px;
+	font-size: max(1.75vw, 16px);
+}
+
+.dropResult:hover {
+	background: gray;
+}
+
+#location {	
+	margin-left: 0.5vw;
+	width: 19vw;
+	font-size: max(1.75vw, 16px);
+}
+
+
 </style>
 
-
+<div id="searchDiv">
+	<input id="searchPosts" placeholder="Search" onkeyup="searchPost()"></input>
+	<div id="dropdownDiv">
+		<button id="sortButton">Sort</button>
+		<div id="dropdownSort">
+			<button class="dropResult">Recent</button>
+			<button class="dropResult">Distance</button>
+		</div>
+	</div>
+	<input id="location" placeholder="Zip Code" onkeyup="searchPost()"></input>
+</div>
 <div id="posts"></div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -21,23 +86,43 @@
 <script>
 
 var postsEl = document.getElementById("posts")
-var limit = 10
-var getPosts = function() {
+var limit = 15
+var search = ""
+
+var getPosts = function(search = "", zipCode = "", radius = 10) {
+	var url = "/posts?limit=" + limit
+	if (search && search.length > 0) {
+		url += "&search=" + search
+	}
+	if (zipCode && zipCode.length == 5) {
+		url += "&zipCode=" + zipCode + "&radius=" + radius
+	}
 	
-	$.get("/posts?limit=" + limit, function(data) {
-		
+	$.get(url, function(data) {
 			postsEl.innerHTML = ""
-    		var posts = JSON.parse(data)
+    		var posts = data
     		
     		for (var i = 0; i < posts.length; i++) {
     			var post = posts[i];
-    			var el = createPost(document, post, () => {location.href = '/post-page/' + post.id})
+    			var el = createPost(document, post, (id) => {location.href = '/post-page/' + id})
     			postsEl.appendChild(el);
-    			
-    			
     		}
     		
-    	})
+    })
+}
+
+var searchPost = function() {
+	var searchBar = document.getElementById("searchPosts")
+	var searchVal = searchBar.value
+	var locationBar = document.getElementById("location")
+	var radius = 10
+	var zipCode = locationBar.value
+	if (zipCode.length == 5) {
+		getPosts(searchVal, zipCode, radius)
+	} else {
+		getPosts(searchVal)
+	}
+	
 }
 
 getPosts()

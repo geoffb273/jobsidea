@@ -4,33 +4,63 @@ var createPost = function(document, post, func) {
 	
 	var div = document.createElement("div")
 	div.style.display = "flex"
-	div.onclick = func
+	div.onclick = () => func(post.id)
 	div.style.background = "white"
-	div.style.marginLeft = "10vw"
-	div.style.width = "max(250px, 50vw)"
+	div.style.marginLeft = "5vw"
+	div.style.width = "max(400px, 60vw)"
 	div.style.border = "1px lightgray solid"
 	var left = document.createElement("div")
-	var img = document.createElement("img")
+	//left.style.width = "max(8vw, 40px)"
+	var img = document.createElement("div")
 	img.style.width = "max(8vmin, 40px)"
 	img.style.height = "max(8vmin, 40px)"
 	img.style.borderRadius = "max(8vmin, 40px)"
-	img.style.background = "lightgray"
 	img.style.margin = "20 20 20 20"
 	img.className = "profilePic"
+	img.innerHTML = "<i class='fa-solid fa-user fa-xl'></i>"
 	left.appendChild(img)
-	var right = document.createElement("div")
+	$.get("/user-pic/" + post.username, function(data) {
+		if (data) {
+			img.innerHTML = "<img style='width:max(8vmin, 40px);height:max(8vmin, 40px);border-radius:max(8vmin, 40px)' src='" + data + "''></img>"
+		}
+	})
 	div.appendChild(left)
-	div.appendChild(right)
-	right.style.textAlign = "left"
+	
+	var center = document.createElement("div")
+	center.style.width = "30vw"
+	div.appendChild(center)
+	center.style.textAlign = "left"
 	var title = document.createElement("a")
-	title.innerHTML = "@" + post.username
+	title.innerHTML = "<b>" + post.name + "</b> <i style='color:gray;'>@" + post.username + "</i>"
 	title.style.textDecoration = "none"
 	title.style.color = "black";
 	title.href = "/profile/" + post.username
 	var content = document.createElement("p")
 	content.innerHTML = post.content
-	right.appendChild(title)
-	right.appendChild(content)
+	center.appendChild(title)
+	center.appendChild(content)
+	
+	var right = document.createElement("div")
+	right.style.width = "22vw"
+	right.style.fontSize = "12px"
+	right.style.marginRight = "1vw"
+	var date = (Date.now() - new Date(post.created)) / 1000
+	var dateString = Math.round(date + 1) + " seconds ago"
+	if (date >= 59 && date < 60 * 60) {
+		dateString = Math.round(date / 60) + " minutes ago"
+	} else if (date >= 60 * 60 && date < 60 * 60 * 24) {
+		dateString = Math.round(date / (60 * 60)) + " hours ago"
+	} else if (date >= 60 * 60 * 24 && date < 60 * 60 * 24 * (365 + 0.25)) {
+		dateString = Math.round(date / (60 * 60 * 24)) + " days ago"
+	} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
+		dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
+	}
+	var d = document.createElement("p")
+	d.innerHTML = dateString
+	right.style.textAlign = "right"
+	
+	right.appendChild(d)
+	div.appendChild(right)
 	
 	return div
 }

@@ -1,18 +1,22 @@
 <head>
 	<%- include('css/style'); %>
-	
 </head>
 <style>
-	
+	#page {
+		margin-left: 15vw;
+		min-height: 90vh;
+		width: 70vw;
+	}
 </style>
 
-<div id="post"></div>
+<div id="page">
+<div id="post"></div
+</div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src = "post.js"></script>
+<script src = "../post.js"></script>
 <script>
 	var post = JSON.parse('<%- post %>')
-	console.log(post)
 	var postEl = document.getElementById("post")
     var el = createPost(document, post, () => {})
-    postsEl.appendChild(el);
+    postEl.appendChild(el);
 </script>
