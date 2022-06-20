@@ -65,23 +65,35 @@
 	font-size: max(1.75vw, 16px);
 }
 
+.clicked {
+	background: #aaaaaa;
+}
+
 @media only screen and (max-width: 700px) {
 	#posts {
 		margin-left: 0;
 		width: 98vw;
 	}
+	#searchDiv {
+		margin-left: 0;
+		width: 98vw;
+	}
+	#location {
+		width: 25vw;
+	}
 }
 
 
 </style>
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <div id="searchDiv">
 	<input id="searchPosts" placeholder="Search" onkeyup="searchPost()"></input>
 	<div id="dropdownDiv">
-		<button id="sortButton">Sort</button>
+		<button id="sortButton">Filter</button>
 		<div id="dropdownSort">
-			<button class="dropResult">Recent</button>
-			<button class="dropResult">Distance</button>
+			<button class="dropResult" onclick="waiter(this)">Waiter</button>
+			<button class="dropResult" onclick="busBoy(this)">Bus Boy</button>
+			<button class="dropResult" onclick="washer(this)">Washer</button>
 		</div>
 	</div>
 	<input id="location" placeholder="Zip Code" onkeyup="searchPost()"></input>
@@ -95,14 +107,18 @@
 var postsEl = document.getElementById("posts")
 var limit = 15
 var search = ""
+var type = ""
 
-var getPosts = function(search = "", zipCode = "", radius = 10) {
+var getPosts = function(search = "", filter = "", zipCode = "", radius = 10) {
 	var url = "/posts?limit=" + limit
 	if (search && search.length > 0) {
 		url += "&search=" + search
 	}
 	if (zipCode && zipCode.length == 5) {
 		url += "&zipCode=" + zipCode + "&radius=" + radius
+	}
+	if (filter && filter.length > 0) {
+		url += "&filter=" + filter
 	}
 	
 	$.get(url, function(data) {
@@ -125,11 +141,53 @@ var searchPost = function() {
 	var radius = 10
 	var zipCode = locationBar.value
 	if (zipCode.length == 5) {
-		getPosts(searchVal, zipCode, radius)
+		getPosts(searchVal, type, zipCode, radius)
 	} else {
-		getPosts(searchVal)
+		getPosts(searchVal, type)
 	}
+}
+
+var waiter = function(e) {
+	var arr = document.getElementsByClassName("clicked")
+	for (var i = 0; i < arr.length; i++) {
+		arr[i].className = "dropResult";
+	}
+	if (type == "Waiter") {
+		type = ""
+	} else {
+		e.classList.add('clicked');
+		type = "Waiter"
+	}
+	searchPost()
 	
+}
+
+var busBoy = function(e) {
+	var arr = document.getElementsByClassName("clicked")
+	for (var i = 0; i < arr.length; i++) {
+		arr[i].className = "dropResult";
+	}
+	if (type == "Bus Boy") {
+		type = ""
+	} else {
+		e.classList.add('clicked');
+		type = "Bus Boy"
+	}
+	searchPost()
+}
+
+var washer = function(e) {
+	var arr = document.getElementsByClassName("clicked")
+	for (var i = 0; i < arr.length; i++) {
+		arr[i].className = "dropResult";
+	}
+	if (type == "Washer") {
+		type = ""
+	} else {
+		e.classList.add('clicked');
+		type = "Washer"
+	}
+	searchPost()
 }
 
 getPosts()

@@ -283,6 +283,7 @@ var getExperience = function(req, res) {
 	if (req.session.experience) {
 		if (req.session.experience[username]) {
 			res.send(req.session.experience[username])
+			return
 		}
 	}
 	db.getExperience(username).then(snapshot => {
@@ -338,6 +339,7 @@ var getPosts = async function(req, res) {
 	var search = req.query.search ? req.query.search : undefined
 	var zipCode = req.query.zipCode ? req.query.zipCode : undefined
 	var radius = req.query.radius ? req.query.radius : 10
+	var filter = req.query.filter ? req.query.filter : undefined
 	var key = "IHIYP8RAX9QB541A2VBS"
 	var url = "https://api.zip-codes.com/ZipCodesAPI.svc/1.0/FindZipCodesInRadius?zipcode=" + zipCode + "&maximumradius=" + radius + "&country=US&key=" + key
 	var zipCodes = undefined
@@ -368,7 +370,8 @@ var getPosts = async function(req, res) {
 	}
 	
 	
-	var p = search ? (zipCodes ? db.getPosts(limit, search, zipCodes): db.getPosts(limit, search)) : (zipCode ? db.getPosts(limit, undefined, zipCodes): db.getPosts(limit))
+	var p = zipCodes ? db.getPosts(limit, search, filter, zipCodes): db.getPosts(limit, search, filter)
+		
 	
 	p.then(snapshot => {
 		if (snapshot) {
@@ -439,12 +442,13 @@ var uploadProfilePic = function(req, res) {
 					db.deleteProfilePic(user.pic, username).then(_ => {
 						db.uploadProfilePic(username, file).then(_ => {
 							res.redirect('/profile')
+							fs.unlink(path)
 						})
 					})
 				} else {
-					console.log("Straight to upload")
 					db.uploadProfilePic(username, file).then(_ => {
 						res.redirect('/profile')
+						fs.unlink(path)
 					})
 				}
 			})

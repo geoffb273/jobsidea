@@ -7,6 +7,7 @@ body {
 }
 button {
 	font-family: Copperplate; 
+	color: black;
 }
 
 #top {
@@ -21,7 +22,7 @@ button {
 	font-size: max(2.5vw, 23px);
 }
 #top > button {
-	width: 16vw;
+	width: 15vw;
 	border-radius: 0;
 	background: white;
 	margin: 10px 0px 10px 0.2vw;
@@ -63,7 +64,12 @@ button {
 	color: black;
 	text-decoration: none;
 	font-size: max(2.5vw, 20px)
-	
+}
+
+@media only screen and (max-width: 600px) {
+	#top > #logo {
+		font-size: max(3vw, 12px)
+	}
 }
 
 </style>

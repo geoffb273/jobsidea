@@ -17,11 +17,13 @@ var createPost = function(document, post, func) {
 	img.style.borderRadius = "max(8vmin, 40px)"
 	img.style.margin = "20 20 20 20"
 	img.className = "profilePic"
-	img.innerHTML = "<i class='fa-solid fa-user fa-xl'></i>"
+	img.innerHTML = "<a href='/profile/" + post.username 
+		+ "' style='color:black'><i class='fa-solid fa-user fa-2xl' style='margin-top: 10px'></i></a>"
 	left.appendChild(img)
 	$.get("/user-pic/" + post.username, function(data) {
 		if (data) {
-			img.innerHTML = "<img style='width:max(8vmin, 40px);height:max(8vmin, 40px);border-radius:max(8vmin, 40px)' src='" + data + "''></img>"
+			img.innerHTML = "<a href='/profile/" + post.username 
+				+ "'><img style='width:max(8vmin, 40px);height:max(8vmin, 40px);border-radius:max(8vmin, 40px)' src='" + data + "''></img></a>"
 		}
 	})
 	div.appendChild(left)

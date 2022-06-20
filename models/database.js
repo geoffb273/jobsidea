@@ -180,7 +180,7 @@ var updatePost = function(post) {
 	return utils.replaceItem(db, "Posts", {id: post.id}, post)
 }
 
-var getPosts = function(limit, search = undefined, zipCodes = undefined) {
+var getPosts = function(limit, search = undefined, filter = undefined, zipCodes = undefined) {
 	var find = {}
 	if (search && search.length > 0) {
 		var arr = []
@@ -188,6 +188,9 @@ var getPosts = function(limit, search = undefined, zipCodes = undefined) {
 		arr.push({username: new RegExp(search, "gi")})
 		arr.push({content: new RegExp(search, "gi")})
 		find["$or"] = arr
+	}
+	if (filter && filter.length > 0) {
+		find["type"] = filter
 	}
 	if (zipCodes && zipCodes.length > 0) {
 		find["zipCode"] = {$in: zipCodes}
@@ -250,7 +253,6 @@ var getProfilePic = function(id) {
 }
 
 var uploadProfilePic = function(username, file) {
-	console.log(file)
 	var id = uuidv4();
 	var promises = []
 	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {pic: id}}))

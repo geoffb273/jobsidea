@@ -6,7 +6,7 @@ var io = require('socket.io')(http);
 
 var routes = require('./routes/routes.js');
 var db = require('./models/database.js');
-
+var nodeMailer = require('nodemailer')
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var MemoryStore = require('memorystore')(session)
@@ -94,6 +94,45 @@ app.get('/pics/:id', routes.pic)
 app.post('/pics/:username', upload.single('photo'), routes.handle_pic)
 app.delete('/pics/:username/:id', routes.delete_pic)
 
+/*var sendMail = async function(send, rec, type) {
+	var sender = await db.getUser(send)
+	var reciever = await db.getUser(rec)
+	let transporter = nodeMailer.createTransport({
+		host: 'smtp.gmail.com',
+		port: 465,
+		secure: false,
+		auth: {
+			user: 'geoffbrandtappdevelopment@gmail.com',
+			pass: 'Legend273!'
+		}
+	});
+	var html = "Hello"
+	var url = "localhost:8000"
+	if (type == "New Message") {
+		html = '<p>You have recieved a new message from <b><i>@' + send + '</i></b>. Go to <a href='
+			+ url + '>Staffer</a> to see what it is.</p>'
+	}
+	console.log(sender.email)
+	console.log(reciever.email)
+	let mailOptions = {
+		from: '"'+ send + '"' + sender.email + ' ',
+		to: reciever.email,
+		subject: "Staffer: " + type, // Subject line
+		text: html
+		//html: html// html body
+	};
+	
+	transporter.sendMail(mailOptions, (error, info) => {
+		if (error) {
+			console.log("Error")
+			console.log(error);
+			return
+		}
+		console.log("Message sent");
+		console.log("info")
+	});
+}*/
+
 io.on('connection', (socket) => {
 	
 	socket.on('chat message', (msg) => {
@@ -104,9 +143,11 @@ io.on('connection', (socket) => {
 				return name != msg.username
 			})[0]
 			var promises = []
+			
 			socket.to(missingUser).emit('notification', {})
 			socket.to(missingUser).emit('update chats', {chatId: msg.chatId})
 			promises.push(db.putNotification(missingUser, msg.username, msg.username + " sent you a message", "New Message"))
+			//sendMail(msg.username, missingUser, "New Message")
 			promises.push(db.changeUnread(msg.chatId, missingUser))
 			Promise.all(promises);
 		}
