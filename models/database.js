@@ -250,6 +250,7 @@ var getProfilePic = function(id) {
 }
 
 var uploadProfilePic = function(username, file) {
+	console.log(file)
 	var id = uuidv4();
 	var promises = []
 	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {pic: id}}))

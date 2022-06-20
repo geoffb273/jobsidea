@@ -58,7 +58,22 @@ var createPost = function(document, post, func) {
 	var d = document.createElement("p")
 	d.innerHTML = dateString
 	right.style.textAlign = "right"
-	
+	var maxWidth = function(x) {
+		if (x.matches) {
+			div.style.width = "97vw"
+			div.style.marginLeft = "0"
+			center.style.width = "47vw"
+			right.style.width = "34vw"
+		} else {
+			div.style.width = "max(400px, 60vw)"
+			div.style.marginLeft = "5vw"
+			center.style.width = "30vw"
+			right.style.width = "22vw"
+		}
+	}
+	var x = window.matchMedia("only screen and (max-width: 700px)")
+	maxWidth(x)
+	x.addListener(maxWidth)
 	right.appendChild(d)
 	div.appendChild(right)
 	

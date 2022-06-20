@@ -7,13 +7,13 @@
 	}
 	
 	#title {
-		font-size: 10vmin;
+		font-size: max(6vw, 48px);
 		width; 100%;
 		border-bottom: solid;
 		background: white;
 	}
+	
 	#container {
-		
 		padding: 0.25rem;
 		width: 60vw;
 		margin-left: 20vw;
@@ -30,8 +30,8 @@
 	#login {
 		box-sizing: border-box; 
 		backdrop-filter: blur(10px); 
-		width: 50vmin;
-		height: 30vmin;
+		width: 40vw;
+		height: max(40vh, 200px);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -40,21 +40,20 @@
 	
 	#login > input {
 		border-radius: 1vmin;
-		width: 30vmin;
-		font-size: 4vmin;
+		width: max(27.5vw, 200px);
+		font-size: max(2.5vw, 25px);
 	}
 	
 	#login > #top {
-		margin-top: 3vmin;
+		margin-top: max(4vh, 20px);
 	}
 	
 	#login > button {
 		border-radius: 1vmin;
 		border: none; 
 		margin: 0.5vmin;
-		font-size: 4vmin;
-		
-		
+		font-size: max(2.5vw, 32px);
+		border: 0.5px solid;
 	}
 	
 	#signup {
@@ -62,19 +61,25 @@
 	}
 	
 	#signup > form > button {
-		border-radius: 0.5vmin;
+		border-radius: 1vw;
 		border: none; 
 		margin: 0.5vmin;
-		font-size: 2vmin;
-		
-		
-		width: 15vmin;
-		font-size: 2vmin;
+		font-size: max(1.75vw, 16px);
+		width: max(12.5vw, 100px);
+		border: 0.5px solid;
+	}
+	
+	@media only screen and (max-width: 700px) {
+		#container {
+			margin-left: 0;
+			padding-left: 0;
+			width: 100%;
+		}
 	}
 
 </style>
 
-<p id="title">Waiter</p>
+<p id="title">Staffer</p>
 
 
 <div id="container">

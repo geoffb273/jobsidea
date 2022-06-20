@@ -1,6 +1,6 @@
 var db = require('../models/database.js');
 const axios = require('axios')
-
+const fs = require('fs')
 
 
 
@@ -109,8 +109,36 @@ var getProfile = function(req, res) {
 		username = req.session.username;
 		ownProfile = true
 	}
+	if (req.session.users) {
+		if (req.session.users[username]) {
+			var user = req.session.users[username]
+			var email = user.email;
+			if (user.type == "User") {
+				var firstname = user.firstname;
+				var lastname = user.lastname;
+				res.render("profile.ejs", {username: username, email: email, picId: user.pic,
+					name: firstname + " " + lastname, user: true, own: ownProfile})
+			} else if (user.type == "Restaurant") {
+				var name = user.name;
+				var street = user.street;
+				var city = user.city;
+				var state = user.state;
+				var zipCode = user.zipCode;
+				res.render("profile.ejs", {username: username, email: email, name: name, street: street, picId: user.pic,
+					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
+			}
+			return
+		}
+	}
+	
 	db.getUser(username).then(snapshot => {
 		if (snapshot) {
+			if (req.session.users) {
+				req.session.users[username] = snapshot
+			} else {
+				req.session.users = {}
+				req.session.users[username] = snapshot
+			}
 			var user = snapshot;
 			var email = user.email;
 			/*
@@ -252,6 +280,11 @@ var getNotificationsPage = function(req, res) {
 
 var getExperience = function(req, res) {
 	var username = req.query.username;
+	if (req.session.experience) {
+		if (req.session.experience[username]) {
+			res.send(req.session.experience[username])
+		}
+	}
 	db.getExperience(username).then(snapshot => {
 		var experience = {}
 		if (snapshot) {
@@ -262,6 +295,12 @@ var getExperience = function(req, res) {
 					experience[k].push(unclean[k][id]);
 				}
 			}
+		}
+		if (req.session.experience) {
+			req.session.experience[username] = experience
+		} else {
+			req.session.experience = {}
+			req.session.experience[username] = experience
 		}
 		res.send(experience);
 	});
@@ -328,139 +367,11 @@ var getPosts = async function(req, res) {
 		zipCodes = [zipCode]
 	}
 	
-	if (req.session.searches) {
-		if (search) {
-			if (zipCode) {
-				if (req.session.searches[search]) {
-					if (req.session.searches[search][zipCode]) {
-						if (req.session.searches[search][zipCode][radius]) {
-							//console.log("Zip and search")
-							res.send(req.session.searches[search][zipCode][radius])
-							return
-						}
-					}
-				}
-			} else {
-				if (req.session.searches[search]) {
-					if (req.session.searches[search]['-1']) {
-						//console.log("no zip and search")
-						res.send(req.session.searches[search]['-1'])
-						return
-					}
-				}
-			}
-		} else {
-			if (zipCode) {
-				if (req.session.searches['-1']) {
-					if (req.session.searches['-1'][zipCode]) {
-						if (req.session.searches['-1'][zipCode][radius]) {
-							//console.log("Zip and no search")
-							res.send(req.session.searches['-1'][zipCode][radius])
-							return
-						}
-					}
-				}
-			} else {
-				if (req.session.searches['-1']) {
-					if (req.session.searches['-1']['-1']) {
-						//console.log("no zip and no search")
-						res.send(req.session.searches['-1']['-1'])
-						return
-					}
-				}
-			}
-		}
-	}
-	
 	
 	var p = search ? (zipCodes ? db.getPosts(limit, search, zipCodes): db.getPosts(limit, search)) : (zipCode ? db.getPosts(limit, undefined, zipCodes): db.getPosts(limit))
 	
 	p.then(snapshot => {
 		if (snapshot) {
-			if (req.session.searches) {
-				if (zipCode) {
-					if (search) {
-						if (req.session.searches[search]) {
-							if (req.session.searches[search][zipCode]) {
-								req.session.searches[search][zipCode][radius] = snapshot
-								//console.log("Zip and search")
-							} else {
-								req.session.searches[search][zipCode] = {}
-								req.session.searches[search][zipCode][radius] = snapshot
-								//console.log("Zip and search")
-							}
-						} else {
-							req.session.searches[search] = {}
-							req.session.searches[search][zipCode] = {}
-							req.session.searches[search][zipCode][radius] = snapshot
-							//console.log("Zip and search")
-						}
-					} else {
-						if (req.session.searches['-1']) {
-							if (req.session.searches['-1'][zipCode]) {
-								req.session.searches['-1'][zipCode][radius] = snapshot
-								//console.log("Zip and no search")
-							} else {
-								req.session.searches['-1'][zipCode] = {}
-								req.session.searches['-1'][zipCode][radius] = snapshot
-								//console.log("Zip and no search")
-							}
-						} else {
-							req.session.searches['-1'] = {}
-							req.session.searches['-1'][zipCode] = {}
-							req.session.searches['-1'][zipCode][radius] = snapshot
-							//console.log("Zip and no search")
-						}
-					}
-				} else {
-					if (search) {
-						if (req.session.searches[search]) {
-							req.session.searches[search]['-1'] = snapshot
-							//console.log("No zip and search")
-						} else {
-							req.session.searches[search] = {}
-							req.session.searches[search]['-1'] = snapshot
-							//console.log("No zip and search")
-						}
-					} else {
-						if (req.session.searches['-1']) {
-							req.session.searches['-1']['-1'] = snapshot
-							//console.log("No zip and no search")
-						} else {
-							req.session.searches['-1'] = {}
-							req.session.searches['-1']['-1'] = snapshot
-							//console.log("No zip and no search")
-						}
-					}
-				}
-				
-			} else {
-				req.session.searches = {}
-				if (zipCode) {
-					if (search) {
-						req.session.searches[search] = {}
-						req.session.searches[search][zipCode] = {}
-						req.session.searches[search][zipCode][radius] = snapshot
-						//console.log("Zip and search")
-					} else {
-						req.session.searches['-1'] = {}
-						req.session.searches['-1'][zipCode] = {}
-						req.session.searches['-1'][zipCode][radius] = snapshot
-						//console.log("Zip and no search")
-					}
-				} else {
-					if (search) {
-						req.session.searches[search] = {}
-						req.session.searches[search]['-1'] = snapshot
-						//console.log("No zip and search")
-					} else {
-						req.session.searches['-1'] = {}
-						req.session.searches['-1']['-1'] = snapshot
-						//console.log("No zip and no search")
-					}
-				}
-				
-			}
 			res.send(snapshot)
 		}
 	})
@@ -468,7 +379,19 @@ var getPosts = async function(req, res) {
 
 var getPost = function(req, res) {
 	var id = req.params.id
+	if (req.session.posts) {
+		if (req.session.posts[id]) {
+			res.send(req.session.posts[id])
+			return
+		}
+	}
 	db.getPost(id).then(snapshot => {
+		if (req.session.posts) {
+			req.session.posts[id] = snapshot
+		} else {
+			req.session.posts = {}
+			req.session.posts[id] = snapshot
+		}
 		res.send(snapshot)
 	})
 }
@@ -502,35 +425,42 @@ var deletePost = function(req, res) {
 }
 
 var uploadProfilePic = function(req, res) {
-	console.log(req)
+	var username = req.session.username
 	if (req.file) {
-		var file = req.file
-		const pathName=req.file.path;
-		console.log(pathName)
-		/*db.getUser(username).then(user => {
-			if (user.pic) {
-				db.deleteProfilePic(user.pic, username).then(_ => {
-					db.uploadProfilePic(username, file).then(_ => {
-						res.send("Done")
-					})
-				})
-			} else {
-				db.uploadProfilePic(username, file).then(_ => {
-					res.send("Done")
-				})
+		var path = req.file.path
+		fs.readFile(path, (err, data) => {
+			if (err) {
+				res.redirect('/profile')
+				return
 			}
-		})*/
+			var file = data
+			db.getUser(username).then(user => {
+				if (user.pic) {
+					db.deleteProfilePic(user.pic, username).then(_ => {
+						db.uploadProfilePic(username, file).then(_ => {
+							res.redirect('/profile')
+						})
+					})
+				} else {
+					console.log("Straight to upload")
+					db.uploadProfilePic(username, file).then(_ => {
+						res.redirect('/profile')
+					})
+				}
+			})
+		})
+	} else {
+		res.redirect('/profile')
 	}
 	
-	/*var file = req.body.file
-	var username = req.params.username
-	*/
 }
 
 var getProfilePic = function(req, res) {
 	var id = req.params.id
 	db.getProfilePic(id).then(url => {
 		res.send(url)
+	}).catch(_ => {
+		res.send("")
 	})
 }
 
@@ -539,6 +469,8 @@ var deleteProfilePic = function(req, res) {
 	var username = req.params.username
 	db.deleteProfilePic(id, username).then(_ => {
 		res.send("Done")
+	}).catch(_ => {
+		res.send("DNE")
 	})
 }
 

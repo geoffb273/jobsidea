@@ -1,10 +1,18 @@
 <style>
-	
+	body {
+		text-align: center;
+		font-family: Copperplate; 
+		background: #eeeeee;
+		justify-content: center
+	}
+	#title {
+		font-size: max(6vw, 48px);
+		width; 100%;
+		border-bottom: solid;
+		background: white;
+	}
 	#container {
-		position: fixed;
-		top: 15vh;
-		left: 40vw;
-		right: 40vw;
+		
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -14,14 +22,15 @@
 	#signup {
 		box-sizing: border-box; 
 		backdrop-filter: blur(10px); 
-		background: #afb8c2; 
-		width: 50vmin;
+		background: white;
+		width: 40vw;
 		height: 60vmin;
 		display: flex;
 		border-radius: 2vmin;
 		justify-content: space-around;
 		flex-direction: column;
 		align-items: center;
+		border: 0.5px solid;
 	}
 	
 	#signup > input {
@@ -29,14 +38,13 @@
 		width: 30vmin;
 		font-size: 3vmin;
 		margin: -10px;
-		border: 0px
 	}
 	#signup > div {
 		margin-bottom: 2.5vmin;
 	}
 	#signup > div > select {
 		border-radius: 1vmin;
-		font-size: 3vmin;
+		font-size: 2.5vmin;
 		border: 0px
 	}
 	
@@ -57,9 +65,49 @@
 		font-size: 2.5vmin;
 		
 	}
+	
+	@media only screen and (max-width: 700px) {
+		#signup {
+			margin-left: 0;
+			padding-left: 0;
+			width: 100%;
+			height: 55vh;
+		}
+		
+		#signup > input {
+			border-radius: 1vmin;
+			width: 50vmin;
+			font-size: max(16px, 4vh);
+			margin: -10px;
+		}
+		
+		#signup > button {
+			border-radius: 1vmin;
+			border: none; 
+			margin: 0.25vh;
+			font-size: max(16px, 4vh);
+			border: 0.5px solid;
+		}
+		#signup > div > label {
+			border-radius: 1vmin;
+			font-size: max(16px, 3vh);
+			border: 0px;
+		}
+		
+		#signup > div > select {
+			border-radius: 1vmin;
+			font-size: max(12px, 2.5vh);
+			border: 0px;
+		}
+		#signup > div {
+			margin-bottom: 2.5vh;
+		}
+	}
+
+
 
 </style>
-
+<p id="title">Staffer</p>
 <div id="container">
 <form id="signup" action="/handle-signup-restaurant" method="post">
 	<input id="top" name='username' placeholder="Username" required><br>

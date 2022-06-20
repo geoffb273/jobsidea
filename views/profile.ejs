@@ -43,7 +43,7 @@
 		color: white;
 		border-radius: 5vmin;
 		margin-right: 1.5vw;
-		font-size: max(16px, 2vmin);
+		font-size: max(12px, 2vmin);
 	}
 	
 	#header > #rightheader > form > #chatButton {
@@ -55,7 +55,7 @@
 		margin-top: max(12.5vmin, 40px);
 	}
 	
-	#header > #rightheader > #edit {
+	#header > #rightheader > #upload {
 		margin-top: max(10vmin, 40px);
 	}
 	
@@ -68,7 +68,7 @@
 		padding-left: 10px;
 		margin-right: 1.5vw;
 		border-radius: 5vmin;
-		font-size: max(16px, 2vmin);
+		font-size: max(12px, 2vmin);
 		width: 12vw;
 		padding-top: 2.5px;
 		padding-bottom: 2.5px;
@@ -80,6 +80,13 @@
 		z-index: -1;
 	}
 	
+	@media only screen and (max-width: 700px) {
+		#header {
+			left: 0;
+			margin-left: 0;
+			width: 98vw;
+		}
+	}
 	
 	
 </style>
@@ -102,7 +109,10 @@
 	var getProfilePic = function() {
 		$.get("/pics/" + picId, function(url) {
 			var image = document.getElementById("profilePic")
-			image.src = url
+			if (url.length > 0) {
+				image.src = url
+			}
+			
 		});
 	}
 	if (picId) {
@@ -126,7 +136,7 @@
 	</div>
 	<div id="rightheader">
 		<%if (own) {%>
-				<form id="upload" method="post">
+				<form id="upload" method="post" enctype="multipart/form-data">
 					<label for="upload-photo">Edit Profile Pic<input type="file" id="upload-photo" name="photo" accept="image/*" /></label>
 				</form>
 				<button id="logout" onclick="window.location.href='/login'">Log Out</button>
