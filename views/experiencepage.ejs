@@ -1,0 +1,249 @@
+<head>
+	<%- include('css/style'); %>
+</head>
+
+<style>
+	#exp {
+		width: 70vw;
+		max-height: 90vh;
+		margin-left: 5vw;
+	}
+	
+	#exp-div {
+		background: white;
+		width: 80vw;
+		height: 90vh;
+		margin-left: 10vw;
+	}
+	
+	.right {
+		text-align: right
+	}
+	
+	.edit {
+		border: 0.5px solid;
+		font-family: Copperplate; 
+		min-width: 2.5vw;
+		font-size: 16px;
+		min-height: 25px;
+		margin-top: 0;
+		max-width: 50vw;
+	}
+	
+	.exp-button {
+		color: white;
+		background: black;
+		border-radius: 10px;
+	}
+	
+@media only screen and (max-width: 700px) {
+	#exp-div {
+		width: 97vw;
+		margin-left: 0;
+	}
+	#exp {
+		width: 90vw;
+		margin-left: 5vw;
+	}
+}
+	
+	
+</style>
+
+<div id="exp-div">
+	<table id="exp"></table>
+</div>
+
+
+
+<script>
+var username = '<%- username%>'
+var experience = JSON.parse('<%- experience%>')
+
+
+var deleteExp = function(e) {
+	var row = e.parentNode.parentNode
+	var rowIndex = row.rowIndex
+	var restaurant = row.className
+	var role = row.cells[0].children[0].innerHTML
+	var expTable = document.getElementById("exp")
+	expTable.deleteRow(rowIndex)
+	var row = expTable.rows[rowIndex - 1]
+	if (row.className == 'row-top') {
+		var below = expTable.rows[rowIndex]
+		if (below.className == 'add-button') {
+			expTable.deleteRow(rowIndex)
+			expTable.deleteRow(rowIndex - 1)
+		}
+	}
+	
+	$.ajax('/experience/' + restaurant + '/' + role, {type: "DELETE"})
+}
+
+var save = function(e) {
+	var row = e.parentNode.parentNode
+	var restaurant = row.className
+	var titleCell = row.cells[0]
+	var desCell = row.cells[1]
+	var timeCell = row.cells[2]
+	var saveCell = row.cells[3]
+	var jobTitle = titleCell.children[0].value
+	var jobDesc = desCell.children[0].innerHTML
+	if (!jobDesc || (jobDesc && jobDesc.length == 0)) {
+		return
+	}
+	var timeDiv = timeCell.children[0]
+	var num = timeDiv.children[0].innerHTML
+	if (!num || (num && num.length == 0)) {
+		return
+	}
+	if (!parseInt(num)) {
+		return
+	}
+	var jobTime = num + " " + timeDiv.children[1].value
+	var job = {
+		restaurant: restaurant,
+		role: jobTitle,
+		description: jobDesc,
+		time: jobTime,
+		username: username
+	}
+	
+	titleCell.innerHTML = '<b>' + jobTitle + '</b>'
+	desCell.innerHTML = jobDesc
+	timeCell.innerHTML = jobTime
+	saveCell.innerHTML = "<button class='exp-button' onclick='deleteExp(this)'>Delete</button>"
+	$.post('/experience', {job: job}, function(data){})
+}
+
+var saveRest = function(e) {
+	var expTable = document.getElementById("exp")
+	var row = e.parentNode.parentNode
+	var restRow = expTable.rows[row.rowIndex - 1]
+	var restaurant = restRow.cells[0].children[0].innerHTML
+	if (!restaurant || (restaurant && restaurant.length == 0)) {
+		return
+	}
+	row.className = restaurant
+	var titleCell = row.cells[0]
+	var desCell = row.cells[1]
+	var timeCell = row.cells[2]
+	var saveCell = row.cells[3]
+	var jobTitle = titleCell.children[0].value
+	var jobDesc = desCell.children[0].innerHTML
+	if (!jobDesc || (jobDesc && jobDesc.length == 0)) {
+		return
+	}
+	var timeDiv = timeCell.children[0]
+	var num = timeDiv.children[0].innerHTML
+	if (!num || (num && num.length == 0)) {
+		return
+	}
+	if (!parseInt(num)) {
+		return
+	}
+	var jobTime = num + " " + timeDiv.children[1].value
+	var job = {
+		restaurant: restaurant,
+		role: jobTitle,
+		description: jobDesc,
+		time: jobTime,
+		username: username
+	}
+	var restCell = restRow.cells[0]
+	restCell.innerHTML = "<u style='font-size:max(16px, 1.45vw)'>" + restaurant + "</u>"
+	titleCell.innerHTML = '<b>' + jobTitle + '</b>'
+	desCell.innerHTML = jobDesc
+	timeCell.innerHTML = jobTime
+	saveCell.innerHTML = "<button class='exp-button' onclick='deleteExp(this)'>Delete</button>"
+	var addRow = expTable.insertRow(row.rowIndex + 1)
+	var addButton = addRow.insertCell(0)
+	addButton.innerHTML = '<button class="exp-button" onclick="addExp(this)">Add</button>'
+	$.post('/experience', {job: job}, function(data){})
+}
+
+
+var addExp = function(e) {
+	var rowIndex = e.parentNode.parentNode.rowIndex
+	var expTable = document.getElementById("exp")
+	var newRow = expTable.insertRow(rowIndex)
+	newRow.className = expTable.rows[rowIndex - 1].className
+	var titleCell = newRow.insertCell(0)
+	titleCell.innerHTML = "<select class='edit'><option value='Busser'>Busser</option>"
+		+ "<option value='Waiter'>Waiter</option><option value='Washer'>Washer</option><option value='Other'>Other</option></select>" 
+	var desCell = newRow.insertCell(1)
+	desCell.style.width = '50vw'
+	desCell.innerHTML = '<p class="edit" contenteditable="true"></p>'
+	var timeCell = newRow.insertCell(2)
+	timeCell.innerHTML = '<div style="display:flex;height:25px;"><p class="edit" contenteditable="true"></p>'
+		+ '<select class="edit"><option value="Months">Months</option><option value="Years">Years</option></select></div>'
+	var saveCell = newRow.insertCell(3)
+	saveCell.innerHTML = '<button class="exp-button" onclick="save(this)">Save</button>'
+	saveCell.style.textAlign = 'right'
+}
+
+var addRest = function(e) {
+	var rowIndex = e.parentNode.parentNode.rowIndex
+	var expTable = document.getElementById("exp")
+	var length = expTable.length
+	var restRow = expTable.insertRow(rowIndex)
+	var newRow = expTable.insertRow(rowIndex + 1)
+	var restR = restRow.insertCell(0)
+	restR.style.width = '10vw'
+	restR.innerHTML = '<p class="edit" contenteditable="true"></p>'
+	var titleCell = newRow.insertCell(0)
+	titleCell.innerHTML = "<select class='edit'><option value='Busser'>Busser</option>"
+		+ "<option value='Waiter'>Waiter</option><option value='Washer'>Washer</option><option value='Other'>Other</option></select>" 
+	var desCell = newRow.insertCell(1)
+	desCell.style.width = '50vw'
+	desCell.innerHTML = '<p class="edit" contenteditable="true"></p>'
+	var timeCell = newRow.insertCell(2)
+	timeCell.innerHTML = '<div style="display:flex;height:25px;"><p class="edit" contenteditable="true"></p>'
+		+ '<select class="edit"><option value="Months">Months</option><option value="Years">Years</option></select></div>'
+	var saveCell = newRow.insertCell(3)
+	saveCell.innerHTML = '<button class="exp-button" onclick="saveRest(this)">Save</button>'
+	saveCell.style.textAlign = 'right'
+	
+}
+
+var makeExp = function() {
+	var expTable = document.getElementById("exp")
+	
+	for(var rest in experience) {
+		var length = expTable.length
+		var r = expTable.insertRow(length)
+		r.className = 'row-top'
+		var c = r.insertCell(0)
+		r.insertCell(1)
+		r.insertCell(2)
+		c.innerHTML = '<u style="font-size:max(1.45vw, 16px)">' + rest + '</u>'
+		var exp = experience[rest]
+		for (var i = 0; i < exp.length; i++) {
+			var job = exp[i]
+			var r1 = expTable.insertRow(length)
+			r1.className = rest
+			var c1 = r1.insertCell(0)
+			c1.innerHTML = '<b>' + job.role + '</b>'
+			var c2 = r1.insertCell(1)
+			c2.innerHTML = job.description
+			var c2 = r1.insertCell(2)
+			c2.innerHTML = job.time
+			var cEnd = r1.insertCell(3)
+			cEnd.className = "right"
+			cEnd.innerHTML = "<button class='exp-button' onclick='deleteExp(this)'>Delete</button>"
+		}
+		length = expTable.length
+		var bottom = expTable.insertRow(length)
+		var cBottom = bottom.insertCell(0)
+		bottom.className = "add-button"
+		cBottom.innerHTML = '<button class="exp-button" onclick="addExp(this)">Add</button>'
+	}
+	var length = expTable.length
+	var bottom = expTable.insertRow(length)
+	var cBottom = bottom.insertCell(0)
+	cBottom.innerHTML = '<button class="exp-button" onclick="addRest(this)">Add New Restaurant</button>'
+	
+}
+makeExp()
+
+</script>

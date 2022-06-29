@@ -1,12 +1,26 @@
 var utils = require('./utils.js');
 var { v4: uuidv4 } = require('uuid');
-
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
 var db
 var connect = async function() {
-	db = await utils.connect("mongodb+srv://geoff:brandt@cluster0.znowy.mongodb.net/jobsidea?retryWrites=true&w=majority")
+	var url = process.env.MONGODB_URL
+	db = await utils.connect(url)//"mongodb+srv://geoff:brandt@cluster0.znowy.mongodb.net/jobsidea?retryWrites=true&w=majority")
 	console.log("Connected to database")
 }
 
+var sendText = async function(rec, msg) {
+	var reciever = await getUser(rec)
+	if (reciever.phone) {
+		client.messages.create({ 
+			body: msg,  
+			messagingServiceSid: 'MG633bfe4facc0db49a4d4543b93def291',
+			to: reciever.phone 
+		})
+	}
+	
+}
 
 var addUser = async function(username, password, firstname, lastname, email) {//, phone, birthday, profilePic = undefined) {
 	var p = []
@@ -21,9 +35,9 @@ var addUser = async function(username, password, firstname, lastname, email) {//
 				firstname: firstname,
 				lastname: lastname,
 				email: email,
-				type: "User"
-				/*phone: phone,
-				birthday: birthday,
+				type: "User",
+				phone: phone
+				/*birthday: birthday,
 				profilePic: profilePic*/
 			}
 			
@@ -47,7 +61,7 @@ var getUsers = function(search) {
 }
 
 
-var addRestaurant = async function(username, password, name, email, street, city, state, zipCode) {
+var addRestaurant = async function(username, password, name, email, street, city, state, zipCode, phone) {
 	var p = []
 	p.push(getUser(username));
 	p.push(utils.getItem(db, "Emails", {username: username}));
@@ -62,9 +76,9 @@ var addRestaurant = async function(username, password, name, email, street, city
 				city: city,
 				state: state,
 				zipCode: zipCode,
-				type: "Restaurant"
-				/*phone: phone,
-				profilePic: profilePic*/
+				type: "Restaurant",
+				phone: phone
+				/*profilePic: profilePic*/
 			}
 			
 			var promises = []
@@ -140,6 +154,8 @@ var getNotifications = async function(username, limit, callback) {
 }
 
 var putNotification = function(username, sender, msg, type) {
+	var url = "http://localhost:8000/chats"
+	sendText(username, msg + " " + url)
 	var notificationId = uuidv4();
 	var notificationObj = {
 		content: msg,
@@ -208,19 +224,15 @@ var getPost = function(id) {
 }
 
 var getExperience = function(username) {
-	return utils.getItem(db, "Experience", {username: username});
+	return utils.getList(db, "Experience", {username: username}, {restaurant: 1});
 }
 
-var putExperience = function(username, type, time, location) {
-	var expId = uuidv4();
-	var expObj = {
-		time: time,
-		location: location,
-		id: expId,
-		username: username,
-		type: type
-	}
-	return utils.postItem(db, "Experience", expObj);
+var putExperience = function(job) {
+	return utils.postItem(db, "Experience", job);
+}
+
+var deleteExperience = function(username, restaurant, role) {
+	return utils.deleteItem(db, "Experience", {username: username, restaurant: restaurant, role: role})
 }
 
 var getReviews = async function(username, callback) {
@@ -276,8 +288,8 @@ var addComment = function(comment) {
 		content: comment.content,
 		author: comment.author,
 		postId: comment.postId,
-		created: comment.created
-		
+		created: comment.created,
+		name: comment.name
 	}
 	return utils.postItem(db, "Comments", c)
 }
@@ -322,6 +334,7 @@ module.exports = {
 	//Experience
 	getExperience: getExperience,
 	putExperience: putExperience,
+	deleteExperience: deleteExperience,
 	//Review
 	getReviews: getReviews,
 	putReview: putReview,

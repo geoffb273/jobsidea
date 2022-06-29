@@ -150,11 +150,15 @@
   		var sendMessage = function() {
   			
     		if (message.value) {
-      			socket.emit('chat message', {message: message.value, username: username, chatId: chat.id});
-      			var obj = {content: message.value, username: username, chatId: chat.id}
+    			var m = message.value.trim()
+    			if (m.length == 0) {
+    				return
+    			}
+      			socket.emit('chat message', {message: m, username: username, chatId: chat.id});
+      			var obj = {content: m, username: username, chatId: chat.id}
       			$.post('/handle-message', obj);
    	 			var item = document.createElement('li');
-    			item.textContent = username + ": " + message.value;
+    			item.textContent = username + ": " + m;
     			if (last != username) {
     				item.style.borderTop = "0.1px solid"
     			}

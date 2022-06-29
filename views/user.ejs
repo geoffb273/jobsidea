@@ -1,106 +1,101 @@
 
 
+<style>
+	#experience {
+		background: white;
+		border: 0.5px solid;
+		border-radius: 20px;
+		margin-left: 10vw;
+		width: 80vw;
+	}
+	#expTable {
+		margin-left: 5vw;
+		width: 70vw;
+		margin-bottom: 10vh;
+	}
+	
+	#exp-title {
+		font-size: max(3vw, 20px);
+		font-weight: bold;
+		justify-content: center;
+	}
+	
+	#edit-experience {
+		position: absolute;
+		right: 10px;
+		top: 0;
+		color: white;
+		background: black;
+		border-radius: 20px;
+		font-size: 14px;
+	}
+	
+	
+	@media only screen and (max-width: 700px) {
+		#experience {
+			margin-left: 0;
+			width: 98vw;
+		}
+		#expTable {
+			width: 88vw;
+		}
+	}
+	
+</style>
+
 <body>
 
 
-<div id="experience-div">
-	<b><u>Experience</u></b>
+
+<div id="experience">
+	<div style="position:relative">
+		<p id="exp-title"><u>Experience</u></p>
+		<%if(own && own == true) { %>
+			<button id="edit-experience" onclick='editExpPage()'>Edit Experience</button>
+		<% } %> 
+	</div>
+	<table id="expTable"></table>
 </div>
 
-<div id="reviews-div">
-	<b><u>Reviews</u></b>
-	<p id="rating">Not enough reviews</p>
-	<table id="reviews"></table>
-</div>
+
 <script>
 	var username = '<%- username%>'
-	var picId = '<%- picId %>'
-	var reviewsTable = document.getElementById("reviews");
 	var experienceElement = document.getElementById("experience-div")
-	
-	var reviews = [];
 	var experiences = {};
-	var experienceTables = {}
 	var types = [];
-	var rating = document.getElementById("rating");
+	
+	var editExpPage = function() {
+		window.location.href = "edit-experience/" + username
+	}
 	
 	var makeExperience = function() {
-		$.get("/experience?username=" + username, function(data) {
-			for(var type in data) {
-				if (!types.includes(type)) {
-					types.push(type);
-					experiences[type] = []
-					
-					var table = document.createElement("table");
-					experienceElement.appendChild(table);
-					experienceTables[type] = table;
-					
-					var hrow = table.insertRow(0);
-					hrow.insertCell(0).innerHTML = "<u>" + type + "</u>";
-					
-					data[type].forEach(function(experience) {
-						experiences[type].push(experience.id);
-						var numRows = table.rows.length
-						var row = table.insertRow(numRows);
-						var cell0 = row.insertCell(0);
-						var cell1 = row.insertCell(1);
-						var cell2 = row.insertCell(2);
-						cell1.innerHTML = experience.location;
-						cell2.innerHTML = experience.time;
-					});
-					
-				} else {
-					data[type].forEach(function(experience) {
-						if (!experiences[type].includes(experience.id)) {
-							experiences[type].push(experience.id)
-							var table = experienceTables[type];
-							var numRows = table.rows.length;
-							var row = table.insertRow(numRows);
-							var cell0 = row.insertCell(0);
-							var cell1 = row.insertCell(1);
-							var cell2 = row.insertCell(2);
-							cell1.innerHTML = experience.location;
-							cell2.innerHTML = experience.time;
-						}
-						
-					})
+		var expTable = document.getElementById("expTable")
+		$.get("/experience/" + username, function(data) {
+			for(var rest in data) {
+				var length = expTable.length
+				var r = expTable.insertRow(length)
+				r.className = 'row-top'
+				var c = r.insertCell(0)
+				r.insertCell(1)
+				r.insertCell(2)
+				c.innerHTML = '<u style="font-size:max(1.45vw, 16px)">' + rest + '</u>'
+				var exp = data[rest]
+				for (var i = 0; i < exp.length; i++) {
+					var job = exp[i]
+					var r1 = expTable.insertRow(length)
+					var c1 = r1.insertCell(0)
+					c1.innerHTML = '<b>' + job.role + '</b>'
+					var c2 = r1.insertCell(1)
+					c2.style.textAlign = 'center'
+					c2.innerHTML = job.description
+					var cEnd = r1.insertCell(2)
+					cEnd.className = "right"
+					cEnd.innerHTML = job.time
 				}
-				
 			}
 		});
 	}
 	
-	var updateReviews = function() {
-		$.get("/reviews?username=" + username, function(data) {
-			data.forEach(function(review) {
-				if (!reviews.includes(review.id)) {
-					reviews.push(review.id);
-					var rows = reviewsTable.rows;
-					var row;
-					if (rows.length > 0) {
-						row = reviewsTable.insertRow(rows.length - 1);
-					} else {
-						row = reviewsTable.insertRow(0);
-					}
-					
-					var cell1 = row.insertCell(0);
-					var cell2 = row.insertCell(1);
-					cell1.innerHTML = "<b>&#64" + review.author + "</b>";
-					cell2.innerHTML = review.content;
-				}
-				
-			});
-		});
-		
-		$.get("/stars?username=" + username, function(data) {
-			if (data && data != "undefined") {
-				rating.innerHTML = data + " stars";
-			}
-		});
-		
-	}
-	
-	updateReviews();
 	makeExperience();
 	
 	

@@ -20,6 +20,7 @@ button {
 	top: 0;
 	border-bottom: 0.5px solid;
 	font-size: max(2.5vw, 23px);
+	z-index: 1;
 }
 #top > button {
 	width: 15vw;
@@ -96,6 +97,9 @@ button {
 		if (search && search.length > 0) {
 			$.get("/search-users/" + search, function(data) {
 				var usernames = data
+				if (data.length > 3) {
+					usernames = JSON.parse(data)
+				}
 				for (var i = 0; i < usernames.length; i++) {
 					var username = usernames[i]
 					var btn = document.createElement("button")

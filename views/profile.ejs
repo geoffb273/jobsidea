@@ -17,15 +17,13 @@
 	}
 	
 	#header {
-		position: relative;
-		left: 10vw;
-		display: flex;
 		width: 80vw;
+		display: flex;
 		border-bottom: 0.5px solid;
-		margin-top: 5vmin;
+		margin-top: 1.5vh;
 		background: white;
 		border-radius: 5vmin;
-		
+		margin-left: 10vw;
 	}
 	
 	#header > #info {
@@ -33,10 +31,10 @@
 	}
 	
 	#header > #rightheader {
-		position: absolute;
-		right: 0px;
 		display: flex;
 		flex-direction: column;
+		position: absolute;
+		right: 10vw;
 	}
 	#header > #rightheader > button {
 		background: black;
@@ -94,6 +92,57 @@
 			min-height: 25px;
 			margin-top: 7.5vmin;
 		}
+		
+		#header > #rightheader {
+			right: 2.5vw;
+		}
+	}
+	
+	#reviews-div {
+		max-width: 100vw;
+		height: max(23vh, 135px);
+		max-height: 170px;
+		overflow-x: auto;
+		display: flex;
+		font-size: 14px;
+	}
+	.review {
+		position: relative;
+		margin-top: 10px;
+		background: white;
+		width: max(20vw, 300px);
+		min-width: max(25vw, 300px);
+		border-radius: 20px;
+		height: max(20vh, 115px);
+		max-height: 150px;
+		margin-bottom: 10px;
+		border: 0.5px solid;
+		margin-right: 5px;
+	}
+	.profilePicRev {
+		width: 35px;
+		height: 35px;
+		border-radius: 35px;
+		margin-right: 10px;
+	}
+	
+	.top-review {
+		margin-top: 10px;
+		margin-left: 10px;
+		text-align: left;
+		font-size: 16px;
+	}
+	
+	.center {
+		
+	}
+	
+	.bottom-review {
+		position: absolute;
+		bottom: 0;
+		right: 10px;
+		text-align: right;
+		color: gray;
 	}
 	
 	
@@ -110,14 +159,13 @@
 <script>
 	var own = '<%- own%>';
 	var username = '<%- username%>'
-	var picId = '<%- picId %>'
 	if (own) {
 		var socket = io()
 		socket.emit('self room', {username: username});
 	}
 	
 	var getProfilePic = function() {
-		$.get("/pics/" + picId, function(url) {
+		$.get("/user-pic/" + username, function(url) {
 			var image = document.getElementById("profilePic")
 			if (url.length > 0) {
 				image.src = url
@@ -125,9 +173,7 @@
 			
 		});
 	}
-	if (picId) {
-		getProfilePic()
-	}
+	getProfilePic()
 </script>
 
 
@@ -159,20 +205,94 @@
 	</div>
 	
 </div>
+<div id="reviews-div"></div>
 
 <script>
-var username = '<%- username%>'
-var own = '<%- own%>'
-if (own) {
-	var upload = document.getElementById("upload")
+	var reviews = [];
+	var username = '<%- username%>'
+	var own = '<%- own%>'
 	
-	upload.action = "/pics/" + username
-	
-	var photo = document.getElementById("upload-photo")
-	photo.onchange = (e) => {
-		upload.submit()
+	if (own && own == true) {
+		var upload = document.getElementById("upload")
+		
+		upload.action = "/pics/" + username
+		
+		var photo = document.getElementById("upload-photo")
+		photo.onchange = (e) => {
+			upload.submit()
+		}
 	}
-}
+
+	var updateReviews = function() {
+		var reviewsDiv = document.getElementById("reviews-div")
+		$.get("/reviews?username=" + username, function(data) {
+			data.forEach(function(review) {
+				if (!reviews.includes(review.id)) {
+					reviews.push(review.id);
+					var reviewDiv = makeReview(review)
+					reviewsDiv.appendChild(reviewDiv)
+				}
+				
+			});
+		});
+		
+		$.get("/stars?username=" + username, function(data) {
+			if (data && data != "undefined") {
+				rating.innerHTML = data + " stars";
+			}
+		});
+	}
+	
+	var makeReview = function(review) {
+		var reviewDiv = document.createElement("div")
+		reviewDiv.className = "review"
+		var top = document.createElement("div")
+		top.className="top-review"
+		var center = document.createElement("div")
+		var bottom = document.createElement("div")
+		reviewDiv.appendChild(top)
+		reviewDiv.appendChild(center)
+		reviewDiv.appendChild(bottom)
+		
+		center.style.display = "flex"
+		center.style.justifyContent = "center"
+		center.style.marginTop = "max(5vh, 30px)"
+		center.style.marginLeft = "10px"
+		center.style.marginRight = "10px"
+		
+		bottom.className = "bottom-review"
+		
+		$.get("/user-pic/" + review.author, function(data) {
+			if (data) {
+				top.innerHTML = "<div style='float:left'><img src=" + data + " username=" + review.author + " class='profilePicRev'></img></div>"
+				top.innerHTML += "<div>" + review.name + "<i style='color:gray'>@" + review.author + "</i></div>"
+			} else {
+				top.innerHTML = "<span class='profilePicRev' username=" + review.author + "><i class='fa fa-user fa-xl'></i></span>"
+				top.innerHTML += review.name + "<i style='color:gray'>@" + review.author + "</i>"
+			}
+			top.username = review.author
+			top.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
+			
+		})
+		top.innerHTML = "<span class='profilePicRev' username=" + review.author + "><i class='fa fa-user fa-xl'></i></span>"
+		top.innerHTML += review.name + "<i style='color:gray'>@" + review.author + "</i>"
+		center.innerHTML = review.content
+		var date = (Date.now() - new Date(review.created)) / 1000
+		var dateString = Math.round(date + 1) + " seconds ago"
+		if (date >= 59 && date < 60 * 60) {
+			dateString = Math.round(date / 60) + " minutes ago"
+		} else if (date >= 60 * 60 && date < 60 * 60 * 24) {
+			dateString = Math.round(date / (60 * 60)) + " hours ago"
+		} else if (date >= 60 * 60 * 24 && date < 60 * 60 * 24 * (365 + 0.25)) {
+			dateString = Math.round(date / (60 * 60 * 24)) + " days ago"
+		} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
+			dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
+		}
+		bottom.innerHTML = dateString
+		return (reviewDiv)
+	}
+	
+	updateReviews();
 </script>
 
 <% if(user) { %>

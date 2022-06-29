@@ -32,6 +32,7 @@ var handleLogin = function(req, res) {
 			var userPassword = user.password; //TODO Encryption
 			if (password == userPassword) {
 				req.session.username = user.username;
+				req.session.user = user
 				req.session.type = user.type;
 				res.redirect("/profile");
 			} else {
@@ -66,10 +67,10 @@ var handleSignUpUser = function(req, res) {
 	var firstname = req.body.firstname;
 	var lastname = req.body.lastname;
 	var email = req.body.email;
-	/*var phone = req.body.phone;
-	var birthday = req.body.birthday;*/
+	var phone = req.body.phone;
+	/*var birthday = req.body.birthday;*/
 	
-	db.addUser(username, password, firstname, lastname, email /*phone, birthday*/).then(_ => {
+	db.addUser(username, password, firstname, lastname, email, phone/*, birthday*/).then(_ => {
 		req.session.username = username;
 		req.session.type = "User";
 		res.redirect("/profile");
@@ -92,7 +93,8 @@ var handleSignUpRestaurant = function(req, res) {
 	var city = req.body.city;
 	var state = req.body.state;
 	var zipCode = req.body.zipCode;
-	db.addRestaurant(username, password, name, email, street, city, state, zipCode).then(_ => {
+	var phone = req.body.phone;
+	db.addRestaurant(username, password, name, email, street, city, state, zipCode, phone).then(_ => {
 		req.session.username = username;
 		req.session.type = "Restaurant";
 		res.redirect("/profile?username=" + username);
@@ -105,7 +107,7 @@ var handleSignUpRestaurant = function(req, res) {
 var getProfile = function(req, res) {
 	var username = req.params.username;
 	var ownProfile = false
-	if (!username) {
+	if (!username || (username && username == req.session.username)) {
 		username = req.session.username;
 		ownProfile = true
 	}
@@ -116,7 +118,7 @@ var getProfile = function(req, res) {
 			if (user.type == "User") {
 				var firstname = user.firstname;
 				var lastname = user.lastname;
-				res.render("profile.ejs", {username: username, email: email, picId: user.pic,
+				res.render("profile.ejs", {username: username, email: email,
 					name: firstname + " " + lastname, user: true, own: ownProfile})
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
@@ -124,7 +126,7 @@ var getProfile = function(req, res) {
 				var city = user.city;
 				var state = user.state;
 				var zipCode = user.zipCode;
-				res.render("profile.ejs", {username: username, email: email, name: name, street: street, picId: user.pic,
+				res.render("profile.ejs", {username: username, email: email, name: name, street: street,
 					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
 			}
 			return
@@ -150,7 +152,7 @@ var getProfile = function(req, res) {
 				var lastname = user.lastname;
 				/**var birthday = user.birthday */
 				
-				res.render("profile.ejs", {username: username, email: email, picId: user.pic,
+				res.render("profile.ejs", {username: username, email: email,
 					name: firstname + " " + lastname, user: true, own: ownProfile})
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
@@ -158,7 +160,7 @@ var getProfile = function(req, res) {
 				var city = user.city;
 				var state = user.state;
 				var zipCode = user.zipCode;
-				res.render("profile.ejs", {username: username, email: email, name: name, street: street, picId: user.pic,
+				res.render("profile.ejs", {username: username, email: email, name: name, street: street,
 					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
 			}
 			
@@ -279,7 +281,7 @@ var getNotificationsPage = function(req, res) {
 }
 
 var getExperience = function(req, res) {
-	var username = req.query.username;
+	var username = req.params.username;
 	if (req.session.experience) {
 		if (req.session.experience[username]) {
 			res.send(req.session.experience[username])
@@ -289,11 +291,14 @@ var getExperience = function(req, res) {
 	db.getExperience(username).then(snapshot => {
 		var experience = {}
 		if (snapshot) {
-			var unclean = snapshot;
-			for(var k in unclean) {
-				experience[k] = []
-				for(var id in unclean[k]) {
-					experience[k].push(unclean[k][id]);
+			for (var i = 0; i < snapshot.length; i++) {
+				var exp = snapshot[i]
+				
+				if (experience[exp.restaurant]) {
+					experience[exp.restaurant].push(exp)
+				} else {
+					experience[exp.restaurant] = []
+					experience[exp.restaurant].push(exp)
 				}
 			}
 		}
@@ -305,6 +310,79 @@ var getExperience = function(req, res) {
 		}
 		res.send(experience);
 	});
+}
+
+var getExperiencePage = function(req, res) {
+	var username = req.session.username
+	if (req.session.experience) {
+		if (req.session.experience[username]) {
+			var experience = req.session.experience[username]
+			res.render('experiencepage.ejs', {experience: JSON.stringify(experience), username: username})
+			return
+		}
+	}
+	db.getExperience(username).then(snapshot => {
+		var experience = {}
+		if (snapshot) {
+			for (var i = 0; i < snapshot.length; i++) {
+				var exp = snapshot[i]
+				
+				if (experience[exp.restaurant]) {
+					experience[exp.restaurant].push(exp)
+				} else {
+					experience[exp.restaurant] = []
+					experience[exp.restaurant].push(exp)
+				}
+			}
+		}
+		if (req.session.experience) {
+			req.session.experience[username] = experience
+		} else {
+			req.session.experience = {}
+			req.session.experience[username] = experience
+		}
+		res.render('experiencepage.ejs', {experience: JSON.stringify(experience), username: username})
+	});
+}
+
+var putExperience = function(req, res) {
+	var job = req.body.job
+	var username = req.session.username
+	if (req.session.experience) {
+		if (req.session.experience[username]) {
+			if(req.session.experience[username][job.restaurant]) {
+				req.session.experience[username][job.restaurant].push(job)
+			} else {
+				req.session.experience[username][job.restaurant] = []
+				req.session.experience[username][job.restaurant].push(job)
+			}
+		}
+	}
+	db.putExperience(job).then(_ => {
+		res.send('Done')
+	})
+}
+
+var deleteExperience = function(req, res) {
+	var username = req.session.username
+	var restaurant = req.params.restaurant
+	var role = req.params.role
+	if (req.session.experience) {
+		if (req.session.experience[username]) {
+			if (req.session.experience[username][restaurant]) {
+				var exp = req.session.experience[username][restaurant]
+				var newExp = exp.filter(item => {item.role != role})
+				if (newExp.length > 0) {
+					req.session.experience[username][restaurant] = newExp
+				} else {
+					delete req.session.experience[username][restaurant]
+				}
+			}
+		}
+	}
+	db.deleteExperience(username, restaurant, role).then(_ => {
+		res.send('Done')
+	})
 }
 
 var getReviews = function(req, res) {
@@ -401,8 +479,15 @@ var getPost = function(req, res) {
 
 var getPostPage = function(req, res) {
 	var id = req.params.id
+	var username = req.session.username
+	var name
+	if (req.session.type == "User") {
+		name = req.session.user.firstname + " " + req.session.user.lastname
+	} else {
+		name = req.session.user.name
+	}
 	db.getPost(id).then(post => {
-		res.render('postpage.ejs', {post: JSON.stringify(post)})
+		res.render('postpage.ejs', {post: JSON.stringify(post), username: username, name: name})
 	})
 }
 
@@ -441,14 +526,26 @@ var uploadProfilePic = function(req, res) {
 				if (user.pic) {
 					db.deleteProfilePic(user.pic, username).then(_ => {
 						db.uploadProfilePic(username, file).then(_ => {
+							req.session.users[username].pic = req.file.filename
+							if (req.session.pics) {
+								if (req.session.pics[username]) {
+									delete req.session.pics[username]
+								}
+							}
 							res.redirect('/profile')
-							fs.unlink(path)
+							fs.unlink(path, _ => {})
 						})
 					})
 				} else {
 					db.uploadProfilePic(username, file).then(_ => {
+						req.session.users[username].pic = req.file.filename
+						if (req.session.pics) {
+							if (req.session.pics[username]) {
+								delete req.session.pics[username]
+							}
+						}
 						res.redirect('/profile')
-						fs.unlink(path)
+						fs.unlink(path, _ => {})
 					})
 				}
 			})
@@ -511,8 +608,15 @@ var getUserProfilePic = function(req, res) {
 
 var addComment = function(req, res) {
 	var comment = req.body.comment
-	db.putComment(comment).then(_ => {
+	db.addComment(comment).then(_ => {
 		res.send("Done")
+		db.getPost(comment.postId).then(post => {
+			var reciever = post.username
+			var sender = comment.author
+			if (reciever != sender) {
+				db.putNotification(reciever, sender, sender + " commented on your post.", "Comment")
+			}
+		})
 	})
 }
 
@@ -552,6 +656,9 @@ var routes = {
 	notifications_page: getNotificationsPage,
 	//Experience
 	experience: getExperience,
+	experience_page: getExperiencePage,
+	put_experience: putExperience,
+	delete_experience: deleteExperience,
 	//Review
 	reviews: getReviews,
 	//Star

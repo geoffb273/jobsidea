@@ -3,7 +3,7 @@ const app = express();
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
+require('dotenv').config();
 var routes = require('./routes/routes.js');
 var db = require('./models/database.js');
 var nodeMailer = require('nodemailer')
@@ -11,6 +11,7 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var MemoryStore = require('memorystore')(session)
 var multer = require('multer');
+
 /*var storage = multer.diskStorage({
 	destination: function(req, file, cb) {
 		cb(null, "uploads/")
@@ -81,8 +82,14 @@ app.get('/my-notifications', routes.notifications)
 
 
 app.get('/reviews', routes.reviews);
-app.get('/experience', routes.experience);
+
+app.get('/experience/:username', routes.experience);
+app.get('/edit-experience/:username', routes.experience_page);
+app.post('/experience', routes.put_experience)
+app.delete('/experience/:restaurant/:role', routes.delete_experience)
+
 app.get('/stars', routes.stars);
+
 app.get('/posts', routes.posts)
 app.get('/posts/:id', routes.post)
 app.get('/post-page/:id', routes.post_page)
@@ -93,6 +100,9 @@ app.get('/user-pic/:username', routes.user_pic)
 app.get('/pics/:id', routes.pic)
 app.post('/pics/:username', upload.single('photo'), routes.handle_pic)
 app.delete('/pics/:username/:id', routes.delete_pic)
+
+app.get('/comments/:postId', routes.comments)
+app.post('/comments', routes.add_comment)
 
 /*var sendMail = async function(send, rec, type) {
 	var sender = await db.getUser(send)
