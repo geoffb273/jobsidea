@@ -57,7 +57,7 @@ var getUser = function(username) {
 }
 
 var getUsers = function(search) {
-	return utils.getList(db, "Users", {username: new RegExp(search, "gi")}, {username: 1}, 3)
+	return utils.getList(db, "Users", {username: new RegExp(search, "gi")}, {username: 1}, 10)
 }
 
 
@@ -241,15 +241,8 @@ var getReviews = async function(username, callback) {
 	
 }
 
-var putReview = function(username, author, message) {
-	var reviewId = uuidv4();
-	var reviewObj = {
-		author: author,
-		content: message,
-		id: reviewId,
-		username: username
-	}
-	return utils.postItem(db, "Reviews", reviewObj);
+var putReview = function(review) {
+	return utils.postItem(db, "Reviews", review);
 }
 
 var getStars = function(username) {

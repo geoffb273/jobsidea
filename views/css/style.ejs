@@ -2,8 +2,16 @@
 body {
 	text-align: center;
 	justify-content: center;
-	background: #eeeeee;
-	font-family: Copperplate; 
+	
+	font-family: Copperplate;
+	margin: 0;
+	background-image:
+		linear-gradient(45deg, red 25%, transparent 25%), 
+		linear-gradient(135deg, red 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, red 75%),
+		linear-gradient(135deg, white 75%, red 75%);
+	background-size: 100px 100px;
+	background-position:0 0, 50px 0, 50px -50px, 0px -50px;
 }
 button {
 	font-family: Copperplate; 
@@ -12,51 +20,68 @@ button {
 
 #top {
 	width: 100%;
-	background: white;
 	margin: 0;
 	display: flex;
 	justify-content: center;
 	position: sticky;
 	top: 0;
-	border-bottom: 0.5px solid;
+	border-bottom: 1px outset lightgray;
 	font-size: max(2.5vw, 23px);
 	z-index: 1;
+	background: white;
 }
 #top > button {
-	width: 15vw;
+	width: 10vw;
 	border-radius: 0;
 	background: white;
 	margin: 10px 0px 10px 0.2vw;
 	min-height: 3vh;
 }
 
+#top > #space {
+	width: 20vw;
+	
+}
+
 
 
 #top > #dropdown {
 	margin: 10px 0px 10px 0.2vw;
-	width: 18vw;
-	
-	
+	width: max(20vw, 150px);
 }
 
 #top > #dropdown > input {
 	width: 100%;
 	font-size: max(1.5vw, 16px);
+	border-radius: 10px;
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 #top > #dropdown > #results {
 	display: none;
 	z-index: 1;
 	position: absolute;
-	background: black;
-	width: 18vw;
-	
+	background: white;
+	width: max(22vw, 175px);
+	max-height: 150px;
+	border: 1px solid lightgray;
+	border-radius: 15px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 5px;
 }
 
-#dropdown-btn {
-	display: block;
-	left: 0;
+.dropdown-btn {
+	display: flex;
 	width: 100%;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-bottom: 0.5px solid lightgray;
+	font-size: max(1vw, 12px);
+	overflow-x: auto;
+	height: 30px;
 }
 
 #top > #logo {
@@ -64,7 +89,7 @@ button {
 	width: 14vw;
 	color: black;
 	text-decoration: none;
-	font-size: max(2.5vw, 20px)
+	font-size: max(2.5vw, 20px);
 }
 
 @media only screen and (max-width: 600px) {
@@ -78,36 +103,68 @@ button {
 
 <div id="top">
 	<a id="logo" href='/'>Staffer</a>
-	<button onclick="location.href='/'" class="fa-solid fa-home fa-sm"></button>
-	<button onclick="location.href='/notifications'" class="fa-solid fa-bell fa-sm"></button>
-	<button onclick="location.href='/chats'" class="fa-solid fa-envelope fa-sm"></button>
-	<button onclick="location.href='/profile'" class="fa-solid fa-user fa-sm"></button>
 	<div id="dropdown">
 		<input id="search" placeholder="Search" onkeyup="searchChange()"></input>
 		<div id="results"></div>
 	</div>
+	<div id="space"></div>
+	<button onclick="location.href='/'" class="fa-solid fa-home fa-sm"></button>
+	<button onclick="location.href='/notifications'" class="fa-solid fa-bell fa-sm"></button>
+	<button onclick="location.href='/chats'" class="fa-solid fa-envelope fa-sm"></button>
+	<button onclick="location.href='/profile'" class="fa-solid fa-user fa-sm"></button>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
 	var searchChange = function() {
 		var searchEl = document.getElementById("search")
 		var resultsEl = document.getElementById("results")
+		var searchResults = []
 		resultsEl.innerHTML = ""
 		var search = searchEl.value;
 		if (search && search.length > 0) {
 			$.get("/search-users/" + search, function(data) {
-				var usernames = data
-				if (data.length > 3) {
-					usernames = JSON.parse(data)
+				for (var i = 0; i < data.length; i++) {
+					var u = data[i]
+					if (searchResults.find((res) => {res.username == u.username}) == undefined) {
+						searchResults.push(u)
+					}
 				}
-				for (var i = 0; i < usernames.length; i++) {
-					var username = usernames[i]
-					var btn = document.createElement("button")
-					btn.onclick = (e) => { window.location.href = "/profile/" + e.target.username }
-					btn.innerHTML = username;
-					btn.username = username;
-					btn.id = "dropdown-btn"
-					resultsEl.appendChild(btn)
+				
+				
+				for (var i = 0; i < searchResults.length; i++) {
+					var user = searchResults[i]
+					var div = document.createElement("div")
+					div.username = user.username
+					
+					div.onclick = (e) => {
+						var username = e.target.username? e.target.username: e.target.attributes.username.value
+						window.location.href = "/profile/" + username
+					}
+					if (user.pic.length > 0) {
+						var img = document.createElement("img")
+						img.src = user.pic
+						img.username = user.username
+						img.style.width = '25px'
+						img.style.height = '25px'
+						img.style.borderRadius = '25px'
+						div.appendChild(img)
+					} else {
+						var span = document.createElement("div")
+						span.innerHTML = "<i username='" + user.username + "' class='fa-solid fa-user fa-2xl'></i>"
+						span.username = user.username
+						span.style.height = '20px'
+						span.style.marginTop = '15px'
+						span.style.marginBottom = '-10px'
+						div.appendChild(span)
+					}
+					var text = document.createElement('p')
+					text.username = user.username
+					text.innerHTML = user.username
+					text.style.marginLeft = '5px'
+					text.style.marginBottom = '0'
+					div.appendChild(text)
+					div.className = "dropdown-btn"
+					resultsEl.appendChild(div)
 					resultsEl.style.display = "block"
 				}
 				

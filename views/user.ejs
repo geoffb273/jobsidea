@@ -3,10 +3,12 @@
 <style>
 	#experience {
 		background: white;
-		border: 0.5px solid;
 		border-radius: 20px;
 		margin-left: 10vw;
 		width: 80vw;
+		border-style: none solid solid none;
+		border-width: 4px;
+		border-color: black;
 	}
 	#expTable {
 		margin-left: 5vw;
@@ -34,10 +36,10 @@
 	@media only screen and (max-width: 700px) {
 		#experience {
 			margin-left: 0;
-			width: 98vw;
+			width: 100vw;
 		}
 		#expTable {
-			width: 88vw;
+			width: 90vw;
 		}
 	}
 	
@@ -48,7 +50,7 @@
 
 
 <div id="experience">
-	<div style="position:relative">
+	<div style="position:relative;padding-top:0.5px;">
 		<p id="exp-title"><u>Experience</u></p>
 		<%if(own && own == true) { %>
 			<button id="edit-experience" onclick='editExpPage()'>Edit Experience</button>

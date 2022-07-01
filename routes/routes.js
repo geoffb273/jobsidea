@@ -1,8 +1,7 @@
 var db = require('../models/database.js');
 const axios = require('axios')
 const fs = require('fs')
-
-
+var crypto = require('crypto'); 
 
 var getHome = function(req, res) {
 	var username = req.session.username;
@@ -29,8 +28,8 @@ var handleLogin = function(req, res) {
 	db.getUser(username).then(snapshot => {
 		if (snapshot) {
 			var user = snapshot;
-			var userPassword = user.password; //TODO Encryption
-			if (password == userPassword) {
+			var userPassword = user.password;
+			if (userPassword == crypto.createHash('sha256').update(password).digest('hex')) {
 				req.session.username = user.username;
 				req.session.user = user
 				req.session.type = user.type;
@@ -48,12 +47,31 @@ var handleLogin = function(req, res) {
 
 var searchUsers = function(req, res) {
 	var search = req.params.search
-	db.getUsers(search).then(snapshot => {
-		var usernames = []
+	db.getUsers(search).then(async function(snapshot) {
+		var users = []
 		for(var i = 0; i < snapshot.length; i++) {
-			usernames.push(snapshot[i].username)
+			var user = snapshot[i]
+			var userObj = {}
+			userObj.username = user.username
+			if (user.type == "User") {
+				userObj.name = user.firstname + " " + user.lastname
+			} else {
+				userObj.name = user.name
+			}
+			if (user.pic) {
+				try {
+					var url = await db.getProfilePic(user.pic)
+					userObj.pic = url
+				} catch (err) {
+					userObj.pic = ""
+				}
+				users.push(userObj)
+			} else {
+				userObj.pic = ""
+				users.push(userObj)
+			}
 		}
-		res.send(usernames);
+		res.send(users);
 	})
 }
 
@@ -63,7 +81,7 @@ var getSignUpUser = function(req, res) {
 
 var handleSignUpUser = function(req, res) {
 	var username = req.body.username.toLowerCase();
-	var password = req.body.password;
+	var password = crypto.createHash('sha256').update(req.body.password).digest('hex');
 	var firstname = req.body.firstname;
 	var lastname = req.body.lastname;
 	var email = req.body.email;
@@ -86,7 +104,7 @@ var getSignUpRestaurant = function(req, res) {
 
 var handleSignUpRestaurant = function(req, res) {
 	var username = req.body.username.toLowerCase();
-	var password = req.body.password;
+	var password = crypto.createHash('sha256').update(req.body.password).digest('hex');
 	var name = req.body.name;
 	var email = req.body.email;
 	var street = req.body.street;
@@ -392,6 +410,13 @@ var getReviews = function(req, res) {
 	});
 }
 
+var addReview = function(req, res) {
+	var review = req.body.review
+	db.putReview(review).then(_ => {
+		res.send("Done")
+	})
+}
+
 var getStars = function(req, res) {
 	var username = req.query.username;
 	db.getStars(username).then(snapshot => {
@@ -608,15 +633,14 @@ var getUserProfilePic = function(req, res) {
 
 var addComment = function(req, res) {
 	var comment = req.body.comment
+	var post = req.body.post
 	db.addComment(comment).then(_ => {
+		var reciever = post.username
+		var sender = comment.author
+		if (reciever != sender) {
+			db.putNotification(reciever, sender, sender + " commented on your post.", "Comment")
+		}
 		res.send("Done")
-		db.getPost(comment.postId).then(post => {
-			var reciever = post.username
-			var sender = comment.author
-			if (reciever != sender) {
-				db.putNotification(reciever, sender, sender + " commented on your post.", "Comment")
-			}
-		})
 	})
 }
 
@@ -661,6 +685,7 @@ var routes = {
 	delete_experience: deleteExperience,
 	//Review
 	reviews: getReviews,
+	add_review: addReview,
 	//Star
 	stars: getStars,
 	//Posts

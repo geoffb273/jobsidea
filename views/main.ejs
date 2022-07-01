@@ -47,12 +47,15 @@
 	z-index: 1;
 	position: absolute;
 	width: max(10vw, 75px);
+	max-height: 150px;
+	overflow-y: auto;
 }
 
 .dropResult {
 	width: max(10vw, 75px);
-	height: 50px;
+	min-height: 30px;
 	font-size: max(1.75vw, 14px);
+	margin: 0;
 }
 
 .dropResult:hover {
@@ -75,7 +78,7 @@
 		width: 98vw;
 	}
 	#searchDiv {
-		margin-left: 0;
+		margin-left: 10vw;
 		width: 98vw;
 	}
 	#location {
@@ -94,6 +97,7 @@
 			<button class="dropResult" onclick="waiter(this)">Waiter</button>
 			<button class="dropResult" onclick="busBoy(this)">Bus Boy</button>
 			<button class="dropResult" onclick="washer(this)">Washer</button>
+			<button class="dropResult" onclick="other(this)">Other</button>
 		</div>
 	</div>
 	<input id="location" placeholder="Zip Code" onkeyup="searchPost()"></input>
@@ -186,6 +190,20 @@ var washer = function(e) {
 	} else {
 		e.classList.add('clicked');
 		type = "Washer"
+	}
+	searchPost()
+}
+
+var other = function(e) {
+	var arr = document.getElementsByClassName("clicked")
+	for (var i = 0; i < arr.length; i++) {
+		arr[i].className = "dropResult";
+	}
+	if (type == "Other") {
+		type = ""
+	} else {
+		e.classList.add('clicked');
+		type = "Other"
 	}
 	searchPost()
 }

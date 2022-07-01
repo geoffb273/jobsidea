@@ -70,14 +70,14 @@
 @media only screen and (max-width: 700px) {
 	#page {
 		margin-left: 0;
-		width: 98vw;
+		width: 100vw;
 	}
 	#comments {
-		width: 88vw;
+		width: 90vw;
 		margin-left: 5vw;
 	}
 	#formDiv {
-		width: 88vw;
+		width: 90vw;
 		
 	}
 	#commentInput {
@@ -204,7 +204,7 @@
 				postId: post.id,
 				created: new Date().toISOString()
 			}
-			$.post("/comments", {comment: comment}, function(data) {
+			$.post("/comments", {comment: comment, post: post}, function(data) {
 				getComments()
 				commentInput.value = ""
 			})

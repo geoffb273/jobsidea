@@ -1,7 +1,4 @@
 <style>
-	body {
-		justify-content: center;
-	}
 	#profilePic {
 		height: 25vmin;
 		width: 25vmin;
@@ -19,7 +16,9 @@
 	#header {
 		width: 80vw;
 		display: flex;
-		border-bottom: 0.5px solid;
+		border-style: none solid solid none;
+		border-width: 4px;
+		border-color: black;
 		margin-top: 1.5vh;
 		background: white;
 		border-radius: 5vmin;
@@ -80,9 +79,9 @@
 	
 	@media only screen and (max-width: 700px) {
 		#header {
-			left: 0;
 			margin-left: 0;
-			width: 98vw;
+			width: 100vw;
+			margin-right: 0;
 		}
 		
 		#profilePic {
@@ -92,10 +91,10 @@
 			min-height: 25px;
 			margin-top: 7.5vmin;
 		}
-		
 		#header > #rightheader {
-			right: 2.5vw;
+			right: 1vw;
 		}
+		
 	}
 	
 	#reviews-div {
@@ -116,8 +115,10 @@
 		height: max(20vh, 115px);
 		max-height: 150px;
 		margin-bottom: 10px;
-		border: 0.5px solid;
 		margin-right: 5px;
+		border-style: none solid solid none;
+		border-width: 4px;
+		border-color: black;
 	}
 	.profilePicRev {
 		width: 35px;
@@ -265,13 +266,13 @@
 		$.get("/user-pic/" + review.author, function(data) {
 			if (data) {
 				top.innerHTML = "<div style='float:left'><img src=" + data + " username=" + review.author + " class='profilePicRev'></img></div>"
-				top.innerHTML += "<div>" + review.name + "<i style='color:gray'>@" + review.author + "</i></div>"
+				top.innerHTML += "<div username="+ review.author + ">" + review.name + "<i style='color:gray'>@" + review.author + "</i></div>"
 			} else {
 				top.innerHTML = "<span class='profilePicRev' username=" + review.author + "><i class='fa fa-user fa-xl'></i></span>"
 				top.innerHTML += review.name + "<i style='color:gray'>@" + review.author + "</i>"
 			}
 			top.username = review.author
-			top.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
+			top.onclick = (e) => {window.location.href='/profile/' + review.author}
 			
 		})
 		top.innerHTML = "<span class='profilePicRev' username=" + review.author + "><i class='fa fa-user fa-xl'></i></span>"

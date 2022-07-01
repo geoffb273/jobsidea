@@ -12,22 +12,6 @@ var cookieParser = require('cookie-parser');
 var MemoryStore = require('memorystore')(session)
 var multer = require('multer');
 
-/*var storage = multer.diskStorage({
-	destination: function(req, file, cb) {
-		cb(null, "uploads/")
-	},
-	filename: function(req, file, cb) {
-		cb(null, Date.now() + file.originalname)
-	}
-})
-const fileFilter = function(req, file, cb) {
-	if (file.mimeType == 'image/jpeg' || file.mimeType == 'image/jpg' || file.mimeType == 'image/png') {
-		cb(null, true)
-	} else {
-		cb(null, false)
-	}
-}*/
-
 var upload = multer({ dest: 'uploads/' })
 app.use(express.json());
 app.use(express.urlencoded());
@@ -51,56 +35,62 @@ app.all('*', function(req, res, next) {
   }
 });
 
-app.get('/', routes.home);
 
 
+//Users
 app.get('/login', routes.login);
 app.post('/handle-login', routes.handle_login);
 app.get('/logout', routes.logout)
-
 app.get('/search-users/:search', routes.search_users);
-
 app.get('/signup-user', routes.signup_user);
 app.post('/handle-signup-user', routes.handle_signup_user);
-
 app.get('/signup-restaurant', routes.signup_restaurant);
 app.post('/handle-signup-restaurant', routes.handle_signup_restaurant);
 
+//Profile
+app.get('/', routes.home);
 app.get('/profile', routes.profile);
 app.get('/profile/:username', routes.profile);
 
+//Chats
 app.get('/chats', routes.chats_page);
 app.get('/my-chats', routes.chats);
 app.post('/chats/:username', routes.handle_chats)
-
 app.get('/chat/:chatId', routes.chat);
 app.post('/handle-message', routes.handle_message);
 app.get('/messages', routes.messages)
 
+//Notifications
 app.get('/notifications', routes.notifications_page);
 app.get('/my-notifications', routes.notifications)
 
-
+//Reviews
 app.get('/reviews', routes.reviews);
+app.post('/review', routes.add_review);
 
+//Experience
 app.get('/experience/:username', routes.experience);
 app.get('/edit-experience/:username', routes.experience_page);
 app.post('/experience', routes.put_experience)
 app.delete('/experience/:restaurant/:role', routes.delete_experience)
 
+//Stars
 app.get('/stars', routes.stars);
 
+//Posts
 app.get('/posts', routes.posts)
 app.get('/posts/:id', routes.post)
 app.get('/post-page/:id', routes.post_page)
 app.post('/posts', routes.add_post)
 app.delete('/posts/:id', routes.delete_post)
 
+//Pics
 app.get('/user-pic/:username', routes.user_pic)
 app.get('/pics/:id', routes.pic)
 app.post('/pics/:username', upload.single('photo'), routes.handle_pic)
 app.delete('/pics/:username/:id', routes.delete_pic)
 
+//Comments
 app.get('/comments/:postId', routes.comments)
 app.post('/comments', routes.add_comment)
 
