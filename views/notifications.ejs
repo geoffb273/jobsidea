@@ -4,8 +4,10 @@
 </head>
 
 <style>
-	tr:nth-child(odd) { 
-		background-color: #ffb8b8; 
+	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
+	
+	tr:nth-child(even) { 
+		background-color: #B6D0E4;
 	}
 	
 	#post {
@@ -14,9 +16,11 @@
 		max-height: 85vh;
 		width: 70vw;
 		overflow-y: scroll;
-		border-style: none groove groove none;
+		/*border-style: none groove groove none;
 		border-width: 4px;
-		border-color: black;
+		border-color: black;*/
+		box-shadow: 5px 5px 10px #20537A;
+		margin-top: 10px;
 	}
 	
 	#table {
@@ -24,6 +28,8 @@
 		width: 70vw;
 		max-height: 85vh;
 		overflow-y: scroll;
+		color: black;
+		border-collapse: collapse;
 	}
 	.profilePic {
 		border-radius: 5vmin;
@@ -33,18 +39,19 @@
 	}
 	.chatButton {
 		padding-top: 1vmin;
-      	width: max(5vw, 50px);
+      	width: max(3vw, 50px);
       	height: max(4vmin, 25px);
       	border-radius: 5vmin;
       	font-size: max(2vmin, 16px);
+      	background: white;
 	}
 	@media only screen and (max-width: 700px) {
-		.post {
-			margin-left: 0;
-			width: 100vw;
+		#post {
+			margin-left: 1vw;
+			width: 98vw;
 		}
 		#table {
-			width: 100vw;
+			width: 97vw;
 		}
 	}
 	
@@ -92,6 +99,7 @@
 					}
 					var u2 = notification.content.split(" ")[0]
 					var cell0 = row.insertCell(0);
+					cell0.style.textAlign = 'right'
 					
 					if (notification.sender) {
 						$.get("/user-pic/" + notification.sender, function(data) {
@@ -115,6 +123,8 @@
 					
 					var cell1 = row.insertCell(1);
 					cell1.innerHTML = content
+					cell1.style.textAlign = 'center'
+					cell1.style.height = '50px';
 					var cell2 = row.insertCell(2);
 					cell2.innerHTML = dateString;
 					
@@ -130,6 +140,7 @@
 					button.chatId = chatId
 					button.onclick = (e) => {window.location.href = "/chat/" + e.target.chatId}
 					cell3.appendChild(button);
+					cell3.style.textAlign = 'center'
     			}
     		})
 		});
@@ -138,7 +149,7 @@
 	
 	var checkEnd = function() {
 		var table = document.getElementById("post")
-  		if (table.scrollTop + table.offsetHeight - table.scrollHeight == 8) {
+  		if (table.scrollTop + table.offsetHeight - table.scrollHeight == 0) {
   			
   			limit += 10;
       		getNotifications()
@@ -146,7 +157,6 @@
   	}
   	var post = document.getElementById("post")
   	post.onscroll = checkEnd
-  	console.log(post.onscroll)
 	
 	socket.emit('self room', {username: username})
 	socket.on("notification", function() {

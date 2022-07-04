@@ -6,20 +6,26 @@
 
 <body>
 <style>
-	.post {
-		margin-left: 15vw;
-		min-height: 90vh;
-		width: 70vw;
+	#post {
 		background: white;
+		margin-left: 15vw;
+		max-height: 85vh;
+		width: 70vw;
+		overflow-y: scroll;
+		/*border-style: none groove groove none;
+		border-width: 4px;
+		border-color: black;*/
+		box-shadow: 5px 5px 10px #20537A;
+		margin-top: 10px;
 	}
    	#table {
-      	padding: 0;
-      	width: 70vw; 
-      	font-size: max(16px, 1.5vw);
-      	overflow-y: auto;
-      	margin-left: 0vw;
-      	
-   	}
+		font-size: max(16px, 1.5vw);
+		width: 70vw;
+		max-height: 85vh;
+		overflow-y: scroll;
+		color: black;
+		border-collapse: collapse;
+	}
       
   	#table > tr {
       	padding: 0px;
@@ -29,8 +35,8 @@
       	float:right; margin-right: 10px;
    	}
       
-  	tr:nth-child(odd) { 
-      	background-color: #ffb8b8; 
+  	tr:nth-child(even) { 
+      	background-color: #B6D0E4; 
    	}
   	.chatButton {
       	padding-top: 1vmin;
@@ -38,6 +44,7 @@
       	height: 5vmin;
       	border-radius: 5vmin;
       	font-size: 3vmin;
+      	background: white;
    	}
       
   	.profilePic {
@@ -46,22 +53,24 @@
       	height: 5vmin;
       	font-size: 2vmin;
       	margin-left: 5px;
+      	margin-top: 10px;
+      	margin-bottom: 10px;
    	}
    	
    	@media only screen and (max-width: 700px) {
-		.post {
-			margin-left: 0;
-			width: 100vw;
+		#post {
+			margin-left: 1vw;
+			width: 98vw;
 		}
 		#table {
-			width: 100vw;
+			width: 97vw;
 		}
 	}
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Chats</title>
 
-<div class="post">
+<div id="post">
   <table id = "table"></table>
 </div>
 <script src="/socket.io/socket.io.js"></script>
@@ -101,7 +110,7 @@
     			
     			var row = table.insertRow(i);
     			var cell0 = row.insertCell(0);
-    			
+    			cell0.style.textAlign = 'right'
 				$.get("/user-pic/" + chatName, function(data) {
 					if (data) {
 						cell0.innerHTML = "<img src=" + data + " class='profilePic'></img>"
@@ -119,7 +128,8 @@
 					cell1.innerHTML = chatName;
 				}
 				
-				
+				cell1.style.textAlign = 'center'
+				cell1.style.height = '50px';
 				var cell2 = row.insertCell(2);
 				cell2.innerHTML = dateString
 				
@@ -132,7 +142,7 @@
 				button.chatId = chat.id;
 				button.onclick = enterChat;
 				cell3.appendChild(button);
-    			
+    			cell3.style.textAlign = 'center'
     		})
     	})
   	};

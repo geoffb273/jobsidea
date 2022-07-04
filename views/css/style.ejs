@@ -3,32 +3,38 @@ body {
 	text-align: center;
 	justify-content: center;
 	
-	font-family: Copperplate;
+	font-family: Helvetica;
 	margin: 0;
-	background-image:
+	/*background-image:
 		linear-gradient(45deg, red 25%, transparent 25%), 
 		linear-gradient(135deg, red 25%, transparent 25%),
 		linear-gradient(45deg, transparent 75%, red 75%),
 		linear-gradient(135deg, white 75%, red 75%);
 	background-size: 100px 100px;
-	background-position:0 0, 50px 0, 50px -50px, 0px -50px;
-}
+	background-position:0 0, 50px 0, 50px -50px, 0px -50px;*/
+	background: #B6D0E4;
+}															/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 button {
-	font-family: Copperplate; 
+	font-family: Helvetica; 
 	color: black;
 }
 
 #top {
-	width: 100%;
+	width: 99vw - 8px;
 	margin: 0;
 	display: flex;
 	justify-content: center;
 	position: sticky;
 	top: 0;
-	border-bottom: 1px outset lightgray;
+	left: 0.5vw;
+	border-bottom: 1px solid black;
 	font-size: max(2.5vw, 23px);
 	z-index: 1;
-	background: white;
+	background: #5481A4;
+	/*border-style: none solid solid solid;
+	border-width: 4px;
+	border-color: black;*/
+	box-shadow: 5px 5px 10px #20537A;
 }
 #top > button {
 	width: 10vw;
@@ -36,18 +42,22 @@ button {
 	background: white;
 	margin: 10px 0px 10px 0.2vw;
 	min-height: 3vh;
+	
+	color: #20537A;
 }
 
 #top > #space {
-	width: 20vw;
+	width: 17vw;
 	
 }
 
 
 
 #top > #dropdown {
-	margin: 10px 0px 10px 0.2vw;
-	width: max(20vw, 150px);
+	margin: 10px 0px 10px 10px;
+	width: 20vw;
+	min-width: 175px;
+	
 }
 
 #top > #dropdown > input {
@@ -64,7 +74,7 @@ button {
 	z-index: 1;
 	position: absolute;
 	background: white;
-	width: max(22vw, 175px);
+	width: max(25vw, 200px);
 	max-height: 150px;
 	border: 1px solid lightgray;
 	border-radius: 15px;
@@ -87,15 +97,32 @@ button {
 #top > #logo {
 	margin: 10px 0px 10px 0.2vw;
 	width: 14vw;
-	color: black;
+	color: white;
+	font-family: Monaco;
+	font-weight: bolder;
 	text-decoration: none;
-	font-size: max(2.5vw, 20px);
+	font-size: max(2.5vw, 24px);
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
 	#top > #logo {
 		font-size: max(3vw, 12px)
 	}
+	#top > #space {
+		width: 10px;
+	}
+	#top > #dropdown {
+		width: 35vw;
+	}
+	
+	#top > #dropdown > #results {
+		width: 35vw;
+	}
+	
+	#top > #logo {
+		font-size: 18px;
+	}
+	
 }
 
 </style>
