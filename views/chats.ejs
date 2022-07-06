@@ -31,19 +31,15 @@
       	padding: 0px;
   	}
       
-  	#join { 
-      	float:right; margin-right: 10px;
-   	}
-      
   	tr:nth-child(even) { 
       	background-color: #B6D0E4; 
    	}
   	.chatButton {
-      	padding-top: 1vmin;
-      	width: 10vmin;
-      	height: 5vmin;
+		padding-top: 1vmin;
+      	width: max(3vw, 50px);
+      	height: max(4vmin, 25px);
       	border-radius: 5vmin;
-      	font-size: 3vmin;
+      	font-size: max(2vmin, 16px);
       	background: white;
    	}
       
@@ -55,7 +51,13 @@
       	margin-left: 5px;
       	margin-top: 10px;
       	margin-bottom: 10px;
+      	
    	}
+   	
+   	#name {
+   		width: 40vw
+   	}
+   	
    	
    	@media only screen and (max-width: 700px) {
 		#post {
@@ -63,8 +65,13 @@
 			width: 98vw;
 		}
 		#table {
-			width: 97vw;
+			width: 98vw;
 		}
+		
+		#name {
+			width: 45vw
+		}
+		
 	}
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -130,6 +137,7 @@
 				
 				cell1.style.textAlign = 'center'
 				cell1.style.height = '50px';
+				cell1.id = 'name'
 				var cell2 = row.insertCell(2);
 				cell2.innerHTML = dateString
 				
@@ -138,9 +146,10 @@
 				
 				button.className = "fa-solid fa-message fa-2xl chatButton"
 				
-				button.id = "join";
 				button.chatId = chat.id;
 				button.onclick = enterChat;
+				button.style.background = 'white'
+				button.style.color = '#20537A'
 				cell3.appendChild(button);
     			cell3.style.textAlign = 'center'
     		})

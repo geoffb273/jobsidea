@@ -81,6 +81,7 @@ button {
 	padding-left: 10px;
 	padding-right: 10px;
 	margin-top: 5px;
+	overflow-y: auto;
 }
 
 .dropdown-btn {
@@ -92,6 +93,7 @@ button {
 	font-size: max(1vw, 12px);
 	overflow-x: auto;
 	height: 30px;
+	min-height: 30px;
 }
 
 #top > #logo {
@@ -131,7 +133,7 @@ button {
 <div id="top">
 	<a id="logo" href='/'>Staffer</a>
 	<div id="dropdown">
-		<input id="search" placeholder="Search" onkeyup="searchChange()"></input>
+		<input id="search" placeholder="Search" onkeyup="onChange()"></input>
 		<div id="results"></div>
 	</div>
 	<div id="space"></div>
@@ -142,12 +144,26 @@ button {
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
-	var searchChange = function() {
+	var searches = []
+	var timers = []
+	var onChange = function() {
 		var searchEl = document.getElementById("search")
+		
+		var search = searchEl.value;
+		searches.push(search)
+		var id = setTimeout(searchChange, 500);
+		timers.push(id)
+	}
+	var searchChange = function() {
 		var resultsEl = document.getElementById("results")
 		var searchResults = []
 		resultsEl.innerHTML = ""
-		var search = searchEl.value;
+		console.log(searches)
+		for (var i = 0; i < timers.length; i++) {
+			clearTimeout(timers[i])
+		}
+		var search = searches.pop()
+		searches = []
 		if (search && search.length > 0) {
 			$.get("/search-users/" + search, function(data) {
 				for (var i = 0; i < data.length; i++) {
@@ -162,7 +178,6 @@ button {
 					var user = searchResults[i]
 					var div = document.createElement("div")
 					div.username = user.username
-					
 					div.onclick = (e) => {
 						var username = e.target.username? e.target.username: e.target.attributes.username.value
 						window.location.href = "/profile/" + username
@@ -184,20 +199,30 @@ button {
 						span.style.marginBottom = '-10px'
 						div.appendChild(span)
 					}
+					var dText = document.createElement('div')
+					dText.style.textAlign = 'center'
+					dText.style.width = '90%'
+					dText.username = user.username
 					var text = document.createElement('p')
+					dText.append(text)
 					text.username = user.username
-					text.innerHTML = user.username
+					text.innerHTML = user.name + '<i style="color: gray">@' + user.username + '</i>'
 					text.style.marginLeft = '5px'
 					text.style.marginBottom = '0'
-					div.appendChild(text)
+					text.style.marginTop = '0'
+					text.style.fontSize = 'max(1.5vw, 16px)'
+					
+					text.style.textAlign = 'center'
+					div.appendChild(dText)
 					div.className = "dropdown-btn"
 					resultsEl.appendChild(div)
 					resultsEl.style.display = "block"
 				}
-				
+				allow = true
 			})
 		} else {
 			resultsEl.style.display = "none"
+			allow = true
 		}
 		
 	}

@@ -57,7 +57,14 @@ var getUser = function(username) {
 }
 
 var getUsers = function(search) {
-	return utils.getList(db, "Users", {username: new RegExp(search, "gi")}, {username: 1}, 10)
+	var find = {}
+	var arr = []
+	arr.push({username: new RegExp("^" + search, "i")})
+	arr.push({name: new RegExp("^" + search, "i")})
+	arr.push({firstname: new RegExp("^" + search, "i")})
+	arr.push({lastname: new RegExp("^" + search, "i")})
+	find["$or"] = arr
+	return utils.getList(db, "Users", find, {username: 1}, 10)
 }
 
 

@@ -4,11 +4,12 @@ var createPost = function(document, post, func) {
 	
 	var div = document.createElement("div")
 	div.style.display = "flex"
+	div.style.paddingTop = '10px'
 	div.onclick = () => func(post.id)
 	div.style.background = "white"
 	div.style.marginLeft = "5vw"
 	div.style.width = "max(400px, 60vw)"
-	div.style.border = "1px lightgray solid"
+	div.style.border = "1px #38698E solid"
 	var left = document.createElement("div")
 	//left.style.width = "max(8vw, 40px)"
 	var img = document.createElement("div")
