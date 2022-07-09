@@ -83,26 +83,6 @@
 		z-index: -1;
 	}
 	
-	@media only screen and (max-width: 700px) {
-		#header {
-			margin-left: 0;
-			width: 100vw;
-			margin-right: 0;
-		}
-		
-		#profilePic {
-			height: 20vmin;
-			width: 20vmin;
-			min-width: 25px;
-			min-height: 25px;
-			margin-top: 7.5vmin;
-		}
-		#header > #rightheader {
-			right: 1vw;
-		}
-		
-	}
-	
 	#reviews-div {
 		max-width: 100vw;
 		height: max(23vh, 135px);
@@ -155,6 +135,64 @@
 		color: gray;
 	}
 	
+	#review-popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 2;
+		background: rgba(0, 0, 0, 50%);
+	}
+	
+	#review-form {
+		border-radius: 20px;
+		margin-top: 25vh;
+		margin-left: 25vw;
+		padding: 5vh 2.5vw 5vh 2.5vw;
+		width: 45vw;
+		height: 40vh;
+		background: #B6D0E4;
+	}
+	
+	#review-input {
+		width: 38vw;
+		height: 30vh;
+		border-radius: 20px;
+		padding: 2.5vh 1vw 2.5vh 1vw;
+	}
+	
+	#review-submit {
+		width: 38vw;
+		background: white;
+		color: #20537A;
+		margin-top: 5vh;
+		padding: 2.5vh 1vw 2.5vh 1vw;
+	}
+	
+	@media only screen and (max-width: 700px) {
+		#header {
+			margin-left: 0;
+			width: 100vw;
+			margin-right: 0;
+		}
+		
+		#profilePic {
+			height: 20vmin;
+			width: 20vmin;
+			min-width: 25px;
+			min-height: 25px;
+			margin-top: 7.5vmin;
+		}
+		#header > #rightheader {
+			right: 1vw;
+		}
+		
+	}
+	
+	
+	
 	
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=0.8">
@@ -186,7 +224,6 @@
 	getProfilePic()
 </script>
 
-
 <div id="header">
 	<img id="profilePic"></img>
 	<div id="info">
@@ -212,13 +249,18 @@
 				<input type="submit" id="chatButton" value="Chat">
 			</form>
 			
-			<button id="reviewButton">Review</button>
+			<button id="reviewButton" onclick='createReview()'>Review</button>
 		<%}%>
 	</div>
 	
 </div>
 <div id="reviews-div"></div>
-
+<div id='review-popup' onclick='closeReview(this)'>
+	<form id='review-form'>
+		<textarea name='review' id='review-input' type='paragraph' required></textarea><br>
+		<input type='submit' value='Submit' id='review-submit'>
+	</form>
+</div>
 <script>
 	var reviews = [];
 	var username = '<%- username%>'
@@ -306,6 +348,18 @@
 	}
 	
 	updateReviews();
+	
+	var popup = document.getElementById('review-popup')
+	
+	var createReview = function() {
+		popup.style.display = 'block'
+	}
+	
+	window.onclick = function(e) {
+		if (event.target == popup) {
+			popup.style.display = 'none'
+		}
+	}
 </script>
 
 <% if(user) { %>

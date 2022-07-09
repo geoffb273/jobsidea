@@ -4,9 +4,10 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 var db
+
 var connect = async function() {
 	var url = process.env.MONGODB_URL
-	db = await utils.connect(url)//"mongodb+srv://geoff:brandt@cluster0.znowy.mongodb.net/jobsidea?retryWrites=true&w=majority")
+	db = await utils.connect(url)
 	console.log("Connected to database")
 }
 

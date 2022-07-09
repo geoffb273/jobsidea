@@ -103,8 +103,6 @@
 <script src = "../post.js"></script>
 <script>
 	var post = JSON.parse('<%- post %>')
-	var username = '<%- username %>'
-	var name = '<%- name %>'
 	var postEl = document.getElementById("post")
 	var commentsDiv = document.getElementById("commentsDiv")
 	var el = createPost(document, post, () => {})
@@ -143,7 +141,7 @@
 				img.style.borderRadius = "max(8vmin, 40px)"
 				img.style.margin = "20 20 20 20"
 				img.className = "profilePic"
-				img.innerHTML = "<a href='/profile/" + post.username 
+				img.innerHTML = "<a href='/profile/" + post.username
 					+ "' style='color:black'><i class='fa-solid fa-user fa-2xl' style='margin-top: 10px'></i></a>"
 				left.appendChild(img)
 				$.get("/user-pic/" + comment.author, function(data) {
@@ -200,8 +198,6 @@
 			}
 			var comment = {
 				content: c,
-				author: username,
-				name: name,
 				postId: post.id,
 				created: new Date().toISOString()
 			}

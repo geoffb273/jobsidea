@@ -33,6 +33,11 @@ var handleLogin = function(req, res) {
 				req.session.username = user.username;
 				req.session.user = user
 				req.session.type = user.type;
+				if (user.type == "User") {
+					req.session.name = user.firstname + " " + user.lastname
+				} else {
+					req.session.name = user.name
+				}
 				res.redirect("/profile");
 			} else {
 				res.redirect("/login");
@@ -90,6 +95,14 @@ var handleSignUpUser = function(req, res) {
 	
 	db.addUser(username, password, firstname, lastname, email, phone/*, birthday*/).then(_ => {
 		req.session.username = username;
+		req.session.user = {
+			username: username,
+			firstname: firstname,
+			lastname: lastname,
+			email: email,
+			phone: phone
+		}
+		req.session.name = firstname + " " + lastname
 		req.session.type = "User";
 		res.redirect("/profile");
 	}).catch(_ => {
@@ -114,6 +127,17 @@ var handleSignUpRestaurant = function(req, res) {
 	var phone = req.body.phone;
 	db.addRestaurant(username, password, name, email, street, city, state, zipCode, phone).then(_ => {
 		req.session.username = username;
+		req.session.user = {
+			username: username,
+			name: name,
+			email: email,
+			phone: phone,
+			street: street,
+			city: city,
+			state: state,
+			zipCode: zipCode
+		}
+		req.session.name = name
 		req.session.type = "Restaurant";
 		res.redirect("/profile?username=" + username);
 	}).catch(_ => {
@@ -335,7 +359,7 @@ var getExperiencePage = function(req, res) {
 	if (req.session.experience) {
 		if (req.session.experience[username]) {
 			var experience = req.session.experience[username]
-			res.render('experiencepage.ejs', {experience: JSON.stringify(experience), username: username})
+			res.render('experiencepage.ejs', {experience: JSON.stringify(experience)})
 			return
 		}
 	}
@@ -366,6 +390,7 @@ var getExperiencePage = function(req, res) {
 var putExperience = function(req, res) {
 	var job = req.body.job
 	var username = req.session.username
+	job.username = username
 	if (req.session.experience) {
 		if (req.session.experience[username]) {
 			if(req.session.experience[username][job.restaurant]) {
@@ -389,11 +414,12 @@ var deleteExperience = function(req, res) {
 		if (req.session.experience[username]) {
 			if (req.session.experience[username][restaurant]) {
 				var exp = req.session.experience[username][restaurant]
-				var newExp = exp.filter(item => {item.role != role})
+				var newExp = exp.filter(item => {return item.role != role})
 				if (newExp.length > 0) {
 					req.session.experience[username][restaurant] = newExp
 				} else {
 					delete req.session.experience[username][restaurant]
+					
 				}
 			}
 		}
@@ -412,6 +438,11 @@ var getReviews = function(req, res) {
 
 var addReview = function(req, res) {
 	var review = req.body.review
+	var user = req.session.user
+	
+	review.author = user.username
+	var name = user.name ? user.name : user.firstname + " " + user.lastname
+	review.name = name
 	db.putReview(review).then(_ => {
 		res.send("Done")
 	})
@@ -504,15 +535,8 @@ var getPost = function(req, res) {
 
 var getPostPage = function(req, res) {
 	var id = req.params.id
-	var username = req.session.username
-	var name
-	if (req.session.type == "User") {
-		name = req.session.user.firstname + " " + req.session.user.lastname
-	} else {
-		name = req.session.user.name
-	}
 	db.getPost(id).then(post => {
-		res.render('postpage.ejs', {post: JSON.stringify(post), username: username, name: name})
+		res.render('postpage.ejs', {post: JSON.stringify(post)})
 	})
 }
 
@@ -633,6 +657,8 @@ var getUserProfilePic = function(req, res) {
 
 var addComment = function(req, res) {
 	var comment = req.body.comment
+	comment.author = req.session.username
+	comment.name = req.session.name
 	var post = req.body.post
 	db.addComment(comment).then(_ => {
 		var reciever = post.username
