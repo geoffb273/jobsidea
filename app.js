@@ -79,10 +79,11 @@ app.get('/stars', routes.stars);
 
 //Posts
 app.get('/posts', routes.posts)
-app.get('/posts/:id', routes.post)
+app.get('/post/:id', routes.post)
 app.get('/post-page/:id', routes.post_page)
 app.post('/posts', routes.add_post)
 app.delete('/posts/:id', routes.delete_post)
+app.get('/posts/:username', routes.restaurant_posts)
 
 //Pics
 app.get('/user-pic/:username', routes.user_pic)

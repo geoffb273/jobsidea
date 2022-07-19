@@ -196,7 +196,7 @@
 	
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=0.8">
-
+<title><%- name%></title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <head>
 	<%- include('css/style'); %>
@@ -256,9 +256,10 @@
 </div>
 <div id="reviews-div"></div>
 <div id='review-popup' onclick='closeReview(this)'>
-	<form id='review-form'>
+	<form id='review-form' method='POST' action='/review'>
 		<textarea name='review' id='review-input' type='paragraph' required></textarea><br>
 		<input type='submit' value='Submit' id='review-submit'>
+		<input type='hidden' name='username' value=<%= username%> >
 	</form>
 </div>
 <script>
@@ -280,6 +281,11 @@
 	var updateReviews = function() {
 		var reviewsDiv = document.getElementById("reviews-div")
 		$.get("/reviews?username=" + username, function(data) {
+			console.log(data)
+			if (!data) {
+				
+				return
+			}
 			data.forEach(function(review) {
 				if (!reviews.includes(review.id)) {
 					reviews.push(review.id);
@@ -290,11 +296,12 @@
 			});
 		});
 		
-		$.get("/stars?username=" + username, function(data) {
+		/*$.get("/stars?username=" + username, function(data) {
+			console.log(data + " Stars")
 			if (data && data != "undefined") {
-				rating.innerHTML = data + " stars";
+				//rating.innerHTML = data + " stars";
 			}
-		});
+		});*/
 	}
 	
 	var makeReview = function(review) {

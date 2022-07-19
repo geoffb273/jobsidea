@@ -437,14 +437,18 @@ var getReviews = function(req, res) {
 }
 
 var addReview = function(req, res) {
-	var review = req.body.review
 	var user = req.session.user
+	var username = req.body.username
+	var review = {
+		content: req.body.review,
+		username: username,
+		created: new Date().toISOString(),
+		author: req.session.username,
+		name: user.name ? user.name : user.firstname + " " + user.lastname
+	}
 	
-	review.author = user.username
-	var name = user.name ? user.name : user.firstname + " " + user.lastname
-	review.name = name
 	db.putReview(review).then(_ => {
-		res.send("Done")
+		res.redirect("/profile/" + username)
 	})
 }
 
@@ -537,6 +541,13 @@ var getPostPage = function(req, res) {
 	var id = req.params.id
 	db.getPost(id).then(post => {
 		res.render('postpage.ejs', {post: JSON.stringify(post)})
+	})
+}
+
+var getRestaurantPosts = function(req, res) {
+	var username = req.params.username
+	db.getPostsByRestaurant(username).then(posts => {
+		res.send(posts)
 	})
 }
 
@@ -722,6 +733,7 @@ var routes = {
 	delete_post: deletePost,
 	post: getPost,
 	post_page: getPostPage,
+	restaurant_posts: getRestaurantPosts,
 	//Pic
 	pic: getProfilePic,
 	handle_pic: uploadProfilePic,
