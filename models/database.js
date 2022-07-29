@@ -5,10 +5,6 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 var db
 
-/*TWILIO_ACCOUNT_SID="AC6fce80df7e4452c994a400eab92efa8d"
-TWILIO_AUTH_TOKEN="b172b424ea0673bcb6f1f8c102ffe56b"
-MONGODB_URL="mongodb+srv://geoff:brandt@cluster0.znowy.mongodb.net/jobsidea?retryWrites=true&w=majority"*/
-
 
 
 var connect = async function() {
@@ -172,7 +168,7 @@ var getNotifications = async function(username, limit, callback) {
 }
 
 var putNotification = function(username, sender, msg, type, settings) {
-	var url = "http://localhost:8000/chats"
+	var url = "https://stafferjobs.herokuapp.com/chats"
 	if ((!settings) || (settings && settings.textNotification)) {
 		sendText(username, msg + " " + url)
 	}
