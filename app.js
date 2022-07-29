@@ -191,7 +191,7 @@ io.on('connection', (socket) => {
 
 
 /* Run the server */
-http.listen(proccess.env.PORT || 8000, function(){  
+http.listen(process.env.PORT || 8000, function(){  
 	routes.connect();
     console.log('listening on :8000');
 });
