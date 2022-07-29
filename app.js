@@ -95,6 +95,10 @@ app.delete('/pics/:username/:id', routes.delete_pic)
 app.get('/comments/:postId', routes.comments)
 app.post('/comments', routes.add_comment)
 
+//Settings
+app.get('/settings', routes.settings)
+app.post('/settings', routes.change_settings)
+
 /*var sendMail = async function(send, rec, type) {
 	var sender = await db.getUser(send)
 	var reciever = await db.getUser(rec)

@@ -25,7 +25,7 @@ var logout = function(req, res) {
 var handleLogin = function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = req.body.password;
-	db.getUser(username).then(snapshot => {
+	db.getUser(username).then(async(snapshot) => {
 		if (snapshot) {
 			var user = snapshot;
 			var userPassword = user.password;
@@ -37,6 +37,15 @@ var handleLogin = function(req, res) {
 					req.session.name = user.firstname + " " + user.lastname
 				} else {
 					req.session.name = user.name
+					req.session.zipCode = user.zipCode
+				}
+				var settings = await db.getSettings(username)
+				req.session.settings = settings ? settings : {
+					username: username, 
+					emailNotification: true, 
+					textNotification: true,
+					zipCode: "08043",
+					radius: 10
 				}
 				res.redirect("/profile");
 			} else {
@@ -91,9 +100,19 @@ var handleSignUpUser = function(req, res) {
 	var lastname = req.body.lastname;
 	var email = req.body.email;
 	var phone = req.body.phone;
+	var zipCode = req.body.zipCode;
 	/*var birthday = req.body.birthday;*/
-	
-	db.addUser(username, password, firstname, lastname, email, phone/*, birthday*/).then(_ => {
+	var p = []
+	p.push(db.changeSettings(username, {
+			zipCode: zipCode,
+			username: username,
+			emailNotification: true,
+			textNotification: true,
+			radius: 10
+		})
+	)
+	p.push(db.addUser(username, password, firstname, lastname, email, phone/*, birthday*/))
+	Promise.all(p).then(_ => {
 		req.session.username = username;
 		req.session.user = {
 			username: username,
@@ -104,6 +123,7 @@ var handleSignUpUser = function(req, res) {
 		}
 		req.session.name = firstname + " " + lastname
 		req.session.type = "User";
+		
 		res.redirect("/profile");
 	}).catch(_ => {
 		res.redirect("/signup-user");
@@ -125,7 +145,17 @@ var handleSignUpRestaurant = function(req, res) {
 	var state = req.body.state;
 	var zipCode = req.body.zipCode;
 	var phone = req.body.phone;
-	db.addRestaurant(username, password, name, email, street, city, state, zipCode, phone).then(_ => {
+	var p = []
+	p.push(db.changeSettings(username, {
+			zipCode: zipCode,
+			username: username,
+			emailNotification: true,
+			textNotification: true,
+			radius: 10
+		})
+	)
+	p.push(db.addRestaurant(username, password, name, email, street, city, state, zipCode, phone))
+	Promise.all(p).then(_ => {
 		req.session.username = username;
 		req.session.user = {
 			username: username,
@@ -447,7 +477,9 @@ var addReview = function(req, res) {
 		name: user.name ? user.name : user.firstname + " " + user.lastname
 	}
 	
-	db.putReview(review).then(_ => {
+	db.putReview(review).then(async (_) => {
+		var settings = await db.getSettings(username)
+		db.putNotification(username, review.author, review.author + " has posted a review", "Review", settings)
 		res.redirect("/profile/" + username)
 	})
 }
@@ -478,18 +510,13 @@ var getPosts = async function(req, res) {
 	var zipCode = req.query.zipCode ? req.query.zipCode : undefined
 	var radius = req.query.radius ? req.query.radius : 10
 	var filter = req.query.filter ? req.query.filter : undefined
-	var key = "IHIYP8RAX9QB541A2VBS"
-	var url = "https://api.zip-codes.com/ZipCodesAPI.svc/1.0/FindZipCodesInRadius?zipcode=" + zipCode + "&maximumradius=" + radius + "&country=US&key=" + key
-	var zipCodes = undefined
+	
+	var zipCodes = []
+	
 	/*if (zipCode && req.session.zips && req.session.zips[zipCode] && req.session.zips[zipCode][radius]) {
 		zipCodes = req.session.zips[zipCode][radius]
 	} else if(zipCode) {
-		zipCodes = []
-		var data = await axios.get(url)
-		var list = data.data.DataList
-		for (var i = 0; i < list.length; i++) {
-			zipCodes.push(list[i].Code)
-		}
+		zipCodes = await getZipCodes(zipCode, radius)
 		if (req.session.zips) {
 			if (req.session.zips[zipCode]) {
 				req.session.zips[zipCode][radius] = zipCodes
@@ -544,17 +571,76 @@ var getPostPage = function(req, res) {
 	})
 }
 
+var createPost = function(req, res) {
+	var content = req.body.content
+	var username = req.session.username
+	var name = req.session.name
+	var type = req.body.type
+	var zipCode = req.session.zipCode
+	var expiration = req.body.expiration
+	var post = {
+		content: content,
+		username: username,
+		name: name,
+		created: new Date().toISOString(),
+		type: type,
+		zipCode: zipCode,
+		expiration: expiration
+	}
+	
+	db.putPost(post).then(async (_) => {
+		res.redirect('/profile')
+		var zipCodes = [zipCode]
+		var found = false
+		/*if (req.session.zips) {
+			if (req.session.zips[zipCode]) {
+				if (req.session.zips[zipCode][10]) {
+					zipCodes = req.session.zips[zipCode][10];
+					found = true
+				}
+			}
+		}
+		if (!found) {
+			zipCodes = await getZipCodes(zipCode)
+			if (req.session.zips) {
+				if (req.session.zips[zipCode]) {
+					req.session.zips[zipCode][10] = zipCodes
+				} else {
+					req.session.zips[zipCode] = {}
+					req.session.zips[zipCode][10] = zipCodes
+				}
+			} else {
+				req.session.zips = {}
+				req.session.zips[zipCode] = {}
+				req.session.zips[zipCode][10] = zipCodes
+			}
+		}*/
+		var users = await db.getUsersByLocation(zipCodes)
+		for (var user in users) {
+			db.putNotification(user.username, username, username + " in your area has a new post.", "New Post", user.settings)
+		}
+	})
+	
+}
+
+var getZipCodes = async function(zipCode, radius = "10") {
+	var key = "IHIYP8RAX9QB541A2VBS"
+	var url = "https://api.zip-codes.com/ZipCodesAPI.svc/1.0/FindZipCodesInRadius?zipcode=" + zipCode + "&maximumradius=" + radius + "&country=US&key=" + key
+	zipCodes = [zipCode]
+	var data = await axios.get(url)
+	var list = data.data.DataList
+	for (var i = 0; i < list.length; i++) {
+		zipCodes.push(list[i].Code)
+	}
+	return zipCodes
+}
+
+
+
 var getRestaurantPosts = function(req, res) {
 	var username = req.params.username
 	db.getPostsByRestaurant(username).then(posts => {
 		res.send(posts)
-	})
-}
-
-var newPost = function(req, res) {
-	var post = req.body.post
-	db.putPost(post).then(_ => {
-		res.send("Done")
 	})
 }
 
@@ -671,11 +757,12 @@ var addComment = function(req, res) {
 	comment.author = req.session.username
 	comment.name = req.session.name
 	var post = req.body.post
-	db.addComment(comment).then(_ => {
+	db.addComment(comment).then(async(_) => {
 		var reciever = post.username
 		var sender = comment.author
 		if (reciever != sender) {
-			db.putNotification(reciever, sender, sender + " commented on your post.", "Comment")
+			var settings = await db.getSettings(reciever)
+			db.putNotification(reciever, sender, sender + " commented on your post.", "Comment", settings)
 		}
 		res.send("Done")
 	})
@@ -685,6 +772,25 @@ var getComments = function(req, res) {
 	var postId = req.params.postId
 	db.getComments(postId).then(comments => {
 		res.send(comments)
+	})
+}
+
+
+var getSettingsPage = function(req, res) {
+	var username = req.session.username
+	var settings = req.session.settings
+	var isUser = req.session.type == "User"
+	res.render('settingspage.ejs', {username: username, settings: JSON.stringify(settings), isUser: isUser})
+	
+}
+
+var changeSettings = function(req, res) {
+	var settings = req.body
+	delete settings._id 
+	var username = req.session.username
+	req.session.settings = settings
+	db.changeSettings(username, settings).then(_ => {
+		res.send("Done")
 	})
 }
 
@@ -728,7 +834,7 @@ var routes = {
 	//Posts
 	home: getHome,
 	posts: getPosts,
-	add_post: newPost,
+	add_post: createPost,
 	update_post: updatePost,
 	delete_post: deletePost,
 	post: getPost,
@@ -742,6 +848,9 @@ var routes = {
 	//Comment
 	add_comment: addComment,
 	comments: getComments,
+	//Settings
+	settings: getSettingsPage,
+	change_settings: changeSettings
 };
 
 module.exports = routes;

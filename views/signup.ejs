@@ -2,15 +2,19 @@
 <style>
 	body {
 		text-align: center;
-		font-family: Copperplate; 
-		background: #eeeeee;
-		justify-content: center
+		font-family: Helvetica;
+		justify-content: center;
+		background-image: linear-gradient(to bottom, #5481A4, #81A8C6, white);
+		padding: 0;
+		margin: 0;
 	}
 	#title {
-		font-size: max(6vw, 48px);
+		font-size: max(5.5vw, 48px);
 		width; 100%;
-		border-bottom: solid;
-		background: white;
+		border-bottom: solid black;
+		color: white;
+		background-image: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		font-family: Monaco;
 	}
 	#container {
 		left: 40vw;
@@ -33,6 +37,8 @@
 		flex-direction: column;
 		justify-content: space-around;
 		align-items: center;
+		border: 1px solid #20537A;
+		box-shadow: 5px 5px 10px #20537A;
 	}
 	
 	#signup > input {
@@ -50,8 +56,12 @@
 		border-radius: 1vmin;
 		margin: 0.5vmin;
 		font-size: 3vmin;
-		
-		border: 0.5px solid;
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		color: white;
+	}
+	
+	#signup > button:hover {
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
 	}
 	
 	@media only screen and (max-width: 700px) {
@@ -78,6 +88,7 @@
 	}
 
 </style>
+<title>Sign Up</title>
 <p id="title">Staffer</p>
 <div id="container">
 <form id="signup" action="/handle-signup-user" method="post">
@@ -87,6 +98,7 @@
 	<input name='lastname' placeholder="Last Name" required><br>
 	<input name='email' placeholder="Email" type="email" required><br>
 	<input name='phonenumber' placeholder="Phone Number" type="tel" required><br>
+	<input name='zipCode' placeholder="Zip Code" required><br>
 	<button type="submit">Sign Up</button>
 </form>
 <div>

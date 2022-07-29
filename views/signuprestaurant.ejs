@@ -1,22 +1,26 @@
 <style>
 	body {
 		text-align: center;
-		font-family: Copperplate; 
-		background: #eeeeee;
-		justify-content: center
+		font-family: Helvetica;
+		justify-content: center;
+		background-image: linear-gradient(to bottom, #5481A4, #81A8C6, white);
+		padding: 0;
+		margin: 0;
 	}
 	#title {
-		font-size: max(6vw, 48px);
+		font-size: max(5.5vw, 48px);
 		width; 100%;
-		border-bottom: solid;
-		background: white;
+		border-bottom: solid black;
+		color: white;
+		background-image: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		font-family: Monaco;
 	}
 	#container {
-		
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		
 	}
 	
 	#signup {
@@ -30,7 +34,8 @@
 		justify-content: space-around;
 		flex-direction: column;
 		align-items: center;
-		border: 0.5px solid;
+		border: 1px solid #20537A;
+		box-shadow: 5px 5px 10px #20537A;
 	}
 	
 	#signup > input {
@@ -60,10 +65,14 @@
 	
 	#signup > button {
 		border-radius: 1vmin;
-		border: none; 
 		margin: 0.5vmin;
 		font-size: 2.5vmin;
-		
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		color: white;
+	}
+	
+	#signup > button:hover {
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
 	}
 	
 	@media only screen and (max-width: 700px) {
@@ -83,7 +92,6 @@
 		
 		#signup > button {
 			border-radius: 1vmin;
-			border: none; 
 			margin: 0.25vh;
 			font-size: max(16px, 4vh);
 			border: 0.5px solid;
@@ -104,9 +112,9 @@
 		}
 	}
 
-
-
 </style>
+<title>Sign Up</title>
+
 <p id="title">Staffer</p>
 <div id="container">
 <form id="signup" action="/handle-signup-restaurant" method="post">

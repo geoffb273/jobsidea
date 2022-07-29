@@ -1,18 +1,88 @@
 
 <style>
-#posts {
-	margin-left: 15vw;
-	overflow-y: auto;
-}
+	#posts {
+		margin-left: 15vw;
+		overflow-y: auto;
+	}
+
+	#post-popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 2;
+		background: rgba(0, 0, 0, 50%);
+	}
+
+	#post-form {
+		border-radius: 20px;
+		margin-top: 25vh;
+		margin-left: 25vw;
+		padding: 5vh 2.5vw 5vh 2.5vw;
+		width: 45vw;
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		box-shadow: 5px 5px 10px #20537A;
+		border: 2px solid #20537A;
+	}
+	
+	#post-input {
+		width: 38vw;
+		height: 30vh;
+		border-radius: 20px;
+		padding: 2.5vh 1vw 2.5vh 1vw;
+	}
+	
+	#post-submit {
+		width: 38vw;
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		color: white;
+		font-size: min(16px, 2.5vw);
+		margin-top: 5vh;
+		padding: 2.5vh 1vw 2.5vh 1vw;
+	}
+	
+	#post-submit:hover {
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+	}
+	
+	#post-type {
+		
+	}
+	
+	#post-expiration {
+		
+	}
 
 @media only screen and (max-width: 700px) {
 	#posts {
 		margin-left: 0;
 	}
+	#post-form {
+		margin-left: 10vw;
+		width: 80vw;
+	}
+	#post-input {
+		width: 70vw;
+	}
 }
 </style>
 
 <div id="posts"></div>
+<div id="post-popup">
+	<form id='post-form' method='POST' action='/posts'>
+		<textarea name='content' id='post-input' type='paragraph' required></textarea><br>
+		<select id="post-type" name="type" required>
+			<option value='Bus Boy'>Bus Boy</option>
+			<option value='Waiter'>Waiter</option>
+			<option value='Washer'>Washer</option>
+			<option value='Other'>Other</option>
+		</select>
+		<input name="expiration" id="post-expiration" type="date" required/><br>
+		<input type='submit' value='Submit' id='post-submit'>
+	</form>
+</div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
@@ -121,5 +191,10 @@ var createPost = function(document, post, func) {
 }
 
 getPosts()
+
+var postPopup = document.getElementById('post-popup')
+var openCreatePost = function() {
+	postPopup.style.display = 'block'
+}
 
 </script>

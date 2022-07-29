@@ -24,6 +24,7 @@
 		background: white;
 		border-radius: 5vmin;
 		margin-left: 10vw;
+		height: 220px;
 	}
 	
 	#header > #info > #name {
@@ -40,32 +41,42 @@
 		flex-direction: column;
 		position: absolute;
 		right: 10vw;
+		height: 220px;
 	}
-	#header > #rightheader > button {
-		background: black;
+	#header > #rightheader > button {	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		color: white;
 		border-radius: 5vmin;
 		margin-right: 1.5vw;
 		font-size: max(12px, 2vmin);
 	}
 	
+	#header > #rightheader > button:hover {
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+	}
+	
 	#header > #rightheader > form > #chatButton {
-		background: black;
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		color: white;
 		border-radius: 5vmin;
 		margin-right: 1.5vw;
 		font-size: max(16px, 2vmin);
-		margin-top: max(12.5vmin, 40px);
+		margin-top: 75px;
+	}
+	
+	#header > #rightheader > form > #chatButton:hover {
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
 	}
 	
 	#header > #rightheader > #upload {
-		margin-top: max(10vmin, 40px);
+		margin-top: 75px;
 	}
 	
 	label {
 		margin-top: max(10vmin, 40px);
 		cursor: pointer;
-		background: black;
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		border: outset lightgray;
 		color: white;
 		padding-right: 10px;
 		padding-left: 10px;
@@ -76,6 +87,10 @@
 		padding-top: 2.5px;
 		padding-bottom: 2.5px;
 	}
+	
+	label:hover {
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+	}
 
 	#upload-photo {
 		opacity: 0;
@@ -85,8 +100,7 @@
 	
 	#reviews-div {
 		max-width: 100vw;
-		height: max(23vh, 135px);
-		max-height: 170px;
+		height: 170px;
 		overflow-x: auto;
 		display: flex;
 		font-size: 14px;
@@ -100,7 +114,7 @@
 		width: max(20vw, 300px);
 		min-width: max(25vw, 300px);
 		/*border-radius: 20px;*/
-		height: max(20vh, 115px);
+		height: 150px;
 		max-height: 150px;
 		margin-bottom: 10px;
 		
@@ -153,7 +167,9 @@
 		padding: 5vh 2.5vw 5vh 2.5vw;
 		width: 45vw;
 		height: 40vh;
-		background: #B6D0E4;
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		box-shadow: 5px 5px 10px #20537A;
+		border: 2px solid #20537A;
 	}
 	
 	#review-input {
@@ -165,10 +181,24 @@
 	
 	#review-submit {
 		width: 38vw;
-		background: white;
-		color: #20537A;
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		color: white;
 		margin-top: 5vh;
 		padding: 2.5vh 1vw 2.5vh 1vw;
+	}
+	
+	#review-submit:hover {
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+	}
+	
+	#create-post {
+		position: absolute;
+		bottom: 20px;
+		right: 20px;
+		text-decoration: none;
+		color: #38698E;
+		font-size: 24px;
+		
 	}
 	
 	@media only screen and (max-width: 700px) {
@@ -183,12 +213,21 @@
 			width: 20vmin;
 			min-width: 25px;
 			min-height: 25px;
-			margin-top: 7.5vmin;
+			margin-top: 20px;
 		}
 		#header > #rightheader {
 			right: 1vw;
+			height: 175px;
 		}
-		
+		#header {
+			height: 175px;
+		}
+		#header > #rightheader > #upload {
+			margin-top: 60px;
+		}
+		#header > #rightheader > form > #chatButton {
+			margin-top: 60px;
+		}
 	}
 	
 	
@@ -239,10 +278,18 @@
 	</div>
 	<div id="rightheader">
 		<%if (own) {%>
+				<span style='position:absolute;right:20px;top:20px;'>
+					<a href='/settings' style='text-decoration:none;color:#38698E;'>
+						<i class="fa-solid fa-gear fa-lg"></i>
+					</a>
+				</span>
 				<form id="upload" method="post" enctype="multipart/form-data">
 					<label for="upload-photo">Edit Profile Pic<input type="file" id="upload-photo" name="photo" accept="image/*" /></label>
 				</form>
 				<button id="logout" onclick="window.location.href='/login'">Log Out</button>
+				<%if (!user) { %>
+					<a id="create-post" onclick="openCreatePost()"><i class="fa-regular fa-square-plus"></i></a>
+				<%} %>
 			
 		<%} else {%>
 			<form action="/chats/<%- username %>" method="post">
@@ -255,7 +302,7 @@
 	
 </div>
 <div id="reviews-div"></div>
-<div id='review-popup' onclick='closeReview(this)'>
+<div id='review-popup'>
 	<form id='review-form' method='POST' action='/review'>
 		<textarea name='review' id='review-input' type='paragraph' required></textarea><br>
 		<input type='submit' value='Submit' id='review-submit'>
@@ -281,14 +328,12 @@
 	var updateReviews = function() {
 		var reviewsDiv = document.getElementById("reviews-div")
 		$.get("/reviews?username=" + username, function(data) {
-			console.log(data)
 			if (!data) {
-				
 				return
 			}
 			data.forEach(function(review) {
-				if (!reviews.includes(review.id)) {
-					reviews.push(review.id);
+				if (!reviews.includes(review._id)) {
+					reviews.push(review._id);
 					var reviewDiv = makeReview(review)
 					reviewsDiv.appendChild(reviewDiv)
 				}
@@ -317,9 +362,12 @@
 		
 		center.style.display = "flex"
 		center.style.justifyContent = "center"
-		center.style.marginTop = "max(5vh, 30px)"
+		center.style.marginTop = "max(3vh, 20px)"
 		center.style.marginLeft = "10px"
 		center.style.marginRight = "10px"
+		center.style.maxHeight = "75px"
+		center.style.paddingRight = "10px"
+		center.style.overflowY = "auto"
 		
 		bottom.className = "bottom-review"
 		
@@ -365,6 +413,8 @@
 	window.onclick = function(e) {
 		if (event.target == popup) {
 			popup.style.display = 'none'
+		} else if(event.target == postPopup) {
+			postPopup.style.display = 'none'
 		}
 	}
 </script>

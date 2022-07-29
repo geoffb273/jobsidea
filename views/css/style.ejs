@@ -5,14 +5,7 @@ body {
 	
 	font-family: Helvetica;
 	margin: 0;
-	/*background-image:
-		linear-gradient(45deg, red 25%, transparent 25%), 
-		linear-gradient(135deg, red 25%, transparent 25%),
-		linear-gradient(45deg, transparent 75%, red 75%),
-		linear-gradient(135deg, white 75%, red 75%);
-	background-size: 100px 100px;
-	background-position:0 0, 50px 0, 50px -50px, 0px -50px;*/
-	background: #B6D0E4;
+	background-image: linear-gradient(to bottom, #5481A4, #81A8C6, white);
 }															/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 button {
 	font-family: Helvetica; 
@@ -30,7 +23,8 @@ button {
 	border-bottom: 1px solid black;
 	font-size: max(2.5vw, 23px);
 	z-index: 1;
-	background: #5481A4;
+	background-image: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+	//background: #5481A4;
 	/*border-style: none solid solid solid;
 	border-width: 4px;
 	border-color: black;*/
@@ -44,6 +38,11 @@ button {
 	min-height: 3vh;
 	
 	color: #20537A;
+}
+
+#top > button:hover {
+	color: white;
+	background: #20537A;
 }
 
 #top > #space {
@@ -78,16 +77,16 @@ button {
 	max-height: 150px;
 	border: 1px solid lightgray;
 	border-radius: 15px;
-	padding-left: 10px;
-	padding-right: 10px;
 	margin-top: 5px;
 	overflow-y: auto;
 }
+
 
 .dropdown-btn {
 	display: flex;
 	width: 100%;
 	padding-top: 5px;
+	padding-left: 10px;
 	padding-bottom: 5px;
 	border-bottom: 0.5px solid lightgray;
 	font-size: max(1vw, 12px);
@@ -96,14 +95,20 @@ button {
 	min-height: 30px;
 }
 
+.dropdown-btn:hover {
+	background: #B6D0E4;
+}
+
 #top > #logo {
 	margin: 10px 0px 10px 0.2vw;
 	width: 14vw;
-	color: white;
+	color: transparent;
 	font-family: Monaco;
 	font-weight: bolder;
 	text-decoration: none;
 	font-size: max(2.5vw, 24px);
+	background-image: linear-gradient(to bottom right, white, #B6D0E4);
+	background-clip: text;
 }
 
 @media only screen and (max-width: 700px) {

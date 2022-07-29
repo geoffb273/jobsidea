@@ -68,6 +68,10 @@ var getUsers = function(search) {
 	return utils.getList(db, "Users", find, {username: 1}, 10)
 }
 
+var getUsersByLocation = function(zipCode) {
+	
+} 
+
 
 var addRestaurant = async function(username, password, name, email, street, city, state, zipCode, phone) {
 	var p = []
@@ -161,9 +165,11 @@ var getNotifications = async function(username, limit, callback) {
 	callback(snapshot);
 }
 
-var putNotification = function(username, sender, msg, type) {
+var putNotification = function(username, sender, msg, type, settings) {
 	var url = "http://localhost:8000/chats"
-	sendText(username, msg + " " + url)
+	if ((!settings) || (settings && settings.textNotification)) {
+		sendText(username, msg + " " + url)
+	}
 	var notificationId = uuidv4();
 	var notificationObj = {
 		content: msg,
@@ -184,7 +190,8 @@ var getPostsByRestaurant = function(username) {
 
 var putPost = function(p) {
 	var date = new Date();
-	var expireDate = new Date().setTime(date.now() + p.time);
+	var expireDate = new Date(p.expiration)
+	console.log(expireDate)
 	var postId = uuidv4();
 	var postObj = {
 		created: date.toISOString(),
@@ -295,17 +302,13 @@ var addComment = function(comment) {
 	return utils.postItem(db, "Comments", c)
 }
 
-/*var putComment = function(postId, username, message) {
-	var time = (new Date()).toISOString();
-	var commentObj = {
-		author: username,
-		content: message,
-		created: time,
-		postId: postId
-	}
-	return utils.postItem(db, "Comments", commentObj);
-}*/
+var getSettings = function(username) {
+	return utils.getItem(db, "Settings", {username: username})
+}
 
+var changeSettings = function(username, settings) {
+	return utils.replaceItem(db, "Settings", {username: username}, settings)
+}
 
 module.exports = {
 	connect: connect,
@@ -348,5 +351,8 @@ module.exports = {
 	deleteProfilePic: deleteProfilePic,
 	//Comments
 	getComments: getComments,
-	addComment: addComment
+	addComment: addComment,
+	//Settings
+	getSettings: getSettings,
+	changeSettings: changeSettings
 };

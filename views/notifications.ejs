@@ -32,9 +32,9 @@
 		border-collapse: collapse;
 	}
 	.profilePic {
-		border-radius: 5vmin;
-		width: max(5vmin, 20px);
-		height: max(5vmin, 20px);
+		border-radius: max(5vmin, 30px);
+		width: max(5vmin, 30px);
+		height: max(5vmin, 30px);
 		font-size: max(2vmin, 16px);
 	}
 	.chatButton {
@@ -44,7 +44,13 @@
       	border-radius: 5vmin;
       	font-size: max(2vmin, 16px);
       	background: white;
+      	color: #20537A;
 	}
+	.chatButton:hover {
+		background: #20537A;
+		color: white;
+	}
+	
 	@media only screen and (max-width: 700px) {
 		#post {
 			margin-left: 1vw;
@@ -139,8 +145,6 @@
 					button.id = "join";
 					button.chatId = chatId
 					button.onclick = (e) => {window.location.href = "/chat/" + e.target.chatId}
-					button.style.background = 'white'
-					button.style.color = '#20537A'
 					cell3.appendChild(button);
 					cell3.style.textAlign = 'center'
     			}
