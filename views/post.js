@@ -63,8 +63,8 @@ var createPost = function(document, post, func) {
 	right.style.textAlign = "right"
 	var maxWidth = function(x) {
 		if (x.matches) {
-			div.style.width = "100vw"
-			div.style.marginLeft = "0"
+			div.style.width = "98vw"
+			div.style.marginLeft = "1vw"
 			center.style.width = "47vw"
 			right.style.width = "34vw"
 		} else {

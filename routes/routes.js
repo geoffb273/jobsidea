@@ -45,7 +45,7 @@ var handleLogin = function(req, res) {
 					emailNotification: true, 
 					textNotification: true,
 					zipCode: "08043",
-					radius: 10
+					radius: user.type == "User" ? undefined: 10
 				}
 				res.redirect("/profile");
 			} else {
@@ -617,7 +617,7 @@ var createPost = function(req, res) {
 		}*/
 		var users = await db.getUsersByLocation(zipCodes)
 		for (var user in users) {
-			db.putNotification(user.username, username, username + " in your area has a new post.", "New Post", user.settings)
+			db.putNotification(users[user].username, username, username + " in your area has a new post.", "New Post", users[user].settings)
 		}
 	})
 	

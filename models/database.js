@@ -15,7 +15,7 @@ var connect = async function() {
 
 var sendText = async function(rec, msg) {
 	var reciever = await getUser(rec)
-	if (reciever.phone) {
+	if (reciever && reciever.phone) {
 		client.messages.create({ 
 			body: msg,  
 			messagingServiceSid: 'MG633bfe4facc0db49a4d4543b93def291',
@@ -70,8 +70,8 @@ var getUsers = function(search) {
 	return utils.getList(db, "Users", find, {username: 1}, 10)
 }
 
-var getUsersByLocation = function(zipCode) {
-	
+var getUsersByLocation = function(zipCodes) {
+	return utils.getList(db, "Settings", {zipCode: {$in: zipCodes}}, {_id: 1})
 } 
 
 
@@ -162,13 +162,12 @@ var updateTime = function(chatId) {
 }
 
 var getNotifications = async function(username, limit, callback) {
-	
 	var snapshot = await utils.getList(db, "Notifications", {username: username}, {created: -1}, limit)
 	callback(snapshot);
 }
 
 var putNotification = function(username, sender, msg, type, settings) {
-	var url = "https://stafferjobs.herokuapp.com/chats"
+	var url = "https://stafferjobs.herokuapp.com/"
 	if ((!settings) || (settings && settings.textNotification)) {
 		sendText(username, msg + " " + url)
 	}
@@ -319,6 +318,7 @@ module.exports = {
 	getUser: getUser,
 	getUsers: getUsers,
 	addRestaurant: addRestaurant,
+	getUsersByLocation: getUsersByLocation,
 	//Chat + Messages
 	getChats: getChats,
 	getChat: getChat,
