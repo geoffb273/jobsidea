@@ -6,7 +6,7 @@ var createPost = function(document, post, func) {
 	div.style.display = "flex"
 	div.style.paddingTop = '10px'
 	div.onclick = () => func(post.id)
-	div.style.background = "white"
+	div.style.background = "radial-gradient(#cedde9, #81A8C6)"
 	div.style.marginLeft = "5vw"
 	div.style.width = "max(400px, 60vw)"
 	div.style.border = "1px #38698E solid"
@@ -24,7 +24,8 @@ var createPost = function(document, post, func) {
 	$.get("/user-pic/" + post.username, function(data) {
 		if (data) {
 			img.innerHTML = "<a href='/profile/" + post.username 
-				+ "'><img style='width:max(8vmin, 40px);height:max(8vmin, 40px);border-radius:max(8vmin, 40px)' src='" + data + "''></img></a>"
+				+ "'><img class='postProfPic' style='width:max(8vmin, 40px);height:max(8vmin, 40px);border-radius:max(8vmin, 40px)' src='" + data + "''></img></a>"
+			
 		}
 	})
 	div.appendChild(left)

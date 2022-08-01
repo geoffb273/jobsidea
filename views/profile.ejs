@@ -25,6 +25,7 @@
 		border-radius: 5vmin;
 		margin-left: 10vw;
 		height: 220px;
+		background: radial-gradient(#cedde9, #81A8C6);
 	}
 	
 	#header > #info > #name {
@@ -52,7 +53,7 @@
 	}
 	
 	#header > #rightheader > button:hover {
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		background: linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
 	}
 	
 	#header > #rightheader > form > #chatButton {
@@ -65,7 +66,7 @@
 	}
 	
 	#header > #rightheader > form > #chatButton:hover {
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		background: linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
 	}
 	
 	#header > #rightheader > #upload {
@@ -89,7 +90,7 @@
 	}
 	
 	label:hover {
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		background: linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
 	}
 
 	#upload-photo {
@@ -115,7 +116,6 @@
 		background: white;
 		width: max(20vw, 300px);
 		min-width: max(25vw, 300px);
-		/*border-radius: 20px;*/
 		height: 150px;
 		max-height: 150px;
 		margin-bottom: 10px;
@@ -124,12 +124,17 @@
 		border-width: 1px;
 		border-color: black;
 		box-shadow: 5px 5px 10px #20537A;
+		background: radial-gradient(#cedde9, #81A8C6);
 	}
 	.profilePicRev {
 		width: 35px;
 		height: 35px;
 		border-radius: 35px;
 		margin-right: 10px;
+	}
+	.profilePicRev:hover {
+		z-index: 1;
+		transform: scale(1.5, 1.5);
 	}
 	
 	.top-review {

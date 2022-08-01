@@ -15,8 +15,6 @@
 		padding-top: 5px;
 		width: 50vw;
 		margin-left: 10vw;
-		
-		background: white;
 	}
 	
 	#commentsDiv {
@@ -35,7 +33,7 @@
 		position: fixed;
 		bottom: 5px;
 		padding-bottom: 5px;
-		background: white;
+		
 	}
 	
 	#commentInput {
@@ -46,16 +44,23 @@
 		border-bottom-left-radius: 20px;
 		margin: 0;
 		padding: 0;
+		padding-left: 10px;
 	}
 	
 	#commentButton {
 		height: 40px;
 		width: 15vw;
-		border: 0.5px solid;
+		border-left: none;
 		border-top-right-radius: 20px;
 		border-bottom-right-radius: 20px;
 		margin: 0;
 		padding-top: 6px;
+		color: white;
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6, white);
+	}
+	
+	#commentButton:hover {
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6, white);
 	}
 	
 	#post {
@@ -72,8 +77,11 @@
 	}
 	
 	.comment {
+		padding-top: 5px;
 		background: white;
-		width: 100%;
+		width: 50vw;
+		border-bottom: 1px solid #20537A;
+		background: radial-gradient(#cedde9, #81A8C6);
 	}
 	
 @media only screen and (max-width: 700px) {
@@ -96,7 +104,6 @@
 		width: 20vw;
 	}
 	.comment {
-		background: white;
 		width: 100%;
 	}
 }
