@@ -5,8 +5,9 @@ var createPost = function(document, post, func) {
 	var div = document.createElement("div")
 	div.style.display = "flex"
 	div.style.paddingTop = '10px'
+	div.style.boxShadow = "5px 5px 10px #20537A"
 	div.onclick = () => func(post.id)
-	div.style.background = "radial-gradient(#cedde9, #81A8C6)"
+	div.style.background = "white"//"radial-gradient(#cedde9, #81A8C6)"
 	div.style.marginLeft = "5vw"
 	div.style.width = "max(400px, 60vw)"
 	div.style.border = "1px #38698E solid"
