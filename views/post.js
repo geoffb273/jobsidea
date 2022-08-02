@@ -6,8 +6,9 @@ var createPost = function(document, post, func) {
 	div.style.display = "flex"
 	div.style.paddingTop = '10px'
 	div.style.boxShadow = "5px 5px 10px #20537A"
+	div.className = "ind-post"
 	div.onclick = () => func(post.id)
-	div.style.background = "white"//"radial-gradient(#cedde9, #81A8C6)"
+	
 	div.style.marginLeft = "5vw"
 	div.style.width = "max(400px, 60vw)"
 	div.style.border = "1px #38698E solid"
@@ -20,7 +21,7 @@ var createPost = function(document, post, func) {
 	img.style.margin = "20 20 20 20"
 	img.className = "profilePic"
 	img.innerHTML = "<a href='/profile/" + post.username 
-		+ "' style='color:black'><i class='fa-solid fa-user fa-2xl' style='margin-top: 10px'></i></a>"
+		+ "' style='color:black'><i class='fa-solid fa-user fa-2xl post-icon' style='margin-top:10px'></i></a>"
 	left.appendChild(img)
 	$.get("/user-pic/" + post.username, function(data) {
 		if (data) {
@@ -38,13 +39,12 @@ var createPost = function(document, post, func) {
 	var title = document.createElement("a")
 	title.innerHTML = "<b>" + post.name + "</b> <i style='color:gray;'>@" + post.username + "</i>"
 	title.style.textDecoration = "none"
-	title.style.color = "black";
 	title.href = "/profile/" + post.username
+	title.className = "post-title"
 	var content = document.createElement("p")
 	content.innerHTML = post.content
 	center.appendChild(title)
 	center.appendChild(content)
-	
 	var right = document.createElement("div")
 	right.style.width = "22vw"
 	right.style.fontSize = "12px"

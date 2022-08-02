@@ -84,6 +84,19 @@
 		background: radial-gradient(#cedde9, #81A8C6);
 	}
 	
+.ind-post {
+	color: black;
+	background: white	
+}
+
+.post-title {
+	color: black
+}
+
+.post-icon {
+	margin-top: 10px;
+}
+	
 @media only screen and (max-width: 700px) {
 	#page {
 		margin-left: 0;
@@ -105,6 +118,33 @@
 	}
 	.comment {
 		width: 100%;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.ind-post {
+		background: black;
+		color: white	
+	}
+	.post-title {
+		color: white
+	}
+	
+	.post-icon {
+		color: white;
+	}
+	
+	.comment {
+		color: white;
+		background: black;
+	}
+	
+	.comment-title {
+		color: white
+	}
+	
+	.comment-icon {
+		color: white;
 	}
 }
 </style>
@@ -162,7 +202,7 @@
 				img.style.margin = "20 20 20 20"
 				img.className = "profilePic"
 				img.innerHTML = "<a href='/profile/" + post.username
-					+ "' style='color:black'><i class='fa-solid fa-user fa-2xl' style='margin-top: 10px'></i></a>"
+					+ "'><i class='fa-solid fa-user fa-2xl' style='margin-top: 10px'></i></a>"
 				left.appendChild(img)
 				$.get("/user-pic/" + comment.author, function(data) {
 					if (data) {
@@ -174,7 +214,7 @@
 				var title = document.createElement("a")
 				title.innerHTML = "<b>" + comment.name + "</b> <i style='color:gray;'>@" + comment.author + "</i>"
 				title.style.textDecoration = "none"
-				title.style.color = "black";
+				title.className = "comment-title"
 				title.href = "/profile/" + comment.author
 				var content = document.createElement("p")
 				content.innerHTML = comment.content

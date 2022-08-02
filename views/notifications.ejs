@@ -5,9 +5,8 @@
 
 <style>
 	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
-	
-	tr:nth-child(even) { 
-		background-color: #B6D0E4;
+	td {
+		border-bottom: 1px solid black;
 	}
 	
 	#post {
@@ -32,9 +31,9 @@
 		border-collapse: collapse;
 	}
 	.profilePic {
-		border-radius: max(5vmin, 30px);
-		width: max(5vmin, 30px);
-		height: max(5vmin, 30px);
+		border-radius: max(7vmin, 30px);
+		width: max(7vmin, 40px);
+		height: max(7vmin, 40px);
 		font-size: max(2vmin, 16px);
 	}
 	.chatButton {
@@ -55,6 +54,17 @@
 		transform: scale(1.5, 1.5)
 	}
 	
+	.notification-cell1 {
+		text-align: left;
+		height: 100px;
+	}
+	
+	.date-string {
+		color: gray;
+		text-align: right;
+		font-size: max(12px, 1vw);
+	}
+	
 	@media only screen and (max-width: 700px) {
 		#post {
 			margin-left: 1vw;
@@ -62,6 +72,21 @@
 		}
 		#table {
 			width: 98vw;
+		}
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		tr {
+			background: black;
+			color: white;
+		}
+		
+		#post {
+			background: black;
+		}
+		
+		td {
+			border-bottom: 1px solid gray;
 		}
 	}
 	
@@ -90,67 +115,12 @@
 			
 			nots.forEach(notification => {
     			var i = nots.findIndex( curr => { curr.id == notification.id })
-    			var content = notification.content
     			if (!notificationIds.includes(notification.id)) {
     				notificationIds.push(notification.id);
     				notifications.push(notification)
     				var row = table.insertRow(i);
+					createNotificationDiv(notification, row)
 					
-					var date = (Date.now() - new Date(notification.created)) / 1000
-					var dateString = Math.round(date + 1) + " seconds ago"
-					if (date >= 59 && date < 60 * 60) {
-						dateString = Math.round(date / 60) + " minutes ago"
-					} else if (date >= 60 * 60 && date < 60 * 60 * 24) {
-						dateString = Math.round(date / (60 * 60)) + " hours ago"
-					} else if (date >= 60 * 60 * 24 && date < 60 * 60 * 24 * (365 + 0.25)) {
-						dateString = Math.round(date / (60 * 60 * 24)) + " days ago"
-					} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
-						dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
-					}
-					var u2 = notification.content.split(" ")[0]
-					var cell0 = row.insertCell(0);
-					cell0.style.textAlign = 'right'
-					
-					if (notification.sender) {
-						$.get("/user-pic/" + notification.sender, function(data) {
-							if (data) {
-								cell0.innerHTML = "<img src=" + data + " username=" + u2 + " class='profilePic'></img>"
-							} else {
-								cell0.innerHTML = "<span class='profilePic' username=" + u2 + "><i class='fa fa-user fa-xl'></i></span>"
-							}
-							cell0.style.alignSelf = "flex-end"
-							cell0.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
-							
-						})
-					} else {
-						cell0.innerHTML = "<span class='profilePic'><i class='fa fa-user fa-xl'></i></span>"
-						cell0.style.alignSelf = "flex-end"
-						cell0.username = u2
-						cell0.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
-					}
-					
-					
-					
-					var cell1 = row.insertCell(1);
-					cell1.innerHTML = content
-					cell1.style.textAlign = 'center'
-					cell1.style.height = '50px';
-					var cell2 = row.insertCell(2);
-					cell2.innerHTML = dateString;
-					
-					var cell3 = row.insertCell(3)
-					
-					var chatId = username < u2 ? username + "@" + u2 : u2 + "@" + username
-					
-					var button = document.createElement("button");
-				
-					button.className = "fa-solid fa-message fa-sm chatButton"
-				
-					button.id = "join";
-					button.chatId = chatId
-					button.onclick = (e) => {window.location.href = "/chat/" + e.target.chatId}
-					cell3.appendChild(button);
-					cell3.style.textAlign = 'center'
     			}
     		})
 		});
@@ -164,6 +134,55 @@
   			limit += 10;
       		getNotifications()
     	}
+  	}
+  	
+  	var createNotificationDiv = function(notification, row) {
+  		var content = notification.content
+  		var date = (Date.now() - new Date(notification.created)) / 1000
+		var dateString = Math.round(date + 1) + " seconds ago"
+		if (date >= 59 && date < 60 * 60) {
+			dateString = Math.round(date / 60) + " minutes ago"
+		} else if (date >= 60 * 60 && date < 60 * 60 * 24) {
+			dateString = Math.round(date / (60 * 60)) + " hours ago"
+		} else if (date >= 60 * 60 * 24 && date < 60 * 60 * 24 * (365 + 0.25)) {
+			dateString = Math.round(date / (60 * 60 * 24)) + " days ago"
+		} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
+			dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
+		}
+		var u2 = notification.content.split(" ")[0]
+		var cell0 = row.insertCell(0);
+		cell0.style.textAlign = 'center'
+		if (notification.sender) {
+			$.get("/user-pic/" + notification.sender, function(data) {
+				if (data) {
+					cell0.innerHTML = "<img src=" + data + " username=" + u2 + " class='profilePic'></img>"
+				} else {
+					cell0.innerHTML = "<span class='profilePic' username=" + u2 + "><i class='fa fa-user fa-xl'></i></span>"
+				}
+				cell0.style.alignSelf = "flex-end"
+				cell0.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
+				
+			})
+		} else {
+			cell0.innerHTML = "<span class='profilePic'><i class='fa fa-user fa-xl'></i></span>"
+			cell0.style.alignSelf = "flex-end"
+			cell0.username = u2
+			cell0.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
+		}
+		var cell1 = row.insertCell(1);
+		cell1.innerHTML = content
+		cell1.innerHTML += '<p class="date-string">' + dateString + '</p>'
+		cell1.className = 'notification-cell1'
+		
+		var cell3 = row.insertCell(2)
+		var chatId = username < u2 ? username + "@" + u2 : u2 + "@" + username
+		var button = document.createElement("button");
+		button.className = "fa-solid fa-message fa-sm chatButton"
+		button.id = "join";
+		button.chatId = chatId
+		button.onclick = (e) => {window.location.href = "/chat/" + e.target.chatId}
+		cell3.appendChild(button);
+		cell3.style.textAlign = 'center'
   	}
   	var post = document.getElementById("post")
   	post.onscroll = checkEnd

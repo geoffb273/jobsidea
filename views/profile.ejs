@@ -120,7 +120,7 @@
 		max-height: 150px;
 		margin-bottom: 10px;
 		
-		border-style: none solid solid none;
+		border-style: solid;
 		border-width: 1px;
 		border-color: black;
 		box-shadow: 5px 5px 10px #20537A;
@@ -234,6 +234,18 @@
 		}
 		#header > #rightheader > form > #chatButton {
 			margin-top: 60px;
+		}
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		#header {
+			background: black;
+			color: white;
+		}
+		.review {
+			background: black;
+			color: white;
+			border-color: #81A8C6;
 		}
 	}
 	
