@@ -3,21 +3,28 @@
 		text-align: center;
 		font-family: Helvetica;
 		justify-content: center;
-		background-image: linear-gradient(to bottom, #5481A4, #81A8C6, white);
+		background: #eeeeee;
 		padding: 0;
 		margin: 0;
 	}
 	
 	#title {
 		font-size: max(5.5vw, 48px);
-		width; 100%;
-		border-bottom: solid black;
-		color: white;
-		background-image: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		font-family: Monaco;
+		color: transparent;
+		background-image: linear-gradient(to bottom right, #20537A, #B6D0E4);
+		background-clip: text;
+		-webkit-background-clip: text;
+	}
+	#title-div {
+		width: 100%;
+		background: white;
+		max-height: 100px;
+		box-shadow: 5px 5px 10px #20537A;
 	}
 	
 	#container {
+		margin-top: 10vh;
 		padding: 0.25rem;
 		width: 60vw;
 		margin-left: 20vw;
@@ -87,16 +94,30 @@
 	
 	@media only screen and (max-width: 700px) {
 		#container {
-			margin-left: 0;
+			margin-left: 1vw;
 			padding-left: 0;
-			width: 100%;
+			width: 97vw;
+		}
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		#title-div {
+			background: black;
+		}
+		#container {
+			background: black;
+		}
+		body {
+			background: #333333;
 		}
 	}
 
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=0.8">
 <title>Log In / Staffer</title>
-<p id="title">Staffer</p>
+<div id="title-div">
+	<p id="title">Staffer</p>
+</div>
 <div id="container">
 	<form id="login" action="/handle-login" method="post">
 		<input id="top" name='username' placeholder="Username" required><br>

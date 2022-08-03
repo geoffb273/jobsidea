@@ -25,7 +25,7 @@ var sendText = async function(rec, msg) {
 	
 }
 
-var addUser = async function(username, password, firstname, lastname, email) {//, phone, birthday, profilePic = undefined) {
+var addUser = async function(username, password, firstname, lastname, email, phone) {//, phone, birthday, profilePic = undefined) {
 	var p = []
 	p.push(getUser(username));
 	p.push(utils.getItem(db, "Emails", {username: username}));

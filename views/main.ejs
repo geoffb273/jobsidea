@@ -7,9 +7,9 @@
 
 
 #posts {
-	margin-left: 15vw;
+	margin-left: 20vw;
 	max-height: 80vh;
-	width: max(70vw, 400px);
+	width: max(60vw + 2px, 400px);
 	overflow-y: auto;
 }
 
@@ -18,14 +18,18 @@
 	height: 50px;
 	font-size: max(1.75vw, 16px);
 	margin-right: 0.5vw;
+	margin-left: 5px;
 }
 
 #searchDiv {
 	display: flex;
 	margin-top: 10px;
 	margin-left: 20vw;
-	width: 70vw;
-	margin-bottom: 5px;
+	width: max(60vw, 400px);
+	padding-bottom: 5px;
+	background: white;
+	border: 1px #38698E solid;
+	padding-top: 5px;
 }
 
 #sortButton {
@@ -67,6 +71,7 @@
 	margin-left: 0.5vw;
 	width: 19vw;
 	font-size: max(1.75vw, 16px);
+	margin-right: 5px;
 }
 
 .clicked {
@@ -76,7 +81,6 @@
 .postProfPic:hover {
 	transform: scale(1.5, 1.5)
 }
-
 
 .ind-post {
 	color: black;
@@ -92,16 +96,26 @@
 }
 
 @media only screen and (max-width: 700px) {
+	#searchPosts {
+		width: 50%;
+	}
+	#dropdownDiv {
+		width: 13.33%;
+	}
+	#sortButton {
+		width: 100%
+	}
+	#location {
+		width: 33%
+	}
+	
 	#posts {
 		margin-left: 1vw;
 		width: 98vw;
 	}
 	#searchDiv {
-		margin-left: 10vw;
-		width: 78vw;
-	}
-	#location {
-		width: 25vw;
+		margin-left: 1vw;
+		width: 97.75vw;
 	}
 }
 
@@ -116,6 +130,9 @@
 	
 	.post-icon {
 		color: white;
+	}
+	#searchDiv {
+		background: black;
 	}
 }
 

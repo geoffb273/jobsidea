@@ -10,7 +10,6 @@ var createPost = function(document, post, func) {
 	div.onclick = () => func(post.id)
 	
 	div.style.marginLeft = "5vw"
-	div.style.width = "max(400px, 60vw)"
 	div.style.border = "1px #38698E solid"
 	var left = document.createElement("div")
 	//left.style.width = "max(8vw, 40px)"
@@ -33,7 +32,7 @@ var createPost = function(document, post, func) {
 	div.appendChild(left)
 	
 	var center = document.createElement("div")
-	center.style.width = "30vw"
+	center.style.width = "65%"
 	div.appendChild(center)
 	center.style.textAlign = "left"
 	var title = document.createElement("a")
@@ -46,7 +45,7 @@ var createPost = function(document, post, func) {
 	center.appendChild(title)
 	center.appendChild(content)
 	var right = document.createElement("div")
-	right.style.width = "22vw"
+	right.style.width = "22%"
 	right.style.fontSize = "12px"
 	right.style.marginRight = "1vw"
 	var date = (Date.now() - new Date(post.created)) / 1000
@@ -65,15 +64,15 @@ var createPost = function(document, post, func) {
 	right.style.textAlign = "right"
 	var maxWidth = function(x) {
 		if (x.matches) {
-			div.style.width = "98vw"
-			div.style.marginLeft = "1vw"
-			center.style.width = "47vw"
-			right.style.width = "34vw"
+			div.style.width = "100% - 2px"
+			div.style.marginLeft = "0"
+			center.style.width = "60%"
+			right.style.width = "22%"
 		} else {
-			div.style.width = "max(400px, 60vw)"
-			div.style.marginLeft = "5vw"
-			center.style.width = "30vw"
-			right.style.width = "22vw"
+			div.style.width = "100% - 2px"
+			div.style.marginLeft = "0"
+			center.style.width = "65%"
+			right.style.width = "22%"
 		}
 	}
 	var x = window.matchMedia("only screen and (max-width: 700px)")

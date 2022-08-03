@@ -101,6 +101,7 @@ var handleSignUpUser = function(req, res) {
 	var email = req.body.email;
 	var phone = req.body.phone;
 	var zipCode = req.body.zipCode;
+	console.log(phone)
 	/*var birthday = req.body.birthday;*/
 	var p = []
 	p.push(db.changeSettings(username, {
@@ -125,7 +126,8 @@ var handleSignUpUser = function(req, res) {
 		req.session.type = "User";
 		
 		res.redirect("/profile");
-	}).catch(_ => {
+	}).catch(err => {
+		console.log(err)
 		res.redirect("/signup-user");
 	});
 	
