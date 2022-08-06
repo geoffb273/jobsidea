@@ -143,7 +143,8 @@ io.on('connection', (socket) => {
 	socket.on('chat message', (msg) => {
 		socket.to(msg.chatId).emit('chat message', {message: msg.message, username: msg.username});
 		var set = io.sockets.adapter.rooms.get(msg.chatId)
-		if (set.size == 1) {
+		
+		if (set && set.size == 1) {
 			var missingUser = msg.chatId.split("@").filter(function(name) {
 				return name != msg.username
 			})[0]

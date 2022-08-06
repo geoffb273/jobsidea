@@ -261,35 +261,17 @@ var getChatsPage = function(req, res) {
 	res.render("chats.ejs", {username: username});
 }
 
-var getChat = function(req, res) {
+var getChat = async function(req, res) {
 	var chatId = req.params.chatId;
 	var username = req.session.username;
 	var users = chatId.split("@")
 	if (username != users[0] && username != users[1]) {
-		res.redirect("/chats")
+		res.send({})
 		return
 	}
-	var promises = [];
-	promises.push(db.getChat(chatId));
-	promises.push(db.getMessages(chatId, 20));
-	Promise.all(promises).then(snapshots => {
-		if (snapshots[0]) {
-			var chat = snapshots[0];
-			var messages = [];
-			if (snapshots[1]) {
-				snapshots[1].forEach(child => {
-					messages.push(child)
-				});
-			} 
-			res.render('chat.ejs', {username: username, chat: JSON.stringify(chat), messages: JSON.stringify(messages)})
-		} else {
-			console.log("chat not found")
-			res.redirect('/chats');
-		}
-	}).catch(err => {
-		console.log(err)
-		res.redirect('/chats');
-	});
+	
+	var chat = await db.getChat(chatId)
+	res.send(chat)
 }
 
 var handleChats = function(req, res) {
@@ -326,7 +308,7 @@ var putMessage = function(req, res) {
 	var chatId = req.body.chatId;
 	var message = req.body.content;
 	var username = req.session.username;
-	
+	console.log(req.body)
 	var promises = []
 	promises.push(db.updateTime(chatId));
 	promises.push(db.putMessage(chatId, username, message));

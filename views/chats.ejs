@@ -6,88 +6,214 @@
 <body>
 <style>
 	#post {
+		display: flex;
 		background: white;
-		margin-left: 15vw;
-		max-height: 85vh;
-		width: 70vw;
-		overflow-y: scroll;
-		/*border-style: none groove groove none;
-		border-width: 4px;
-		border-color: black;*/
+		position: fixed;
+		left: 15vw;
+		right: 15vw;
 		box-shadow: 5px 5px 10px #20537A;
 		margin-top: 10px;
+		height: max(85vh, 500px);
 	}
    	#table {
-		font-size: max(16px, 1.5vw);
-		width: 70vw;
-		max-height: 85vh;
+   		position: absolute;
+   		left: 0;
+   		top: 0;
+   		bottom: 0;
+		width: 33%;
 		overflow-y: scroll;
+		font-size: max(16px, 1.5vw);
 		color: black;
-		border-collapse: collapse;
-	}
-      
-  	#table > tr {
-      	padding: 0px;
-  	}
-      
-  	tr:nth-child(even) { 
-      	background-color: #B6D0E4; 
-   	}
-  	.chatButton {
-		padding-top: 1vmin;
-      	width: max(3vw, 50px);
-      	height: max(4vmin, 25px);
-      	//border-radius: 5vmin;
-      	font-size: max(2vmin, 16px);
-      	background: white;
-      	color: #20537A;
-   	}
-
-	.chatButton:hover {
-		background: #20537A;
+		border: 1px black solid;
 		color: white;
+		margin-left: 0;
+		height: 100%;
+		margin-top: 0;
+		list-style: none;
+    	padding-left: 0;
+	}
+     
+  	
+  	.row {
+		border-bottom: 1px solid black;
+		height: 60px;
+		width: 100%;
+		margin-left: 0;
+		padding-left: 10px;
+	}
+	
+	.row > .pic {
+		width: 25%;
+	}
+	
+	.row > .username {
+		margin-top: 20px;
+		margin-left: 10px;
+		width: 65%;
+		text-align: center;
+	}
+	
+	.row > .date {
+		width: 10%;
+		margin-top: 40px;
+		color: gray;
+	}
+	
+	.icon-pic {
+		display: inline-block;
+		height: 30px;
 	}
       
   	.profilePic {
-		border-radius: max(5vmin, 30px);
-		width: max(5vmin, 30px);
-		height: max(5vmin, 30px);
+		border-radius: 50%;
+		width: 40px;
+		height: 40px;
 		font-size: max(2vmin, 16px);
-      	margin-left: 5px;
       	margin-top: 10px;
       	margin-bottom: 10px;
       	
    	}
    	
-   	#name {
-   		width: 40vw
-   	}
-   	
    	.profilePic:hover {
 		transform: scale(1.5, 1.5)
 	}
+	
+	#chat-page {
+		position: absolute;
+		left: 33%;
+		margin-left: 2px;
+		right: 0;
+		background: white;
+		height: 100%;
+	}
+	
+	#chat-title {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		margin-top: 20px;
+		height: 35px;
+		border-bottom: 1px solid black;
+		z-index: 1;
+	}
+	
+	#chat {
+		position: absolute;
+		top: 55px;
+		bottom: 70px;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		overflow-y: scroll;
+	}
+	
+	#input-div {
+		position: absolute;
+		bottom: 0;
+		height: 30px;
+		left: 0;
+		right: 0;
+		display: flex;
+		margin: 0;
+		margin-left: 50px;
+		margin-right: 50px;
+		margin-bottom: 20px;
+	}
+	
+	#message-input {
+		width: 80%;
+		height: 100%;
+		border-top-left-radius: 20px;
+		border-bottom-left-radius: 20px;
+		border: 1px solid gray;
+		background: none;
+		color: black;
+		padding-left: 20px;
+		
+	}
+	
+	#message-button {
+		width: 20%;
+		height: 100%;
+		border-top-right-radius: 20px;
+		border-bottom-right-radius: 20px;
+		border: none;
+		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		color: white;
+	}
+	
+	#message-button:hover {
+		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+	}
+	
+	.chat-message {
+		display: block;
+		border: 1px solid gray;
+		border-radius: 20px;
+		margin-top: 5px;
+		margin-right: 5px;
+		margin-left: 5px;
+		max-width: 75%;
+		padding: 10px;
+		text-align: left;
+		//min-width: 25px;
+	}
+	
    	
    	
    	@media only screen and (max-width: 700px) {
 		#post {
-			margin-left: 1vw;
-			width: 98vw;
+			left: 1vw;
+			right: 1vw;
+		}
+		
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		#post {
+			background: black;
 		}
 		#table {
-			width: 98vw;
+			background: black;
+			color: white;
+			border: 1px solid white;
+		}
+		td {
+			border-bottom: 1px solid white;
+		}
+		#chat-title {
+			border-bottom: 1px solid white;
+			color: white;
+			background: black;
 		}
 		
-		#name {
-			width: 45vw
+		#chat-page {
+			background: black;
+			color: white;
 		}
-		
+		.row {
+			border-bottom: 1px solid white;
+		}
+		#message-input {
+			color: white;
+		}
 	}
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=0.8">
 <title>Chats / Staffer</title>
 
 <div id="post">
-  <table id = "table"></table>
+  <ul id = "table"></ul>
+  <div id="chat-page">
+  	<div id="chat-title">Select a User</div>
+  	<ul id="chat" onscroll='checkScroll()'></ul>
+  	<div id="input-div">
+  		<input id="message-input" autocomplete="off"/>
+  		<button id="message-button" onclick="sendMessage()">Send</button>
+  	</div>
+  </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -97,9 +223,76 @@
 	var chats = [];
 	var username = '<%- username %>'
 	var limit = 10;
+	var msgLimit = 0;
+	var message = document.getElementById("message-input")
+	var msgs = []
+	var chat = document.getElementById("chat")
+	var last = username
+	var entered = false
+	var chatId = undefined
+	var enterChat = function(e) {
+		entered = true
+		var row = e.target
+		while (row.className != 'row') {
+			row = row.parentElement;
+		}
+		chatId = row.id
+		msgs = []
+		chat.innerHTML = ""
+		$.get("/chat/" + chatId, function(data) {
+			if (data) {
+				var chat = data
+				socket.emit('joined', {username: username, chatId: chatId, unread: chat.unread});
+			}
+		})
+		msgLimit = 20;
+		getMessages(chatId, msgLimit, true)
+		var title = document.getElementById('chat-title');
+		title.innerHTML = row.chatName
+	}
 	
-	var enterChat = function() {
-		location.href = "/chat/" + this.chatId;
+	var getMessages = function(chatId, mLimit, newChat) {
+		$.get("/messages?chatId=" + chatId + "&limit=" + mLimit , function(data) {
+			var newMessages = JSON.parse(data)
+  			var amt = newMessages.length - msgs.length;
+  			var i = newMessages.length - amt;
+  			var stay = chat.scrollHeight - 10;
+  			console.log(chat.scrollHeight)
+  			while (i < newMessages.length) {
+  				var r = document.createElement('li');
+  				var item = document.createElement('div');
+  				r.appendChild(item);
+  				r.style.width = "100%"
+  				item.className = "chat-message"
+    			item.textContent = newMessages[i].content;
+    			var length = newMessages[i].content.length;
+    			if (length < 10) {
+    				length *= 10
+    			} else if (length < 15) {
+    				length *= 9
+    			} else {
+    				length *= 6
+    			}
+    			length += 10
+    			item.style.width = length + "px"
+    			if (username == newMessages[i].author) {
+    				item.style.background = "gray"
+    				item.style.marginLeft = "auto"
+    				item.style.paddingRight = "0"
+    			} 
+    			last = newMessages[i].author;
+  				chat.insertBefore(r, chat.firstChild);
+  				msgs.unshift(newMessages[i]);
+  				i += 1
+  			}
+  			setTimeout(() => {
+  				if (newChat) {
+  					chat.scrollTop = chat.scrollHeight
+  				} else {
+  					chat.scrollTo(0, chat.scrollHeight - stay);
+  				}
+  			}, 100)
+		})
 	}
 	
 	var updateChats = function() {
@@ -124,20 +317,27 @@
 					return name != username
 				})[0]
     			
-    			var row = table.insertRow(i);
-    			var cell0 = row.insertCell(0);
+    			var row = document.createElement("li")
+    			row.className = "row"
+    			row.style.display = "flex"
+    			table.appendChild(row);
+    			var cell0 = document.createElement("div")
+    			cell0.className = "pic"
+    			row.appendChild(cell0)
     			cell0.style.textAlign = 'right'
 				$.get("/user-pic/" + chatName, function(data) {
 					if (data) {
 						cell0.innerHTML = "<img src=" + data + " class='profilePic'></img>"
 					} else {
-						cell0.innerHTML = "<span class='profilePic'><i class='fa fa-user fa-xl'></i></span>"
+						cell0.innerHTML = "<span class='icon-pic'><i class='fa fa-user fa-xl'></i></span>"
 					}
 					
 					cell0.style.alignSelf = "flex-end"
 				})
     			
-				var cell1 = row.insertCell(1);
+				var cell1 = document.createElement("div")
+				cell1.className = "username"
+				row.appendChild(cell1)
 				if (chat.unread == username) {
 					cell1.innerHTML = chatName + ' <span style="color:#20537A;font-size:max(0.75vw, 8px)"><i class="fa-solid fa-circle"></i></span>';
 				} else {
@@ -145,21 +345,18 @@
 				}
 				
 				cell1.style.textAlign = 'center'
-				cell1.style.height = '50px';
 				cell1.id = 'name'
-				var cell2 = row.insertCell(2);
+				
+				var cell2 = document.createElement("div")
+				cell2.className = "date"
+				row.appendChild(cell2)
 				cell2.innerHTML = dateString
+				cell2.style.minWidth = '100px'
+				cell2.style.fontSize = '12px'
 				
-				var cell3 = row.insertCell(3);
-				var button = document.createElement("button");
-				
-				button.className = "fa-solid fa-message fa-2xl chatButton"
-				
-				button.chatId = chat.id;
-				button.onclick = enterChat;
-				
-				cell3.appendChild(button);
-    			cell3.style.textAlign = 'center'
+				row.id = chat.id
+				row.chatName = chatName
+				row.onclick = (e) => {enterChat(e)}
     		})
     	})
   	};
@@ -168,30 +365,123 @@
   		limit += 10
   		updateChats();
   	}
+  	
+  	var checkScroll = function() {
+  		//console.log(chat.scrollTop)
+  		//console.log(chat.scrollHeight)
+  		if (entered && chat.scrollTop == 0) {
+  			msgLimit += 20
+  			//console.log(chat.scrollHeight)
+      		getMessages(chatId, msgLimit, false)
+    	}
+  	}
+  	
   	socket.emit('self room', {username: username})
   	
 	socket.on('update chats', function(msg) {
 		setTimeout(updateChats, 1000);
 	});
 	
-	/*chats.forEach(chat => {
-		chatIds.push(chat.id);
-		var row = table.insertRow(table.rows.length);
-		row.id = chat.id;
-		var cell1 = row.insertCell(0);
-		var chatName = chat.id.split("@").filter(function(name) {
-			return name == username
-		})[0]
-		cell1.innerHTML = chatName;
-		var cell2 = row.insertCell(1);
-		var button = document.createElement("button");
-		button.innerHTML = "Join Chat";
-		button.id = "join";
-		button.chatId = chat.id;
-		button.onclick = enterChat;
-		cell2.appendChild(button);
-	});*/
 	updateChats();
+	
+		
+		
+	var sendMessage = function() {
+		
+		if (message.value) {
+			var m = message.value.trim()
+			if (m.length == 0) {
+				return
+			}
+			socket.emit('chat message', {message: m, username: username, chatId: chatId});
+			var obj = {content: m, username: username, chatId: chatId}
+			$.post('/handle-message', obj);
+	 		var item = document.createElement('li');
+			item.textContent = m;
+			var r = document.createElement('li');
+  			var item = document.createElement('div');
+  			r.appendChild(item);
+  			r.style.width = "100%"
+  			item.className = "chat-message"
+    		item.textContent = m
+    		var length = m.length;
+    		if (length < 10) {
+    			length *= 10
+    		} else if (length < 15) {
+    			length *= 9
+    		} else {
+    			length *= 6
+    		}
+    		length += 10
+    		item.style.width = length + "px"
+    		item.style.background = "gray"
+    		item.style.marginLeft = "auto"
+    		item.style.paddingRight = "0"
+			last = username;
+			chat.appendChild(r);
+			chat.scrollTo(0, chat.scrollHeight);
+			
+		}
+		message.value = '';
+	};
+	var leave = function() {
+		socket.emit('user left', {username: username, chatId: chat.id});
+	};
+	
+	
+	socket.on('chat message', function(msg) {
+		var item = document.createElement('div');
+		item.textContent = msg.message;
+		item.className = "chat-message"
+		var r = document.createElement('li');
+		r.appendChild(item);
+		var length = msg.message.length;
+		if (length < 10) {
+    		length *= 10
+    	} else if (length < 15) {
+    		length *= 9
+    	} else {
+    		length *= 6
+    	}
+    	length += 10
+    	item.style.width = length + "px"
+		last = msg.username
+		
+		chat.appendChild(r);
+		chat.scrollTo(0, chat.scrollHeight);
+	});
+	socket.on('joined', function(obj) {
+		var item = document.createElement('div');
+		var msg = "<b>" + obj.username + " joined</b>";
+		item.innerHTML = msg
+		var r = document.createElement('li');
+		r.appendChild(item);
+		var length = msg.length;
+		if (length < 10) {
+    		length *= 10
+    	} else if (length < 15) {
+    		length *= 9
+    	} else {
+    		length *= 6
+    	}
+    	length += 10
+    	item.style.width = length + "px"
+		last = obj.username
+		chat.appendChild(r);
+		chat.scrollTo(0, chat.scrollHeight);
+	})
+	socket.on('user left', function(msg) {
+		missing.unshift(msg.username);
+		var item = document.createElement('li');
+		item.innerHTML = "<b>" + msg.username + " left the chat</b>";
+		if (last != msg.username) {
+			item.style.borderTop = "0.1px solid"
+		}
+		last = msg.username
+		item.style.background = "#e9f4ff"
+		chat.appendChild(item);
+		chat.scrollTo(0, chat.scrollHeight);
+	});
 </script>
 
 
