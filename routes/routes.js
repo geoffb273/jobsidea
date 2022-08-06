@@ -283,10 +283,10 @@ var handleChats = function(req, res) {
 	}
 	db.getChat(chatId).then(chat => {
 		if (chat) {
-			res.redirect("/chat/" + chatId)
+			res.redirect("/chats")
 		} else {
 			db.putChat(username, username2).then(_ => {
-				res.redirect("/chat/" + chatId)
+				res.redirect("/chats")
 			}).catch(_ => {
 				res.redirect("/chats")
 			})
