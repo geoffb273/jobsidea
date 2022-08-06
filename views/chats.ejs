@@ -14,13 +14,14 @@
 		box-shadow: 5px 5px 10px #20537A;
 		margin-top: 10px;
 		height: max(85vh, 500px);
+		min-width: 605px;
 	}
    	#table {
    		position: absolute;
    		left: 0;
    		top: 0;
    		bottom: 0;
-		width: 33%;
+		width: 225px;
 		overflow-y: scroll;
 		font-size: max(16px, 1.5vw);
 		color: black;
@@ -35,52 +36,55 @@
      
   	
   	.row {
-		border-bottom: 1px solid black;
-		height: 60px;
-		width: 100%;
+		height: 80px;
 		margin-left: 0;
 		padding-left: 10px;
+		
+		display: flex;
+		color: black;
 	}
 	
-	.row > .pic {
-		width: 25%;
+	.row:hover {
+		background: #f9f9f9;
 	}
 	
-	.row > .username {
-		margin-top: 20px;
-		margin-left: 10px;
-		width: 65%;
-		text-align: center;
+	.row > .holder {
+		padding-top: 20px;
+		padding-left: 10px;
+		text-align: left;
 	}
 	
-	.row > .date {
-		width: 10%;
-		margin-top: 40px;
+	.row > .holder > .username {
+		font-size: 24px;
+		margin: 0;
+	}
+	
+	.row > .holder > .date {
 		color: gray;
+		font-size: 12px;
 	}
+	
 	
 	.icon-pic {
 		display: inline-block;
-		height: 30px;
+		height: 40px;
+		margin-left: -10px;
+		margin-right: 10px;
+		width: 60px;
 	}
       
   	.profilePic {
 		border-radius: 50%;
-		width: 40px;
-		height: 40px;
-		font-size: max(2vmin, 16px);
+		width: 60px;
+		height: 60px;
       	margin-top: 10px;
       	margin-bottom: 10px;
       	
    	}
-   	
-   	.profilePic:hover {
-		transform: scale(1.5, 1.5)
-	}
 	
 	#chat-page {
 		position: absolute;
-		left: 33%;
+		left: 225px;
 		margin-left: 2px;
 		right: 0;
 		background: white;
@@ -96,6 +100,7 @@
 		height: 35px;
 		border-bottom: 1px solid black;
 		z-index: 1;
+		font-size: 24px;
 	}
 	
 	#chat {
@@ -131,7 +136,7 @@
 		background: none;
 		color: black;
 		padding-left: 20px;
-		
+		font-size: 16px;
 	}
 	
 	#message-button {
@@ -161,9 +166,24 @@
 		//min-width: 25px;
 	}
 	
+	.right-chat {
+		background: lightgray;
+    	margin-left: auto;
+    	padding-right: 0;
+    	border: none;
+	}
+	
+	.clicked-row {
+		background: #eeeeee;
+	}
+	
+	.clicked-row:hover {
+		background: #eeeeee;
+	}
+	
    	
    	
-   	@media only screen and (max-width: 700px) {
+   	@media only screen and (max-width: 800px) {
 		#post {
 			left: 1vw;
 			right: 1vw;
@@ -194,10 +214,25 @@
 			color: white;
 		}
 		.row {
-			border-bottom: 1px solid white;
+			//border-bottom: 1px solid white;
+			color: white;
+		}
+		.row:hover {
+			background: #222222
+		}
+		
+		.clicked-row {
+			background: #333333;
+		}
+		
+		.clicked-row:hover {
+			background: #333333;
 		}
 		#message-input {
 			color: white;
+		}
+		.right-chat {
+			background: gray;
 		}
 	}
 </style>
@@ -210,7 +245,7 @@
   	<div id="chat-title">Select a User</div>
   	<ul id="chat" onscroll='checkScroll()'></ul>
   	<div id="input-div">
-  		<input id="message-input" autocomplete="off"/>
+  		<input id="message-input" disabled="true" autocomplete="off"/>
   		<button id="message-button" onclick="sendMessage()">Send</button>
   	</div>
   </div>
@@ -229,13 +264,21 @@
 	var chat = document.getElementById("chat")
 	var last = username
 	var entered = false
+	var clicked = undefined
 	var chatId = undefined
 	var enterChat = function(e) {
+		message.disabled = false
+		message.value = ""
 		entered = true
 		var row = e.target
 		while (row.className != 'row') {
 			row = row.parentElement;
 		}
+		row.classList.add("clicked-row")
+		if (clicked) {
+			clicked.classList.remove("clicked-row")
+		}
+		clicked = row
 		chatId = row.id
 		msgs = []
 		chat.innerHTML = ""
@@ -276,22 +319,18 @@
     			length += 10
     			item.style.width = length + "px"
     			if (username == newMessages[i].author) {
-    				item.style.background = "gray"
-    				item.style.marginLeft = "auto"
-    				item.style.paddingRight = "0"
+    				item.classList.add("right-chat")
     			} 
     			last = newMessages[i].author;
   				chat.insertBefore(r, chat.firstChild);
   				msgs.unshift(newMessages[i]);
   				i += 1
   			}
-  			setTimeout(() => {
-  				if (newChat) {
-  					chat.scrollTop = chat.scrollHeight
-  				} else {
-  					chat.scrollTo(0, chat.scrollHeight - stay);
-  				}
-  			}, 100)
+  			if (newChat) {
+  				chat.scrollTop = chat.scrollHeight
+  			} else {
+  				chat.scrollTo(0, chat.scrollHeight - stay - 10);
+  			}
 		})
 	}
 	
@@ -303,15 +342,15 @@
     		chats.forEach(chat => {
     			var i = chats.findIndex( curr => { curr.id == chat.id })
     			var date = (Date.now() - new Date(chat.lastAccessed)) / 1000
-				var dateString = Math.round(date + 1) + " seconds ago"
+				var dateString = Math.round(date + 1) + " s ago"
 				if (date >= 59 && date < 60 * 60) {
-					dateString = Math.round(date / 60) + " minutes ago"
+					dateString = Math.round(date / 60) + " min ago"
 				} else if (date >= 60 * 60 && date < 60 * 60 * 24) {
-					dateString = Math.round(date / (60 * 60)) + " hours ago"
+					dateString = Math.round(date / (60 * 60)) + " hr ago"
 				} else if (date >= 60 * 60 * 24 && date < 60 * 60 * 24 * (365 + 0.25)) {
-					dateString = Math.round(date / (60 * 60 * 24)) + " days ago"
+					dateString = Math.round(date / (60 * 60 * 24)) + " d ago"
 				} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
-					dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
+					dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " yr ago"
 				}
     			var chatName = chat.id.split("@").filter(function(name) {
 					return name != username
@@ -319,7 +358,6 @@
     			
     			var row = document.createElement("li")
     			row.className = "row"
-    			row.style.display = "flex"
     			table.appendChild(row);
     			var cell0 = document.createElement("div")
     			cell0.className = "pic"
@@ -329,15 +367,16 @@
 					if (data) {
 						cell0.innerHTML = "<img src=" + data + " class='profilePic'></img>"
 					} else {
-						cell0.innerHTML = "<span class='icon-pic'><i class='fa fa-user fa-xl'></i></span>"
+						cell0.innerHTML = "<span class='icon-pic'><i class='fa fa-user fa-2xl'></i></span>"
 					}
 					
 					cell0.style.alignSelf = "flex-end"
 				})
-    			
-				var cell1 = document.createElement("div")
+    			var holder = document.createElement("div")
+    			holder.className = "holder"
+				var cell1 = document.createElement("p")
 				cell1.className = "username"
-				row.appendChild(cell1)
+				holder.appendChild(cell1)
 				if (chat.unread == username) {
 					cell1.innerHTML = chatName + ' <span style="color:#20537A;font-size:max(0.75vw, 8px)"><i class="fa-solid fa-circle"></i></span>';
 				} else {
@@ -347,13 +386,12 @@
 				cell1.style.textAlign = 'center'
 				cell1.id = 'name'
 				
-				var cell2 = document.createElement("div")
+				var cell2 = document.createElement("p")
 				cell2.className = "date"
-				row.appendChild(cell2)
+				holder.appendChild(cell2)
 				cell2.innerHTML = dateString
-				cell2.style.minWidth = '100px'
 				cell2.style.fontSize = '12px'
-				
+				row.appendChild(holder)
 				row.id = chat.id
 				row.chatName = chatName
 				row.onclick = (e) => {enterChat(e)}
@@ -388,7 +426,7 @@
 		
 	var sendMessage = function() {
 		
-		if (message.value) {
+		if (entered && message.value) {
 			var m = message.value.trim()
 			if (m.length == 0) {
 				return
@@ -414,9 +452,7 @@
     		}
     		length += 10
     		item.style.width = length + "px"
-    		item.style.background = "gray"
-    		item.style.marginLeft = "auto"
-    		item.style.paddingRight = "0"
+    		item.classList.add("right-chat")
 			last = username;
 			chat.appendChild(r);
 			chat.scrollTo(0, chat.scrollHeight);

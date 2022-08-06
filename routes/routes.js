@@ -308,7 +308,6 @@ var putMessage = function(req, res) {
 	var chatId = req.body.chatId;
 	var message = req.body.content;
 	var username = req.session.username;
-	console.log(req.body)
 	var promises = []
 	promises.push(db.updateTime(chatId));
 	promises.push(db.putMessage(chatId, username, message));

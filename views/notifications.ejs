@@ -5,15 +5,15 @@
 
 <style>
 	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
-	td {
-		border-bottom: 1px solid black;
-	}
 	
 	#post {
 		background: white;
-		margin-left: 15vw;
+		margin-left: 25vw;
 		max-height: 85vh;
-		width: 70vw;
+		width: 50vw;
+		min-width: 500px;
+		padding-left: 10px;
+		padding-right: 10px;
 		overflow-y: scroll;
 		/*border-style: none groove groove none;
 		border-width: 4px;
@@ -24,7 +24,7 @@
 	
 	#table {
 		font-size: max(16px, 1.5vw);
-		width: 70vw;
+		width: 100%;
 		max-height: 85vh;
 		overflow-y: scroll;
 		color: black;
@@ -32,8 +32,8 @@
 	}
 	.profilePic {
 		border-radius: max(7vmin, 30px);
-		width: max(7vmin, 40px);
-		height: max(7vmin, 40px);
+		width: 60px;
+		height: 60px;
 		font-size: max(2vmin, 16px);
 	}
 	.chatButton {
@@ -50,28 +50,22 @@
 		color: white;
 	}
 	
-	.profilePic:hover {
-		transform: scale(1.5, 1.5)
-	}
-	
 	.notification-cell1 {
 		text-align: left;
 		height: 100px;
+		padding-left: 10px;
 	}
 	
 	.date-string {
 		color: gray;
-		text-align: right;
+		//text-align: right;
 		font-size: max(12px, 1vw);
 	}
 	
 	@media only screen and (max-width: 700px) {
 		#post {
-			margin-left: 1vw;
-			width: 98vw;
-		}
-		#table {
-			width: 98vw;
+			margin-left: 2vw;
+			width: 90vw;
 		}
 	}
 	
@@ -85,9 +79,6 @@
 			background: black;
 		}
 		
-		td {
-			border-bottom: 1px solid gray;
-		}
 	}
 	
 </style>
@@ -139,25 +130,27 @@
   	var createNotificationDiv = function(notification, row) {
   		var content = notification.content
   		var date = (Date.now() - new Date(notification.created)) / 1000
-		var dateString = Math.round(date + 1) + " seconds ago"
+		var dateString = Math.round(date + 1) + " s ago"
 		if (date >= 59 && date < 60 * 60) {
-			dateString = Math.round(date / 60) + " minutes ago"
+			dateString = Math.round(date / 60) + " min ago"
 		} else if (date >= 60 * 60 && date < 60 * 60 * 24) {
-			dateString = Math.round(date / (60 * 60)) + " hours ago"
+			dateString = Math.round(date / (60 * 60)) + " hr ago"
 		} else if (date >= 60 * 60 * 24 && date < 60 * 60 * 24 * (365 + 0.25)) {
-			dateString = Math.round(date / (60 * 60 * 24)) + " days ago"
+			dateString = Math.round(date / (60 * 60 * 24)) + " d ago"
 		} else if (date >= 60 * 60 * 24 * (365 + 0.25)) {
-			dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " years ago"
+			dateString = Math.round(date / (60 * 60 * 24 * (365 + 0.25))) + " yr ago"
 		}
 		var u2 = notification.content.split(" ")[0]
 		var cell0 = row.insertCell(0);
+		cell0.style.paddingLeft = "10px"
+		//cell0.style.marginRight = "10px"
 		cell0.style.textAlign = 'center'
 		if (notification.sender) {
 			$.get("/user-pic/" + notification.sender, function(data) {
 				if (data) {
 					cell0.innerHTML = "<img src=" + data + " username=" + u2 + " class='profilePic'></img>"
 				} else {
-					cell0.innerHTML = "<span class='profilePic' username=" + u2 + "><i class='fa fa-user fa-xl'></i></span>"
+					cell0.innerHTML = "<span class='profilePic' username=" + u2 + "><i class='fa fa-user fa-2xl'></i></span>"
 				}
 				cell0.style.alignSelf = "flex-end"
 				cell0.onclick = (e) => {window.location.href='/profile/' + e.target.attributes.username.value}
@@ -180,7 +173,7 @@
 		button.className = "fa-solid fa-message fa-sm chatButton"
 		button.id = "join";
 		button.chatId = chatId
-		button.onclick = (e) => {window.location.href = "/chat/" + e.target.chatId}
+		button.onclick = (e) => {window.location.href = "/chats"}
 		cell3.appendChild(button);
 		cell3.style.textAlign = 'center'
   	}
