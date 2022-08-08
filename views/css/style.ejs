@@ -34,14 +34,15 @@ button {
 }
 
 #bar {
+	display: flex;
 	position: absolute;
-	right: min(150px, max(30px, 8%));
+	right: min(150px, max(30px, 8vw));
 	height: 100%;
-	font-size: min(32px, max(24px, 3vw));
+	font-size: 32px;
 }
 
 #bar > button {
-	margin-right: 5px;
+	margin-right: min(10px, max(5px, 0.75%));
 	background: none;
 	border: none;
 	
@@ -124,7 +125,7 @@ button {
 	}
 	#bar {
 		right: 20px;
-		font-size: 24px;
+		font-size: 20px;
 	}
 	#bar > button {
 		margin-right: 0px;
