@@ -99,6 +99,12 @@ app.post('/comments', routes.add_comment)
 app.get('/settings', routes.settings)
 app.post('/settings', routes.change_settings)
 
+//Saved
+app.get('/saved', routes.saved)
+app.post('/saved/:id', routes.handle_save)
+
+//Apply
+app.post('/apply/:username/:title', routes.apply)
 /*var sendMail = async function(send, rec, type) {
 	var sender = await db.getUser(send)
 	var reciever = await db.getUser(rec)

@@ -192,7 +192,6 @@ var getPostsByRestaurant = function(username) {
 var putPost = function(p) {
 	var date = new Date();
 	var expireDate = new Date(p.expiration)
-	console.log(expireDate)
 	var postId = uuidv4();
 	var postObj = {
 		created: date.toISOString(),
@@ -311,6 +310,18 @@ var changeSettings = function(username, settings) {
 	return utils.replaceItem(db, "Settings", {username: username}, settings)
 }
 
+var getSaved = function(username) {
+	return utils.getList(db, "Saved", {username: username}, {id: 1})
+}
+
+var addSaved = function(username, id) {
+	return utils.postItem(db, "Saved", {username: username, id: id})
+}
+
+var deleteSaved = function(username, id) {
+	return utils.deleteItem(db, "Saved", {username: username, id: id})
+}
+
 module.exports = {
 	connect: connect,
 	//User + Restaurant
@@ -356,5 +367,9 @@ module.exports = {
 	addComment: addComment,
 	//Settings
 	getSettings: getSettings,
-	changeSettings: changeSettings
+	changeSettings: changeSettings,
+	//Saved
+	getSaved: getSaved,
+	addSaved: addSaved,
+	deleteSaved: deleteSaved
 };

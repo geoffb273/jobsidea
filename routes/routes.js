@@ -258,7 +258,8 @@ var getChats = function(req, res) {
 
 var getChatsPage = function(req, res) {
 	var username = req.session.username
-	res.render("chats.ejs", {username: username});
+	var chatId = req.query.chatId
+	res.render("chats.ejs", {username: username, chatId: chatId});
 }
 
 var getChat = async function(req, res) {
@@ -283,16 +284,16 @@ var handleChats = function(req, res) {
 	}
 	db.getChat(chatId).then(chat => {
 		if (chat) {
-			res.redirect("/chats")
+			res.send(chatId)
 		} else {
 			db.putChat(username, username2).then(_ => {
-				res.redirect("/chats")
+				res.send(chatId)
 			}).catch(_ => {
-				res.redirect("/chats")
+				res.send("")
 			})
 		}
 	}).catch(_ => {
-		res.redirect("/chats")
+		res.send("")
 	})
 }
 
@@ -493,6 +494,7 @@ var getPosts = async function(req, res) {
 	var zipCode = req.query.zipCode ? req.query.zipCode : undefined
 	var radius = req.query.radius ? req.query.radius : 10
 	var filter = req.query.filter ? req.query.filter : undefined
+	var username = req.session.username
 	
 	var zipCodes = []
 	
@@ -521,10 +523,24 @@ var getPosts = async function(req, res) {
 	var p = zipCodes ? db.getPosts(limit, search, filter, zipCodes): db.getPosts(limit, search, filter)
 		
 	
-	p.then(snapshot => {
-		if (snapshot) {
-			res.send(snapshot)
+	p.then(async (snapshot) => {
+		var saved = await db.getSaved(username)
+		var posts = snapshot
+		if (saved) {
+			for (var i = 0; i < snapshot.length; i++) {
+				var post = posts[i]
+				post.saved = false
+				for (j = 0; j < saved.length; j++) {
+					var id = saved[j].id
+					if (post.id == id) {
+						post.saved = true
+						break;
+					}
+				}
+			}
 		}
+		
+		res.send(posts)
 	})
 }
 
@@ -777,6 +793,46 @@ var changeSettings = function(req, res) {
 	})
 }
 
+var getSaved = function(req, res) {
+	var username = req.session.username
+	db.getSaved(username).then(saved => {
+		res.send(saved)
+	})
+}
+
+var postSaved = function(req, res) {
+	var username = req.session.username
+	var id = req.params.id
+	db.getSaved(username).then(saved => {
+		if (saved) {
+			for (var i = 0; i < saved.length; i++) {
+				var savedPost = saved[i]
+				if (savedPost.id == id) {
+					db.deleteSaved(username, id).then(_ => {
+						res.send("Delete")
+					})
+				return
+				}
+			}
+		}
+		db.addSaved(username, id).then(_ => {
+			res.send("Added")
+		})
+	})
+}
+
+var postApply = async function(req, res) {
+	var sender = req.session.username
+	var title = req.params.title
+	var username = req.params.username
+	var settings = await db.getSettings(username)
+	db.putNotification(username, sender, sender + " has applied to your " + title + " post", "Application", settings).then(_ => {
+		res.send("Done")
+	});
+	
+}
+
+
 var connect = function() {
 	db.connect()
 }
@@ -833,7 +889,12 @@ var routes = {
 	comments: getComments,
 	//Settings
 	settings: getSettingsPage,
-	change_settings: changeSettings
+	change_settings: changeSettings,
+	//Saved
+	saved: getSaved,
+	handle_save: postSaved,
+	//Apply
+	apply: postApply
 };
 
 module.exports = routes;

@@ -13,67 +13,66 @@ button {
 }
 
 #top {
-	width: 99vw - 8px;
+	height: 70px;
+	width: 100%;
 	margin: 0;
 	display: flex;
 	justify-content: center;
 	position: sticky;
 	top: 0;
-	left: 0.5vw;
-	//border-bottom: 1px solid black;
-	font-size: max(2.5vw, 23px);
 	z-index: 1;
-	//background-image: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 	background: white;
-	/*border-style: none solid solid solid;
-	border-width: 4px;
-	border-color: black;*/
 	box-shadow: 5px 5px 10px #20537A;
 }
-#top > button {
-	width: 10vw;
-	border-radius: 0;
-	background: white;
-	margin: 10px 0px 10px 0.2vw;
-	min-height: 3vh;
-	
-	color: #20537A;
-}
 
-#top > button:hover {
-	color: white;
-	background: #20537A;
-}
-
-#top > #space {
-	width: 17vw;
-	
-}
-
-
-
-#top > #dropdown {
-	margin: 10px 0px 10px 10px;
-	width: 20vw;
-	min-width: 175px;
-	
-}
-
-#top > #dropdown > input {
-	width: 100%;
-	font-size: max(1.5vw, 16px);
-	border-radius: 10px;
-	padding-left: 5px;
+#grouping {
+	position: absolute;
+	left: min(150px, max(30px, 8vw));
+	height: 100%;
+	display: flex;
 	padding-top: 5px;
-	padding-bottom: 5px;
 }
 
-#top > #dropdown > #results {
+#bar {
+	position: absolute;
+	right: min(150px, max(30px, 8vw));
+	height: 100%;
+	font-size: min(32px, max(24px, 3vw));
+}
+
+#bar > button {
+	margin-right: min(10px, max(5px, 0.75vw));
+	background: none;
+	border: none;
+	
+	height: 100%;
+	
+	color: #38698E;
+}
+
+
+#grouping > #dropdown {
+	width: max(20vw, 225px);
+	margin-top: 10px;
+	margin-left: 15px;
+}
+
+#grouping > #dropdown > input {
+	width: 100%;
+	font-size: 16px;
+	padding: 10px;
+	padding-left: 10px;
+	background: #eeeeee;
+	border: none;
+	border-radius: 10px;
+}
+
+#grouping > #dropdown > #results {
 	display: none;
 	z-index: 1;
 	position: absolute;
 	background: white;
-	width: max(25vw, 200px);
+	width: max(25vw, 300px);
 	max-height: 150px;
 	border: 1px solid lightgray;
 	border-radius: 15px;
@@ -99,38 +98,59 @@ button {
 	background: #B6D0E4;
 }
 
-#top > #logo {
-	margin: 10px 0px 10px 0.2vw;
-	width: 14vw;
+#grouping > #logo {
 	color: transparent;
 	font-family: Monaco;
 	font-weight: bolder;
 	text-decoration: none;
-	font-size: max(2.5vw, 24px);
+	margin-top: 5px;
+	font-size: 34px;
 	background-image: linear-gradient(to bottom right, #20537A, #B6D0E4);
 	background-clip: text;
 	-webkit-background-clip: text;
 }
 
+#search {
+	background: none;
+	color: black;
+}
+
 @media only screen and (max-width: 700px) {
-	#top > #logo {
-		font-size: max(3vw, 12px);
-		padding-right: 10px;
+	#top {
+		height: 50px;
 	}
-	#top > #space {
-		width: 5px;
+	#grouping {
+		left: 20px;
 	}
-	#top > #dropdown {
-		width: 35vw;
+	#bar {
+		right: 20px;
+		font-size: 24px;
+	}
+	#bar > button {
+		margin-right: 0px;
 	}
 	
-	#top > #dropdown > #results {
-		width: 35vw;
-	}
-	
-	#top > #logo {
+	#grouping > #logo {
 		font-size: 18px;
+		margin-right: 10px;
+		margin-top: 10px;
 	}
+	#grouping > #dropdown {
+		width: 175px;
+		margin-top: 5px;
+		margin-left: 5px;
+	}
+	
+	#grouping > #dropdown > #results {
+		width: 300px;
+	}
+	
+	#grouping > #dropdown > input {
+		padding: 5px;
+		padding-left: 10px;
+		margin-top: 5px;
+	}
+	
 	
 }
 
@@ -141,23 +161,37 @@ button {
 	#top {
 		background: black;
 	}
+	#search {
+		color: white;
+	}
+	#bar > button {
+		color: white;
+	}
 	
+	#grouping > #dropdown > input {
+		background: #333333;
+	}
 }
 
 </style>
+<link rel="apple-touch-icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <script src="https://kit.fontawesome.com/9e383076d5.js" crossorigin="anonymous"></script>
 
 <div id="top">
-	<a id="logo" href='/'>Staffer</a>
-	<div id="dropdown">
-		<input id="search" placeholder="Search" onkeyup="onChange()"></input>
-		<div id="results"></div>
+	<div id="grouping">
+		<a id="logo" href='/'>Staffer</a>
+		<div id="dropdown">
+			<input id="search" placeholder="Search" onkeyup="onChange()"></input>
+			<div id="results"></div>
+		</div>
 	</div>
-	<div id="space"></div>
-	<button onclick="location.href='/'" class="fa-solid fa-home fa-sm"></button>
-	<button onclick="location.href='/notifications'" class="fa-solid fa-bell fa-sm"></button>
-	<button onclick="location.href='/chats'" class="fa-solid fa-envelope fa-sm"></button>
-	<button onclick="location.href='/profile'" class="fa-solid fa-user fa-sm"></button>
+	<div id="bar">
+		<button onclick="location.href='/'" class="fa fa-home fa-sm"></button>
+		<button onclick="location.href='/notifications'" class="fa fa-bell fa-sm"></button>
+		<button onclick="location.href='/chats'" class="fa fa-envelope fa-sm"></button>
+		<button onclick="location.href='/profile'" class="fa fa-user fa-sm"></button>
+	</div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>

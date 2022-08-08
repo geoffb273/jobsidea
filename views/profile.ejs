@@ -307,7 +307,7 @@
 				<%} %>
 			
 		<%} else {%>
-			<form action="/chats/<%- username %>" method="post">
+			<form onclick="openChat()" action="#" onsubmit="return false">
 				<input type="submit" id="chatButton" value="Chat">
 			</form>
 			
@@ -324,6 +324,19 @@
 		<input type='hidden' name='username' value=<%= username%> >
 	</form>
 </div>
+<%if (!own) {%>
+	<script>
+		var username = '<%- username%>'
+		var openChat = function() {
+			$.post("/chats/" + username, {}, function(data) {
+				console.log(data)
+				window.location.href = "/chats?chatId=" + data
+			})
+			return false;
+		}
+	</script>
+<%} %>
+
 <script>
 	var reviews = [];
 	var username = '<%- username%>'

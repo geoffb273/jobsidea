@@ -25,7 +25,8 @@
 		overflow-y: scroll;
 		font-size: max(16px, 1.5vw);
 		color: black;
-		border: 1px black solid;
+		border: 1px #eeeeee solid;
+		border-bottom: none;
 		color: white;
 		margin-left: 0;
 		height: 100%;
@@ -98,7 +99,7 @@
 		right: 0;
 		margin-top: 20px;
 		height: 35px;
-		border-bottom: 1px solid black;
+		border-bottom: 1px solid #eeeeee;
 		z-index: 1;
 		font-size: 24px;
 	}
@@ -132,8 +133,8 @@
 		height: 100%;
 		border-top-left-radius: 20px;
 		border-bottom-left-radius: 20px;
-		border: 1px solid gray;
-		background: none;
+		border: none;
+		background: #eeeeee;
 		color: black;
 		padding-left: 20px;
 		font-size: 16px;
@@ -155,7 +156,7 @@
 	
 	.chat-message {
 		display: block;
-		border: 1px solid gray;
+		border: 1px solid #eeeeee;
 		border-radius: 20px;
 		margin-top: 5px;
 		margin-right: 5px;
@@ -198,13 +199,13 @@
 		#table {
 			background: black;
 			color: white;
-			border: 1px solid white;
+			border: 1px solid #333333;
 		}
 		td {
-			border-bottom: 1px solid white;
+			border-bottom: 1px solid #333333;
 		}
 		#chat-title {
-			border-bottom: 1px solid white;
+			border-bottom: 1px solid #333333;
 			color: white;
 			background: black;
 		}
@@ -230,9 +231,15 @@
 		}
 		#message-input {
 			color: white;
+			background: #333333;
+		}
+		
+		.chat-message {
+			border: 1px solid #333333
 		}
 		.right-chat {
 			background: gray;
+			border: none;
 		}
 	}
 </style>
@@ -252,6 +259,24 @@
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<%if (chatId) { %>
+	<script>
+		var auto = function() {
+			var chatId = '<%- chatId %>'
+			var row = document.getElementById(chatId)
+			if (row) {
+				enterChat({target: row})
+			}
+		}
+	</script>
+<%} else { %>
+	<script>
+		var auto = function() {
+			console.log("None")
+		}
+	</script>
+<%}%>
 <script>
 	var table = document.getElementById("table");
 	var socket = io();
@@ -396,6 +421,9 @@
 				row.chatName = chatName
 				row.onclick = (e) => {enterChat(e)}
     		})
+    		if (!entered) {
+    			auto()
+    		}
     	})
   	};
   	
