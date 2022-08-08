@@ -1,51 +1,59 @@
+<head>
+	<%- include('css/style'); %>
+</head>
+
 <style>
 	#profilePic {
-		height: 12.5vw;
-		width: 12.5vw;
+		margin-top: 25px;
+		margin-left: 20px;
+		height: 150px;
+		width: 150px;
 		border-radius: 150px;
-		margin-top: min(max(2vw, 15px), 25px);
-		margin-left: 2vw;
-		margin-right: 1.5vw;
 		background: linear-gradient(to bottom, #afb8c2, lightgray, white);//#afb8c2;
 		border: 1px solid #20537A;
-		min-width: 150px;
-		min-height: 150px;
 	}
 	
 	#header {
-		width: 80vw;
+		//position: absolute;
+		
+		width: min(900px, 95%);
 		display: flex;
 		box-shadow: 5px 5px 10px #20537A;
-		margin-top: 1.5vh;
 		background: white;
-		border-radius: 2.5vw;
-		margin-left: 10vw;
-		height: min(220px, max(175px, 25vw));
-		background: white;//radial-gradient(#cedde9, #81A8C6);
+		border-radius: 25px;
+		margin: auto;
+		margin-top: 10px;
+		height: 200px;
+		background: white;
 	}
-	
+	#header > #info {
+		text-align: center;
+	}
 	#header > #info > #name {
 		font-family: Monaco;
 		font-weight: bolder;
 		margin-top: 30px;
+		margin-bottom: 10px;
+		font-size: 26px;
 	}
 	#header > #info > #email {
 		margin-top: 30px;
 	}
 	
 	#header > #rightheader {
+		margin-left: auto;
+		margin-right: 20px;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
-		position: absolute;
-		right: 10vw;
-		height: 220px;
 	}
 	#header > #rightheader > button {	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
+		border: none;
 		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		color: white;
-		//border-radius: 5vmin;
-		margin-right: 1.5vw;
-		font-size: max(12px, 2vmin);
+		border-radius: 25px;
+		width: 110px;
+		font-size: 100%;
 	}
 	
 	#header > #rightheader > button:hover {
@@ -53,12 +61,12 @@
 	}
 	
 	#header > #rightheader > form > #chatButton {
+		border: none;
 		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		color: white;
-		//border-radius: 5vmin;
-		margin-right: 1.5vw;
-		font-size: max(16px, 2vmin);
-		margin-top: 75px;
+		border-radius: 25px;
+		width: 100%;
+		font-size: 14px;
 	}
 	
 	#header > #rightheader > form > #chatButton:hover {
@@ -70,19 +78,16 @@
 	}
 	
 	label {
-		margin-top: max(10vmin, 40px);
 		cursor: pointer;
 		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
-		border: outset lightgray;
+		border: none;
 		color: white;
-		padding-right: 10px;
-		padding-left: 10px;
-		margin-right: 1.5vw;
-		//border-radius: 5vmin;
-		font-size: max(12px, 2vmin);
-		width: 12vw;
+		border-radius: 25px;
+		font-size: 14px;
 		padding-top: 2.5px;
 		padding-bottom: 2.5px;
+		padding-right: 10px;
+		padding-left: 10px;
 	}
 	
 	label:hover {
@@ -96,26 +101,21 @@
 	}
 	
 	#reviews-div {
-		max-width: 100vw;
 		height: 170px;
+		max-width: min(95%, 1000px);
 		overflow-x: auto;
 		display: flex;
 		font-size: 14px;
-		margin-left: 10px;
-		margin-right: 10px;
+		margin: auto;
 		border-right: 1px solid #20537A;
 		border-left: 1px solid #20537A;
-		position: aboslute;
-		top: 420px;
 	}
 	.review {
-		position: relative;
 		margin-top: 10px;
 		background: white;
 		width: max(20vw, 300px);
 		min-width: max(25vw, 300px);
 		height: 150px;
-		max-height: 150px;
 		margin-bottom: 10px;
 		
 		border-style: solid;
@@ -143,15 +143,21 @@
 	}
 	
 	.center {
-		
+		display: flex;
+		justifyContent: center;
+		margin-top: 20px;
+		margin-left: 10px;
+		margin-right: 10px;
+		height: 65px;
+		padding-right: 10px;
+		padding-bottom: 10px;
+		overflow-y: auto;
 	}
 	
 	.bottom-review {
-		position: absolute;
-		bottom: 0;
-		right: 10px;
 		text-align: right;
 		color: gray;
+		padding-right: 10px;
 	}
 	
 	#review-popup {
@@ -208,19 +214,20 @@
 	
 	@media only screen and (max-width: 700px) {
 		#header {
-			margin-left: 1vw;
 			width: 98vw;
-			margin-right: 0;
 			height: 175px;
 		}
 		
 		#profilePic {
-			height: 20vmin;
-			width: 20vmin;
-			min-width: 25px;
-			min-height: 25px;
-			margin-top: 20px;
+			height: 125px;
+			width: 125px;
+			border-radius: 125px;
+			margin-top: 25px;
 		}
+		#header > #info > #email {
+			margin-top: 5px;
+		}
+		
 		#header > #rightheader {
 			right: 1vw;
 			height: 175px;
@@ -231,6 +238,16 @@
 		#header > #rightheader > form > #chatButton {
 			margin-top: 60px;
 		}
+		#reviews-div {
+			height: 145px;
+		}
+		.review {
+			height: 125px;
+		}
+		.center {
+			height: 45px;
+		}
+		
 	}
 	
 	@media (prefers-color-scheme: dark) {
@@ -242,6 +259,7 @@
 			background: black;
 			color: white;
 			border-color: #81A8C6;
+			
 		}
 	}
 	
@@ -249,13 +267,11 @@
 	
 	
 </style>
-<meta name="viewport" content="width=device-width,initial-scale=0.7">
+
 <title><%- name%> / Staffer</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<head>
-	<%- include('css/style'); %>
-</head>
 
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
@@ -282,7 +298,7 @@
 	<img id="profilePic"></img>
 	<div id="info">
 	<%if (name) {%>
-		<p id="name" style="font-size: max(26px, 3vw); text-align:left;"><%= name %></p>
+		<p id="name" text-align:left;"><%= name %></p>
 	<%}%>
 	<%if (username) {%>
 		<p id="username"><i>&#64<%= username %></i></p>
@@ -293,7 +309,7 @@
 	</div>
 	<div id="rightheader">
 		<%if (own) {%>
-				<span style='position:absolute;right:20px;top:20px;'>
+				<span style="margin-top: 20px; margin-bottom: -20px; margin-left: auto">
 					<a href='/settings' style='text-decoration:none;color:#38698E;'>
 						<i class="fa-solid fa-gear fa-lg"></i>
 					</a>
@@ -388,14 +404,9 @@
 		reviewDiv.appendChild(center)
 		reviewDiv.appendChild(bottom)
 		
+		center.className = "center"
 		center.style.display = "flex"
 		center.style.justifyContent = "center"
-		center.style.marginTop = "max(3vh, 20px)"
-		center.style.marginLeft = "10px"
-		center.style.marginRight = "10px"
-		center.style.maxHeight = "75px"
-		center.style.paddingRight = "10px"
-		center.style.overflowY = "auto"
 		
 		bottom.className = "bottom-review"
 		

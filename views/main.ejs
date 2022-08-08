@@ -12,6 +12,8 @@
 	position: absolute;
 	left: 0;
 	right: 0;
+	min-width: 400px;
+	
 	top: 70px;
 	bottom: 0;
 	background: white;
@@ -146,6 +148,7 @@
 	color: black;
 	padding-left: min(100px, max(20px, 5vw));
 	overflow-y: auto;
+	padding-right: 10px;
 }
 
 .display-title {
@@ -172,6 +175,11 @@
 	display: block;
 	font-size: 16px;
 	
+}
+
+.display-jd {
+	font-size: 28px;
+	font-weight: bold;
 }
 
 .display-button {
@@ -210,8 +218,40 @@
 	}
 	
 	#posts {
+		width: 150px;
+	}
+	.ind-post {
+		padding: 5px;
+		height: 110px;
+	}
+	
+	.post-c0 {
+		left: 10px;
+		right: 50px;
+	}
+	
+	.post-title {
+		font-size: 16px;
 		
 	}
+	.post-name {
+		font-size: 12px;
+	}
+	
+	.post-c1 {
+		font-size: 24px;
+		right: 5px;
+	}
+	#display {
+		left: 150px;
+	}
+	.display-title {
+		font-size: 24px;
+	}
+	.display-jd {
+		font-size: 20px;
+	}
+	
 	#searchDiv {
 		
 	}
@@ -478,8 +518,7 @@ var openPost = function(e) {
 	var descrDiv = document.createElement("div")
 	descrDiv.style.textAlign = "left"
 	var jobDescr = document.createElement("p")
-	jobDescr.style.fontWeight = "bold"
-	jobDescr.style.fontSize = "28px"
+	jobDescr.className = "display-jd"
 	jobDescr.textContent = "Job Description"
 	var description = document.createElement("p")
 	description.textContent = post.content

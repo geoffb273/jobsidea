@@ -8,27 +8,20 @@
 	#post {
 		display: flex;
 		background: white;
-		position: fixed;
-		left: 15vw;
-		right: 15vw;
 		box-shadow: 5px 5px 10px #20537A;
+		margin: auto;
 		margin-top: 10px;
-		height: max(85vh, 500px);
-		min-width: 605px;
+		height: 600px;
+		width: 700px;
 	}
    	#table {
-   		position: absolute;
-   		left: 0;
-   		top: 0;
-   		bottom: 0;
-		width: 225px;
+		width: 200px;
 		overflow-y: scroll;
-		font-size: max(16px, 1.5vw);
+		font-size: 16px;
 		color: black;
 		border: 1px #eeeeee solid;
 		border-bottom: none;
 		color: white;
-		margin-left: 0;
 		height: 100%;
 		margin-top: 0;
 		list-style: none;
@@ -69,9 +62,10 @@
 	.icon-pic {
 		display: inline-block;
 		height: 40px;
+		width: 60px;
 		margin-left: -10px;
 		margin-right: 10px;
-		width: 60px;
+		
 	}
       
   	.profilePic {
@@ -84,19 +78,13 @@
    	}
 	
 	#chat-page {
-		position: absolute;
-		left: 225px;
-		margin-left: 2px;
-		right: 0;
+		width: 500px;
 		background: white;
 		height: 100%;
 	}
 	
 	#chat-title {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
+		
 		margin-top: 20px;
 		height: 35px;
 		border-bottom: 1px solid #eeeeee;
@@ -105,44 +93,38 @@
 	}
 	
 	#chat {
-		position: absolute;
-		top: 55px;
-		bottom: 70px;
 		width: 100%;
+		height: 490px;
 		margin: 0;
 		padding: 0;
 		list-style: none;
 		overflow-y: scroll;
+		margin-bottom: 10px;
 	}
 	
 	#input-div {
-		position: absolute;
-		bottom: 0;
-		height: 30px;
-		left: 0;
-		right: 0;
 		display: flex;
-		margin: 0;
-		margin-left: 50px;
-		margin-right: 50px;
-		margin-bottom: 20px;
+		width: 80%;
+		margin: auto;
 	}
 	
 	#message-input {
 		width: 80%;
-		height: 100%;
 		border-top-left-radius: 20px;
 		border-bottom-left-radius: 20px;
 		border: none;
 		background: #eeeeee;
 		color: black;
+		padding-top: 5px;
+		padding-bottom: 5px;
 		padding-left: 20px;
+		padding-right: 10px;
 		font-size: 16px;
+		
 	}
 	
 	#message-button {
 		width: 20%;
-		height: 100%;
 		border-top-right-radius: 20px;
 		border-bottom-right-radius: 20px;
 		border: none;
@@ -185,11 +167,42 @@
 	
    	
    	
-   	@media only screen and (max-width: 800px) {
-		#post {
-			left: 1vw;
-			right: 1vw;
-		}
+   	@media only screen and (max-width: 700px) {
+   		#post {
+   			width: 500px;
+   		}
+   		#table {
+   			width: 125px;
+   		}
+   		#chat-page {
+   			width: 375px;
+   		}
+   		
+   		.row {
+   			height: 60px;
+   		}
+   		.row > .holder {
+   			padding-top: 10px;
+   		}
+   		.row > .holder > .username {
+   			font-size: 16px;
+   		}
+   		.row > .holder > .date {
+   			margin-top: 5px;
+   		}
+   		
+   		.profilePic {
+   			width: 40px;
+   			height: 40px;
+   			margin-top: 10px;
+   		}
+   		
+   		.icon-pic {
+   			
+   			height: 32.5px;
+			width: 40px;
+   		}
+		
 		
 	}
 	
@@ -245,7 +258,7 @@
 		}
 	}
 </style>
-<meta name="viewport" content="width=device-width,initial-scale=0.8">
+<meta name="viewport" content="width=device-width,initial-scale=0.7">
 <title>Chats / Staffer</title>
 
 <div id="post">
@@ -295,6 +308,7 @@
 	var chatId = undefined
 	var enterChat = function(e) {
 		message.disabled = false
+		message.placeholder = "Message..."
 		message.value = ""
 		entered = true
 		var row = e.target
@@ -452,7 +466,11 @@
 	
 	updateChats();
 	
-		
+	message.addEventListener("keyup", (e) => {
+		if (e.key == "Enter" || e.key == "Return") {
+			sendMessage()
+		}
+	})
 		
 	var sendMessage = function() {
 		
