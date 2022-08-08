@@ -95,6 +95,7 @@
 
 .clicked {
 	background: #aaaaaa;
+	border-left: 1px solid black;
 }
 
 .postProfPic:hover {
@@ -107,8 +108,6 @@
 	padding-left: 15px;
 	text-align: left;
 	height: 150px;
-	margin-right: 20px;
-	margin-left: 20px;
 	color: black;
 	border-bottom: 1px solid #eeeeee;
 }
@@ -247,6 +246,10 @@
 	#display {
 		color: white;
 	}
+	.clicked {
+		background: #333333;
+		border-left: 1px white solid;
+	}
 	
 }
 
@@ -282,6 +285,7 @@ var postsEl = document.getElementById("posts")
 var limit = 15
 var search = ""
 var type = ""
+var clicked = undefined
 
 var getPosts = function(search = "", filter = "", zipCode = "", radius = 10) {
 	var url = "/posts?limit=" + limit
@@ -433,6 +437,13 @@ var openPost = function(e) {
 	while(row.className != 'ind-post') {
 		row = row.parentElement
 	}
+	if (clicked) {
+		clicked.classList.remove("clicked")
+	}
+	
+	row.classList.add("clicked");
+	clicked = row
+	
 	var postId = row.id
 	var post = row.post
 	var display = document.getElementById("display")
