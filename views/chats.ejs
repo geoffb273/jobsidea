@@ -5,22 +5,26 @@
 
 <body>
 <style>
+	#bar > #top-envelope {
+		color: #5481A4;
+	}
 	#post {
 		display: flex;
 		background: white;
-		box-shadow: 5px 5px 10px #20537A;
+		//box-shadow: 5px 5px 10px #20537A;
 		margin: auto;
 		margin-top: 10px;
-		height: 600px;
-		width: 700px;
+		height: 80vh;
+		width: 750px;
+		border: 2px solid #e0e0e0;
 	}
    	#table {
-		width: 200px;
+		width: 250px;
 		overflow-y: scroll;
 		font-size: 16px;
 		color: black;
-		border: 1px #dddddd solid;
-		border-bottom: none;
+		border-right: 1px #dddddd solid;
+		
 		color: white;
 		height: 100%;
 		margin-top: 0;
@@ -81,12 +85,13 @@
 		width: 500px;
 		background: white;
 		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 	
 	#chat-title {
-		
-		margin-top: 20px;
-		height: 35px;
+		flex: 0 1 60px;
+		line-height: 60px;
 		border-bottom: 1px solid #dddddd;
 		z-index: 1;
 		font-size: 24px;
@@ -94,7 +99,7 @@
 	
 	#chat {
 		width: 100%;
-		height: 490px;
+		flex: 1 1 auto;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -103,9 +108,11 @@
 	}
 	
 	#input-div {
+		flex: 0 1 40px;
 		display: flex;
 		width: 80%;
 		margin: auto;
+		padding-bottom: 10px;
 	}
 	
 	#message-input {
@@ -137,12 +144,13 @@
 	}
 	
 	.chat-message {
-		display: block;
+		display: flex;
 		border: 1px solid #dddddd;
 		border-radius: 20px;
 		margin-top: 5px;
 		margin-right: 5px;
 		margin-left: 5px;
+		width: fit-content;
 		max-width: 75%;
 		padding: 10px;
 		text-align: left;
@@ -152,13 +160,13 @@
 	.right-chat {
 		background: lightgray;
     	margin-left: auto;
-    	padding-right: 0;
+    	padding-right: 10px;
     	border: none;
 	}
 	
 	.clicked-row {
 		background: #dddddd;
-		border-left: 1px solid black;
+		//border-left: 1px solid black;
 	}
 	
 	.clicked-row:hover {
@@ -346,19 +354,10 @@
   				var r = document.createElement('li');
   				var item = document.createElement('div');
   				r.appendChild(item);
-  				r.style.width = "100%"
+  				//r.style.width = "100%"
   				item.className = "chat-message"
     			item.textContent = newMessages[i].content;
-    			var length = newMessages[i].content.length;
-    			if (length < 10) {
-    				length *= 10
-    			} else if (length < 15) {
-    				length *= 9
-    			} else {
-    				length *= 6
-    			}
-    			length += 10
-    			item.style.width = length + "px"
+    			
     			if (username == newMessages[i].author) {
     				item.classList.add("right-chat")
     			} 
@@ -490,16 +489,6 @@
   			r.style.width = "100%"
   			item.className = "chat-message"
     		item.textContent = m
-    		var length = m.length;
-    		if (length < 10) {
-    			length *= 10
-    		} else if (length < 15) {
-    			length *= 9
-    		} else {
-    			length *= 6
-    		}
-    		length += 10
-    		item.style.width = length + "px"
     		item.classList.add("right-chat")
 			last = username;
 			chat.appendChild(r);
@@ -519,16 +508,7 @@
 		item.className = "chat-message"
 		var r = document.createElement('li');
 		r.appendChild(item);
-		var length = msg.message.length;
-		if (length < 10) {
-    		length *= 10
-    	} else if (length < 15) {
-    		length *= 9
-    	} else {
-    		length *= 6
-    	}
-    	length += 10
-    	item.style.width = length + "px"
+		
 		last = msg.username
 		
 		chat.appendChild(r);
@@ -540,16 +520,7 @@
 		item.innerHTML = msg
 		var r = document.createElement('li');
 		r.appendChild(item);
-		var length = msg.length;
-		if (length < 10) {
-    		length *= 10
-    	} else if (length < 15) {
-    		length *= 9
-    	} else {
-    		length *= 6
-    	}
-    	length += 10
-    	item.style.width = length + "px"
+		
 		last = obj.username
 		chat.appendChild(r);
 		chat.scrollTo(0, chat.scrollHeight);

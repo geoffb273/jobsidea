@@ -5,7 +5,7 @@ body {
 	
 	font-family: Roboto;
 	margin: 0;
-	background: #eeeeee;
+	background: #fcfcfc;
 }															/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 button {
 	font-family: Roboto; 
@@ -22,7 +22,8 @@ button {
 	top: 0;
 	z-index: 1;
 	background: white;
-	box-shadow: 5px 5px 10px #20537A;
+	//box-shadow: 5px 5px 10px #20537A;
+	border-bottom: 2px solid #e0e0e0;
 }
 
 #grouping {
@@ -48,7 +49,7 @@ button {
 	
 	height: 100%;
 	
-	color: #38698E;
+	color: #B6D0E4;
 }
 
 
@@ -188,10 +189,10 @@ button {
 		</div>
 	</div>
 	<div id="bar">
-		<button onclick="location.href='/'" class="fa fa-home fa-sm"></button>
-		<button onclick="location.href='/notifications'" class="fa fa-bell fa-sm"></button>
-		<button onclick="location.href='/chats'" class="fa fa-envelope fa-sm"></button>
-		<button onclick="location.href='/profile'" class="fa fa-user fa-sm"></button>
+		<button onclick="location.href='/'" id="top-home" class="fa fa-home fa-sm"></button>
+		<button onclick="location.href='/notifications'" id="top-bell" class="fa fa-bell fa-sm"></button>
+		<button onclick="location.href='/chats'" id="top-envelope" class="fa fa-envelope fa-sm"></button>
+		<button onclick="location.href='/profile'" id="top-user" class="fa fa-user fa-sm"></button>
 	</div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

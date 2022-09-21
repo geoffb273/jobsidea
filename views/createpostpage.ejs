@@ -1,0 +1,130 @@
+<head>
+	<%- include('css/style'); %>
+</head>
+<style>
+	body {
+		text-align: left;
+	}
+	#cancel {
+		margin-top: 20px;
+		margin-left: 20px;
+		font-size: 20px;
+	}
+	
+	#post-form {
+		width: 80%;
+		margin: auto;
+		margin-top: 10px;
+		padding: 10px;
+		padding-left: 10px;
+		padding-right: 10px;
+		background: white;
+		color: black;
+	}
+	
+	#post-form > table {
+		width: 100%;
+	}
+	
+	
+	.first {
+		vertical-align: top; 
+		font-size: 20px;
+	}
+	
+	#post-title {
+		width: 100%;
+		font-size: 20px;
+	}
+	
+	textarea {
+		width: 100%;
+		height: 75px;
+		resize: none;
+		font-size: 16px;
+	}
+	
+	#checkboxes {
+		display: flex;
+		flex-direction: horizontal;
+	}
+	#checkboxes > input {
+		margin-left: 5px;
+		margin-right: 20px;
+	}
+	
+	@media only screen and (max-width: 700px) {
+		
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		
+	}
+	
+</style>
+
+<button onclick='history.go(-1)' id="cancel">Cancel</button>
+<form id="post-form" action="/posts" method="POST">
+	<table>
+		<tr>
+			<td class="first">
+				<label for="post-title">Job Title:</label>
+			</td>
+			<td>
+				<input id="post-title" name="title" placeholder="Title" required/>
+			</td>
+		</tr>
+		<tr>
+			<td class="first">
+				<label for="post-description">Job Description:</label>
+			<td>
+				<textarea id="post-description" name="content" placeholder="Description" required></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="first">
+				<label for="post-qualification">Job Qualifications:</label>
+			<td>
+				<textarea id="post-qualification" name="qualification" placeholder="Necessary experience" required></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="first">
+				<label for="post-expiration">Application Deadline (optional):</label>
+			<td>
+				<input type="date" name="expiration" id="post-expiration" />
+			</td>
+		</tr>
+		
+		<tr>
+			<td class="first">
+				Job Type:
+			</td>
+			<td>
+				<div id="checkboxes" >
+					<label for="post-waiter">Waiter: </label>
+					<input type="checkbox" name="waiter" id="post-waiter" /><br>
+					<label for="post-busser">Busser: </label>
+					<input type="checkbox" name="busser" id="post-busser" /><br>
+					<label for="post-washer">Dish Washer: </label>
+					<input type="checkbox" name="washer" id="post-washer" /><br>
+					<label for="post-other">Other: </label>
+					<input type="checkbox" name="other" id="post-other" /><br>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="first">
+				<input type="submit" id="post-submit" value="Post" />
+			</td>
+		</tr>
+	</table>
+</form>
+
+
+<script>
+	var rn = new Date()
+	var month = rn.getMonth() < 10 ? "0" + rn.getMonth(): rn.getMonth()
+	var day = rn.getDate() < 10 ? "0" + rn.getDate(): rn.getDate()
+	document.getElementById("post-expiration").min = rn.getFullYear() + "-" + month + "-" + day
+</script>

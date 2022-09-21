@@ -28,13 +28,13 @@ var sendText = async function(rec, msg) {
 var addUser = async function(username, password, firstname, lastname, email, phone) {//, phone, birthday, profilePic = undefined) {
 	var p = []
 	p.push(getUser(username));
-	p.push(utils.getItem(db, "Emails", {username: username}));
+	p.push(utils.getItem(db, "Users", {email: email}));
 	
 	return Promise.all(p).then(snapshots => {
-		if (!snapshots[0] && (!snapshots[1] || email != snapshots[1])) {
+		if (!snapshots[0] && !snapshots[1]) {
 			var obj = {
 				username: username,
-				password: password, //TODO Encryption
+				password: password,
 				firstname: firstname,
 				lastname: lastname,
 				email: email,
@@ -46,7 +46,6 @@ var addUser = async function(username, password, firstname, lastname, email, pho
 			
 			var promises = []
 			promises.push(utils.postItem(db, "Users", obj));
-			promises.push(utils.postItem(db, "Emails", {username: email}));
 			Promise.all(promises);
 		} else {
 			reject("Email or Username already in use");
@@ -78,9 +77,9 @@ var getUsersByLocation = function(zipCodes) {
 var addRestaurant = async function(username, password, name, email, street, city, state, zipCode, phone) {
 	var p = []
 	p.push(getUser(username));
-	p.push(utils.getItem(db, "Emails", {username: username}));
+	p.push(utils.getItem(db, "Users", {email: email}));
 	return Promise.all(p).then(snapshots => {
-		if (!snapshots[0] && (!snapshots[1] || email != snapshots[1])) {
+		if (!snapshots[0] && !snapshots[1]) {
 			var obj = {
 				username: username,
 				name: name,
@@ -97,7 +96,6 @@ var addRestaurant = async function(username, password, name, email, street, city
 			
 			var promises = []
 			promises.push(utils.postItem(db, "Users", obj));
-			promises.push(utils.postItem(db, "Emails", {username: email}));
 			Promise.all(promises);
 		} else {
 			reject("Email or Username already in use");
@@ -200,7 +198,11 @@ var putPost = function(p) {
 		username: p.username,
 		id: postId,
 		name: p.name,
-		zipCode: p.zipCode
+		zipCode: p.zipCode,
+		title: p.title,
+		qualification: p.qualification,
+		type: p.type,
+		location: p.location
 	}
 	var promises = []
 	promises.push(utils.postItem(db, "Posts", postObj));
@@ -272,8 +274,7 @@ var getProfilePic = function(id) {
 	return utils.getImage("profiles", id)
 }
 
-var uploadProfilePic = function(username, file) {
-	var id = uuidv4();
+var uploadProfilePic = function(username, id, file) {
 	var promises = []
 	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {pic: id}}))
 	promises.push(utils.uploadImage("profiles", id, file))
@@ -284,6 +285,24 @@ var deleteProfilePic = function(id, username) {
 	var promises = []
 	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {pic: undefined}}))
 	promises.push(utils.deleteImage("profiles", id))
+	return Promise.all(promises)
+}
+
+var getResume = function(id) {
+	return utils.getPDF("resumes", id)
+}
+
+var uploadResume = function(username, id, file) {
+	var promises = []
+	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {resume: id}}))
+	promises.push(utils.uploadImage("resumes", id, file))
+	return Promise.all(promises)
+}
+
+var deleteResume = function(id, username) {
+	var promises = []
+	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {resume: undefined}}))
+	promises.push(utils.deleteImage("resumes", id))
 	return Promise.all(promises)
 }
 
@@ -371,5 +390,10 @@ module.exports = {
 	//Saved
 	getSaved: getSaved,
 	addSaved: addSaved,
-	deleteSaved: deleteSaved
+	deleteSaved: deleteSaved,
+	//Resume
+	getResume: getResume,
+	uploadResume: uploadResume,
+	deleteResume: deleteResume
+	
 };

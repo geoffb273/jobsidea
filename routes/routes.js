@@ -1,7 +1,9 @@
 var db = require('../models/database.js');
 const axios = require('axios')
-const fs = require('fs')
+const fs = require('fs');
+var { v4: uuidv4 } = require('uuid');
 var crypto = require('crypto'); 
+
 
 var getHome = function(req, res) {
 	var username = req.session.username;
@@ -128,7 +130,7 @@ var handleSignUpUser = function(req, res) {
 		res.redirect("/profile");
 	}).catch(err => {
 		console.log(err)
-		res.redirect("/signup-user");
+		res.redirect("/login");
 	});
 	
 };
@@ -171,9 +173,9 @@ var handleSignUpRestaurant = function(req, res) {
 		}
 		req.session.name = name
 		req.session.type = "Restaurant";
-		res.redirect("/profile?username=" + username);
+		res.redirect("/profile");
 	}).catch(_ => {
-		res.redirect("/signup-restaurant");
+		res.redirect("/login");
 	});
 	
 };
@@ -563,6 +565,16 @@ var getPost = function(req, res) {
 	})
 }
 
+var getCreatePostPage = function(req, res) {
+	if (req.session.type == "User") {
+		res.redirect('/profile')
+		return
+	}
+	var user = req.session.user
+	user.password = undefined
+	res.render("createpostpage.ejs")
+}
+
 var getPostPage = function(req, res) {
 	var id = req.params.id
 	db.getPost(id).then(post => {
@@ -571,20 +583,39 @@ var getPostPage = function(req, res) {
 }
 
 var createPost = function(req, res) {
+	var user = req.session.user
+	var location = user.street + " "
 	var content = req.body.content
 	var username = req.session.username
 	var name = req.session.name
-	var type = req.body.type
+	var type = []
+	if (req.body.waiter) {
+		type.push("Waiter")
+	}
+	if (req.body.busser) {
+		type.push("Busser")
+	}
+	if (req.body.washer) {
+		type.push("Washer")
+	}
+	if (req.body.other) {
+		type.push("Other")
+	}
 	var zipCode = req.session.zipCode
 	var expiration = req.body.expiration
+	var qualification = req.body.qualification
+	var title = req.body.title
 	var post = {
 		content: content,
 		username: username,
 		name: name,
 		created: new Date().toISOString(),
 		type: type,
+		location: location,
 		zipCode: zipCode,
-		expiration: expiration
+		expiration: expiration,
+		qualification: qualification,
+		title: title
 	}
 	
 	db.putPost(post).then(async (_) => {
@@ -618,6 +649,7 @@ var createPost = function(req, res) {
 		for (var user in users) {
 			db.putNotification(users[user].username, username, username + " in your area has a new post.", "New Post", users[user].settings)
 		}
+		
 	})
 	
 }
@@ -670,12 +702,11 @@ var uploadProfilePic = function(req, res) {
 			db.getUser(username).then(user => {
 				if (user.pic) {
 					db.deleteProfilePic(user.pic, username).then(_ => {
-						db.uploadProfilePic(username, file).then(_ => {
-							req.session.users[username].pic = req.file.filename
+						var id = uuidv4();
+						db.uploadProfilePic(username, id, file).then (_ => {
+							req.session.users[username].pic = id
 							if (req.session.pics) {
-								if (req.session.pics[username]) {
-									delete req.session.pics[username]
-								}
+								req.session.pics[username] = id
 							}
 							res.redirect('/profile')
 							fs.unlink(path, _ => {})
@@ -829,7 +860,57 @@ var postApply = async function(req, res) {
 	db.putNotification(username, sender, sender + " has applied to your " + title + " post", "Application", settings).then(_ => {
 		res.send("Done")
 	});
-	
+}
+
+var getResume = async function(req, res) {
+	var username = req.params.username
+	var user = await db.getUser(username)
+	if (req.session.resumes) {
+		if (req.session.resumes[username]) {
+			res.send(req.session.resumes[username])
+			return
+		}
+	}
+	if (user.resume) {
+		var data = await db.getResume(user.resume)
+		var v = new DataView(data)
+		fs.writeFile(username, v, (err) => {
+			if (err) {
+				console.log(err)
+				return
+			}
+			res.sendFile(username, { root: __dirname })
+		})
+		
+		
+		
+	}
+}
+
+var uploadResume = function(req, res) {
+	var username = req.session.username
+	if (req.file) {
+		var path = req.file.path
+		fs.readFile(path, async (err, data) => {
+			var file = data
+			var user = await db.getUser(username)
+			if (user.resume) {
+				await db.deleteResume(user.resume, username)
+			}
+			var id = uuidv4();
+			user.resume = id
+			await db.uploadResume(username, id, file)
+			res.redirect('/profile')
+			fs.unlink(path, _ => {})
+		})
+	}
+}
+
+var deleteResume = function(req, res) {
+	var user = req.session.user
+	db.deleteResume(user.resume, username).then(_ => {
+		res.send("Done")
+	})
 }
 
 
@@ -878,6 +959,7 @@ var routes = {
 	delete_post: deletePost,
 	post: getPost,
 	post_page: getPostPage,
+	create_post_page: getCreatePostPage,
 	restaurant_posts: getRestaurantPosts,
 	//Pic
 	pic: getProfilePic,
@@ -894,7 +976,11 @@ var routes = {
 	saved: getSaved,
 	handle_save: postSaved,
 	//Apply
-	apply: postApply
+	apply: postApply,
+	//Resume
+	resume: getResume,
+	upload_resume: uploadResume,
+	delete_resume: deleteResume
 };
 
 module.exports = routes;

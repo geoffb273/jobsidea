@@ -81,6 +81,7 @@ app.get('/stars', routes.stars);
 app.get('/posts', routes.posts)
 app.get('/post/:id', routes.post)
 app.get('/post-page/:id', routes.post_page)
+app.get('/create-post', routes.create_post_page)
 app.post('/posts', routes.add_post)
 app.delete('/posts/:id', routes.delete_post)
 app.get('/posts/:username', routes.restaurant_posts)
@@ -105,6 +106,11 @@ app.post('/saved/:id', routes.handle_save)
 
 //Apply
 app.post('/apply/:username/:title', routes.apply)
+
+//Resume
+app.get('/resume/:username', routes.resume)
+app.post('/resume', upload.single('resume'), routes.upload_resume)
+app.delete('/resume', routes.delete_resume)
 /*var sendMail = async function(send, rec, type) {
 	var sender = await db.getUser(send)
 	var reciever = await db.getUser(rec)

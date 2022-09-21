@@ -5,17 +5,21 @@
 
 <style>
 	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
-	
+	#bar > #top-bell {
+		color: #5481A4;
+	}
 	#post {
-		background: white;
+		//background: white;
 		margin: auto;
-		max-height: 85vh;
+		//max-height: 85vh;
 		width: max(50%, 500px);
 		padding-left: 10px;
 		padding-right: 10px;
-		overflow-y: scroll;
-		box-shadow: 5px 5px 10px #20537A;
-		margin-top: 10px;
+		//overflow-y: scroll;
+		//box-shadow: 5px 5px 10px #20537A;
+		padding-top: 10px;
+		border-right: 1px solid #e0e0e0;
+		border-left: 1px solid #e0e0e0;
 	}
 	
 	#table {
@@ -25,6 +29,11 @@
 		overflow-y: scroll;
 		color: black;
 		border-collapse: collapse;
+	}
+	
+	td {
+		border-bottom: 1px solid #e0e0e0;
+		height: 125px;
 	}
 	.profilePic {
 		border-radius: max(7vmin, 30px);
@@ -66,12 +75,19 @@
 	
 	@media (prefers-color-scheme: dark) {
 		tr {
-			background: black;
+			//background: black;
 			color: white;
 		}
-		
 		#post {
-			background: black;
+			border-right: 1px solid #111111;
+			border-left: 1px solid #111111;
+		}
+		
+		td {
+			border-bottom: 1px solid #111111;
+		}
+		#post {
+			//background: black;
 		}
 		
 	}

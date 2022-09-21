@@ -2,7 +2,7 @@
 	<%- include('css/style'); %>
 </head>
 
-<style>
+<style> /* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 	#profilePic {
 		margin-top: 25px;
 		margin-left: 20px;
@@ -10,7 +10,7 @@
 		width: 150px;
 		border-radius: 150px;
 		background: linear-gradient(to bottom, #afb8c2, lightgray, white);//#afb8c2;
-		border: 1px solid #20537A;
+		border: 2px solid #B6D0E4;
 	}
 	
 	#header {
@@ -18,16 +18,17 @@
 		
 		width: min(900px, 95%);
 		display: flex;
-		box-shadow: 5px 5px 10px #20537A;
-		background: white;
-		border-radius: 25px;
+		//box-shadow: 5px 5px 10px #20537A;
+		background: transparent;
+		//border-radius: 25px;
 		margin: auto;
 		margin-top: 10px;
 		height: 200px;
-		background: white;
+		border-bottom: 1px solid #dddddd;
 	}
 	#header > #info {
 		text-align: center;
+		padding-left: 10px;
 	}
 	#header > #info > #name {
 		font-family: Monaco;
@@ -46,13 +47,14 @@
 		height: 100%;
 		display: flex;
 		flex-direction: column;
+		text-align: right;
 	}
 	#header > #rightheader > button {	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 		border: none;
 		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		color: white;
 		border-radius: 25px;
-		width: 110px;
+		width: 105px;
 		font-size: 100%;
 	}
 	
@@ -65,8 +67,9 @@
 		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		color: white;
 		border-radius: 25px;
-		width: 100%;
+		width: 105px;
 		font-size: 14px;
+		margin-top: 60px;
 	}
 	
 	#header > #rightheader > form > #chatButton:hover {
@@ -102,13 +105,14 @@
 	
 	#reviews-div {
 		height: 170px;
-		max-width: min(95%, 1000px);
+		max-width: min(95%, 1200px);
 		overflow-x: auto;
 		display: flex;
 		font-size: 14px;
 		margin: auto;
-		border-right: 1px solid #20537A;
-		border-left: 1px solid #20537A;
+		margin-top: 10px;
+		border-right: 1px solid #e0e0e0;
+		border-left: 1px solid #e0e0e0;
 	}
 	.review {
 		margin-top: 10px;
@@ -117,22 +121,16 @@
 		min-width: max(25vw, 300px);
 		height: 150px;
 		margin-bottom: 10px;
+		border-right: 1px solid #dddddd;
 		
-		border-style: solid;
-		border-width: 1px;
-		border-color: black;
-		box-shadow: 5px 5px 10px #20537A;
-		background: white;//radial-gradient(#cedde9, #81A8C6);
+		//box-shadow: 5px 5px 10px #20537A;
+		background: none;//radial-gradient(#cedde9, #81A8C6);
 	}
 	.profilePicRev {
 		width: 35px;
 		height: 35px;
 		border-radius: 35px;
 		margin-right: 10px;
-	}
-	.profilePicRev:hover {
-		z-index: 1;
-		transform: scale(1.5, 1.5);
 	}
 	
 	.top-review {
@@ -203,13 +201,10 @@
 	}
 	
 	#create-post {
-		position: absolute;
-		bottom: 20px;
-		right: 20px;
 		text-decoration: none;
 		color: #38698E;
 		font-size: 24px;
-		
+		margin-top: 20px;
 	}
 	
 	@media only screen and (max-width: 700px) {
@@ -236,7 +231,7 @@
 			margin-top: 60px;
 		}
 		#header > #rightheader > form > #chatButton {
-			margin-top: 60px;
+			margin-top: 55px;
 		}
 		#reviews-div {
 			height: 145px;
@@ -252,7 +247,7 @@
 	
 	@media (prefers-color-scheme: dark) {
 		#header {
-			background: black;
+			//background: black;
 			color: white;
 		}
 		.review {
@@ -267,6 +262,19 @@
 	
 	
 </style>
+
+<%if (own) {%>
+	<style>
+		#bar > #top-user {
+			color: #5481A4;
+		}
+		@media (prefers-color-scheme: dark) {
+			#bar > #top-user {
+				color: #B6D0E4;
+			}
+		}
+	</style>
+<%} %>
 
 <title><%- name%> / Staffer</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -319,7 +327,7 @@
 				</form>
 				<button id="logout" onclick="window.location.href='/login'">Log Out</button>
 				<%if (!user) { %>
-					<a id="create-post" onclick="openCreatePost()"><i class="fa-regular fa-square-plus"></i></a>
+					<a id="create-post" href="/create-post"><i class="fa-regular fa-square-plus"></i></a>
 				<%} %>
 			
 		<%} else {%>
@@ -443,6 +451,11 @@
 	
 	updateReviews();
 	
+	
+</script>
+
+<%if (!own) {%>
+<script>
 	var popup = document.getElementById('review-popup')
 	
 	var createReview = function() {
@@ -457,6 +470,7 @@
 		}
 	}
 </script>
+<%}%>
 
 <% if(user) { %>
 <%- include('user'); %>

@@ -1,7 +1,7 @@
 
 const {initializeApp} = require('firebase/app');
 const { MongoClient } = require("mongodb")
-const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage')
+const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, getBytes } = require('firebase/storage')
 const firebaseConfig = {
   apiKey: "AIzaSyDAYfUUgg1MN4sTHLxD1mm2QBJvnK-QIXg",
   authDomain: "jobsidea.firebaseapp.com",
@@ -99,6 +99,12 @@ var deleteImage = function(path, id) {
 	return deleteObject(r)
 }
 
+var getPDF = function(path, id) {
+	var r = ref(storage, path + "/" + id);
+	return getBytes(r)
+}
+
+
 
 //const {getDatabase, ref, set, get, query, orderByChild, limitToLast, limitToFirst, startAfter, onValue} = require('firebase/database');
 
@@ -152,5 +158,6 @@ module.exports = {
 	updateItem: updateItem,
 	getImage: getImage,
 	uploadImage: uploadImage,
-	deleteImage: deleteImage
+	deleteImage: deleteImage,
+	getPDF: getPDF
 };

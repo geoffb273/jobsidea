@@ -2,44 +2,36 @@
 
 <style>
 	#experience {
-		background: white;
+		//background: white;
 		//border-radius: 20px;
 		
 		margin: auto;
 		width: min(800px, 90%);
-		border-style: none solid solid none;
-		border-width: 1px;
-		border-color: black;
-		box-shadow: 5px 5px 10px #20537A;
+		//box-shadow: 5px 5px 10px #20537A;
 		padding-bottom: 30px;
 		
 		
 	}
-	#expTable {
-		padding-left: 10px;
-		padding-right: 10px;
-		width: 100%
-	}
 	
-	#exp-title {
-		font-size: 24px;
-		font-weight: bold;
-		justify-content: center;
-	}
-	
-	#edit-experience {
+	#upload-experience {
 		position: absolute;
 		right: 10px;
 		top: 0;
 		color: white;
 		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
-		//border-radius: 20px;
+		border-radius: 20px;
 		font-size: 14px;
 		margin-top: 10px;
 	}
 	
-	#edit-experience:hover {
+	#upload-experience:hover {
 		background: linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
+	}
+	
+	#upload-pdf {
+		opacity: 0;
+		position: absolute;
+		z-index: -1;
 	}
 	
 	.right {
@@ -59,16 +51,14 @@
 	
 	@media (prefers-color-scheme: dark) {
 		#experience {
-			background: black;
-			color: white;
-		}
-		#expTable {
+			//background: black;
 			color: white;
 		}
 	}
 	
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=0.8">
+<script src="https://unpkg.com/pdfjs-dist@latest/build/pdf.min.js"></script>
 <body>
 
 
@@ -77,54 +67,48 @@
 	<div style="position:relative;padding-top:0.5px;">
 		<p id="exp-title"><u>Experience</u></p>
 		<%if(own && own == true) { %>
-			<button id="edit-experience" onclick='editExpPage()'>Edit Experience</button>
+			<form id="upload-experience" method="post" enctype="multipart/form-data">
+				<label for="upload-pdf">Upload Resume<input type="file" id="upload-pdf" name="resume" accept="application/pdf" /></label>
+			</form>
 		<% } %> 
 	</div>
-	<table id="expTable"></table>
+	
+		<iframe type="application/pdf" id="resume-frame"></iframe>
+	
 </div>
 
 
 <script>
 	var username = '<%- username%>'
-	var experienceElement = document.getElementById("experience-div")
-	var experiences = {};
-	var types = [];
 	
-	var editExpPage = function() {
-		window.location.href = "edit-experience/" + username
-	}
-	
-	var makeExperience = function() {
-		var expTable = document.getElementById("expTable")
-		$.get("/experience/" + username, function(data) {
-			for(var rest in data) {
-				var length = expTable.length
-				var r = expTable.insertRow(length)
-				r.className = 'row-top'
-				var c = r.insertCell(0)
-				r.insertCell(1)
-				r.insertCell(2)
-				c.innerHTML = '<u style="font-size:max(1.45vw, 16px)">' + rest + '</u>'
-				var exp = data[rest]
-				for (var i = 0; i < exp.length; i++) {
-					var job = exp[i]
-					var r1 = expTable.insertRow(length)
-					var c1 = r1.insertCell(0)
-					c1.innerHTML = '<b>' + job.role + '</b>'
-					var c2 = r1.insertCell(1)
-					c2.style.textAlign = 'center'
-					c2.innerHTML = job.description
-					var cEnd = r1.insertCell(2)
-					cEnd.className = "right"
-					cEnd.innerHTML = job.time
-				}
-			}
-		});
+	var makeExperience = async function() {
+		var frame = document.getElementById("resume-frame")
+		var resp = await fetch("/resume/" + username)
+		var blob = await resp.blob()
+		console.log(blob)
+		blob = new Blob([blob], { type: "application/pdf" });
+		console.log(blob)
+		var url = URL.createObjectURL(blob)
+		
+		frame.src = "https://docs.google.com/viewer?url=" + url + "&embedded=true"
+		
+		
 	}
 	
 	makeExperience();
 	
-	var openCreatePost = function() {}
 </script>
 
+<%if (own) {%>
+<script>
+	
+	var upload = document.getElementById("upload-experience")	
+	upload.action = "/resume"	
+	var resume = document.getElementById("upload-pdf")
+	resume.onchange = (e) => {
+		upload.submit()
+	}
+	
+</script>
+<%}%>
 </body>

@@ -5,8 +5,8 @@
 
 <style>
 
-#top {
-	box-shadow: none;
+#bar > #top-home {
+	color: #5481A4;
 }
 #element {
 	position: absolute;
@@ -16,7 +16,7 @@
 	
 	top: 70px;
 	bottom: 0;
-	background: white;
+	//background: white;
 }
 
 #posts-div {
@@ -26,7 +26,7 @@
 #posts {
 	position: absolute;
 	left: 0;
-	top: 75px;
+	top: 70px;
 	bottom: 0;
 	width: max(30%, 350px);
 	overflow-y: auto;
@@ -46,7 +46,7 @@
 
 #searchDiv {
 	display: flex;
-	background: white;
+	//background: white;
 	border: 1px #dddddd solid;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -143,12 +143,17 @@
 	position: absolute;
 	right: 0;
 	left:  max(30%, 350px);
-	top: 75px;
+	top: 70px;
 	bottom: 0;
 	color: black;
 	padding-left: min(100px, max(20px, 5vw));
 	overflow-y: auto;
 	padding-right: 10px;
+	background: none;
+}
+
+.clicked-display {
+	background: white;
 }
 
 .display-title {
@@ -260,7 +265,7 @@
 @media (prefers-color-scheme: dark) {
 	.ind-post {
 		color: white;
-		border-bottom: 1px solid #333333;
+		border-bottom: 1px solid #111111;
 	}
 	.post-title {
 		color: white
@@ -270,17 +275,17 @@
 	}
 	
 	#searchDiv {
-		background: black;
-		border: 1px #333333 solid;
+		//background: black;
+		border: 1px #111111 solid;
 	}
 	#element {
-		background: black;
+		//background: black;
 	}
 	#posts {
-		border-right: 1px solid #333333;
+		border-right: 1px solid #111111;
 	}
 	#search-input {
-		background: #333333;
+		background: #111111;
 		color: white;
 	}
 	#display {
@@ -290,7 +295,9 @@
 		background: #333333;
 		border-left: 1px white solid;
 	}
-	
+	.clicked-display {
+		background: black;
+	}
 }
 
 
@@ -304,7 +311,7 @@
 			<button id="sortButton">Filter</button>
 			<div id="dropdownSort">
 				<button class="dropResult" onclick="waiter(this)">Waiter</button>
-				<button class="dropResult" onclick="busBoy(this)">Bus Boy</button>
+				<button class="dropResult" onclick="busBoy(this)">Busser</button>
 				<button class="dropResult" onclick="washer(this)">Washer</button>
 				<button class="dropResult" onclick="other(this)">Other</button>
 			</div>
@@ -348,6 +355,10 @@ var getPosts = function(search = "", filter = "", zipCode = "", radius = 10) {
     			var el = document.createElement("div")
     			el.className = "ind-post"
     			el.id = post.id
+    			if (clicked && clicked.id == post.id) {
+    				el.classList.add("clicked")
+    				clicked = el
+    			}
     			el.post = post
     			var c0 = document.createElement("div")
     			c0.className = "post-c0"
@@ -398,14 +409,14 @@ var searchPost = function() {
 }
 
 var waiter = function(e) {
-	var arr = document.getElementsByClassName("clicked")
+	var arr = document.getElementsByClassName("clicked-button")
 	for (var i = 0; i < arr.length; i++) {
 		arr[i].className = "dropResult";
 	}
 	if (type == "Waiter") {
 		type = ""
 	} else {
-		e.classList.add('clicked');
+		e.classList.add('clicked-button');
 		type = "Waiter"
 	}
 	searchPost()
@@ -413,42 +424,42 @@ var waiter = function(e) {
 }
 
 var busBoy = function(e) {
-	var arr = document.getElementsByClassName("clicked")
+	var arr = document.getElementsByClassName("clicked-button")
 	for (var i = 0; i < arr.length; i++) {
 		arr[i].className = "dropResult";
 	}
-	if (type == "Bus Boy") {
+	if (type == "Busser") {
 		type = ""
 	} else {
-		e.classList.add('clicked');
-		type = "Bus Boy"
+		e.classList.add('clicked-button');
+		type = "Busser"
 	}
 	searchPost()
 }
 
 var washer = function(e) {
-	var arr = document.getElementsByClassName("clicked")
+	var arr = document.getElementsByClassName("clicked-button")
 	for (var i = 0; i < arr.length; i++) {
 		arr[i].className = "dropResult";
 	}
 	if (type == "Washer") {
 		type = ""
 	} else {
-		e.classList.add('clicked');
+		e.classList.add('clicked-button');
 		type = "Washer"
 	}
 	searchPost()
 }
 
 var other = function(e) {
-	var arr = document.getElementsByClassName("clicked")
+	var arr = document.getElementsByClassName("clicked-button")
 	for (var i = 0; i < arr.length; i++) {
 		arr[i].className = "dropResult";
 	}
 	if (type == "Other") {
 		type = ""
 	} else {
-		e.classList.add('clicked');
+		e.classList.add('clicked-button');
 		type = "Other"
 	}
 	searchPost()
@@ -488,6 +499,7 @@ var openPost = function(e) {
 	var post = row.post
 	var display = document.getElementById("display")
 	display.innerHTML = ""
+	display.className = "clicked-display"
 	var title = document.createElement("p")
 	title.textContent = post.title
 	title.className = "display-title"
