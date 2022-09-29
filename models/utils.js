@@ -89,9 +89,9 @@ var getImage = function(path, id) {
 	return getDownloadURL(r)
 }
 
-var uploadImage = function(path, id, file) {
+var uploadImage = function(path, id, file, metadata = {}) {
 	var r = ref(storage, path + "/" + id);
-	return uploadBytes(r, file)
+	return uploadBytes(r, file, metadata)
 }
 
 var deleteImage = function(path, id) {
@@ -101,7 +101,7 @@ var deleteImage = function(path, id) {
 
 var getPDF = function(path, id) {
 	var r = ref(storage, path + "/" + id);
-	return getBytes(r)
+	return getDownloadURL(r)
 }
 
 

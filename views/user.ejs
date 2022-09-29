@@ -38,6 +38,19 @@
 		text-align: right;
 	}
 	
+	#experience-holder {
+		margin: auto;
+		width: 90%;
+		max-height: 1000px;
+		background: black;
+	}
+	
+	#resume {
+		width: 100%;
+		min-height: 600px;
+		max-height: 1000px;
+	}
+	
 	
 	@media only screen and (max-width: 700px) {
 		#experience {
@@ -58,7 +71,7 @@
 	
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=0.8">
-<script src="https://unpkg.com/pdfjs-dist@latest/build/pdf.min.js"></script>
+
 <body>
 
 
@@ -72,26 +85,22 @@
 			</form>
 		<% } %> 
 	</div>
-	
-		<iframe type="application/pdf" id="resume-frame"></iframe>
-	
+	<div id="experience-holder"></div>
 </div>
-
 
 <script>
 	var username = '<%- username%>'
 	
-	var makeExperience = async function() {
-		var frame = document.getElementById("resume-frame")
-		var resp = await fetch("/resume/" + username)
-		var blob = await resp.blob()
-		console.log(blob)
-		blob = new Blob([blob], { type: "application/pdf" });
-		console.log(blob)
-		var url = URL.createObjectURL(blob)
-		
-		frame.src = "https://docs.google.com/viewer?url=" + url + "&embedded=true"
-		
+	var makeExperience = function() {
+		$.get('/resume/' + username, (url) => {
+			if (url) {
+				var div = document.getElementById("experience-holder")
+				var e = document.createElement("embed")
+				e.id = "resume"
+				e.src = url + "#toolbar=0"
+				div.appendChild(e)
+			}
+		});
 		
 	}
 	

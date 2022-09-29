@@ -51,9 +51,9 @@
 	}
 	#header > #rightheader > button {	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 		border: none;
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
-		color: white;
-		border-radius: 25px;
+		background: white;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		color: black;
+		border-radius: 5px;
 		width: 105px;
 		font-size: 100%;
 	}
@@ -115,16 +115,18 @@
 		border-left: 1px solid #e0e0e0;
 	}
 	.review {
-		margin-top: 10px;
+		margin-top: 0px;
 		background: white;
 		width: max(20vw, 300px);
 		min-width: max(25vw, 300px);
 		height: 150px;
-		margin-bottom: 10px;
+		margin-bottom: 0px;
 		border-right: 1px solid #dddddd;
 		
 		//box-shadow: 5px 5px 10px #20537A;
 		background: none;//radial-gradient(#cedde9, #81A8C6);
+		padding-top: 10px;
+		padding-bottom: 10px
 	}
 	.profilePicRev {
 		width: 35px;
@@ -251,10 +253,18 @@
 			color: white;
 		}
 		.review {
-			background: black;
+			//background: black;
 			color: white;
 			border-color: #81A8C6;
 			
+		}
+		#header > #rightheader > button {
+			background: black;
+			color: white;
+		}
+		#header > #rightheader > button:hover {
+			background: #666666;
+			border: 1px black solid;
 		}
 	}
 	

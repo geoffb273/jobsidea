@@ -295,7 +295,7 @@ var getResume = function(id) {
 var uploadResume = function(username, id, file) {
 	var promises = []
 	promises.push(utils.updateItem(db, "Users", {username: username}, {$set: {resume: id}}))
-	promises.push(utils.uploadImage("resumes", id, file))
+	promises.push(utils.uploadImage("resumes", id, file, {contentType: 'application/pdf'}))
 	return Promise.all(promises)
 }
 

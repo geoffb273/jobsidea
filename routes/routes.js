@@ -872,17 +872,8 @@ var getResume = async function(req, res) {
 		}
 	}
 	if (user.resume) {
-		var data = await db.getResume(user.resume)
-		var v = new DataView(data)
-		fs.writeFile(username, v, (err) => {
-			if (err) {
-				console.log(err)
-				return
-			}
-			res.sendFile(username, { root: __dirname })
-		})
-		
-		
+		var url = await db.getResume(user.resume)
+		res.send(url)
 		
 	}
 }
