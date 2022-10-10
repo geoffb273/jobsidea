@@ -11,38 +11,36 @@
 	#title {
 		font-size: max(5.5vw, 48px);
 		font-family: Roboto;
-		color: transparent;
-		background-image: linear-gradient(to bottom right, #20537A, #B6D0E4);
-		background-clip: text;
-		-webkit-background-clip: text;
+		color: black;
 	}
 	#title-div {
 		width: 100%;
 		background: white;
 		max-height: 100px;
-		box-shadow: 5px 5px 10px #20537A;
+		box-shadow: 5px 5px 10px black;
+		border-bottom: 1px solid #3F3F3F;
 	}
 	
 	#container {
+		margin: auto;
 		margin-top: 10vh;
 		padding: 0.25rem;
-		width: 60vw;
-		margin-left: 20vw;
+		width: 700px;
+		
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		background: white;
 		border-radius: 2vmin;
-		border: 1px solid #20537A;
-		box-shadow: 5px 5px 10px #20537A;
+		border: 1px solid #3F3F3F;
+		box-shadow: 5px 5px 10px black;
 		
 	}
 	
 	#login {
 		box-sizing: border-box; 
 		backdrop-filter: blur(10px); 
-		width: 40vw;
 		height: max(30vh, 200px);
 		display: flex;
 		flex-direction: column;
@@ -52,9 +50,13 @@
 	
 	#login > input {
 		border-radius: 1vmin;
-		width: max(27.5vw, 200px);
-		font-size: max(2.5vw, 25px);
+		width: 375px;
+		font-size: 36px;
 		padding-left: 5px;
+		background: #eeeeee;
+		color: black;
+		border: none;
+		padding-left: 10px;
 	}
 	
 	#login > #top {
@@ -62,16 +64,18 @@
 	}
 	
 	#login > button {
-		border-radius: 1vmin;
+		padding-left: 10px;
+		padding-right: 10px;
+		border-radius: 5px;
 		margin: 0.5vmin;
 		font-size: max(2.5vw, 32px);
-		border: 0.5px solid;
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		border: 1px solid black;
+		background: #333333;
 		color: white;
 	}
 	
 	#login > button:hover {
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		background: #666666
 	}
 	
 	#signup {
@@ -79,24 +83,36 @@
 	}
 	
 	#signup > form > button {
-		border-radius: 1vw;
+		border-radius: 5px;
 		margin: 0.5vmin;
-		font-size: max(1.75vw, 16px);
-		width: max(12.5vw, 100px);
-		border: 0.5px solid;
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		font-size: 28px;
+		width: 200px;
+		border: 1px solid black;
+		background: #333333;
 		color: white;
 	}
 	
 	#signup > form > button:hover {
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		background: #666666
 	}
 	
 	@media only screen and (max-width: 700px) {
 		#container {
-			margin-left: 1vw;
-			padding-left: 0;
-			width: 97vw;
+			width: 95vw;
+		}
+		#login > input {
+			width: 50vw;
+			font-size: 28px;
+		}
+		#login > button {
+			font-size: 24px;
+		}
+		#signup > form > button {
+			font-size: 20px;
+			width: 150px;
+		}
+		#container {
+			height: 300px;
 		}
 	}
 	
@@ -104,11 +120,19 @@
 		#title-div {
 			background: black;
 		}
+		#title {
+			color: white;
+		}
 		#container {
 			background: black;
 		}
 		body {
 			background: #333333;
+		}
+		
+		#login > input {
+			background: #666666;
+			color: white;
 		}
 	}
 

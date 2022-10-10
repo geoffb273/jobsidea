@@ -6,29 +6,27 @@
 <style>
 	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 	#bar > #top-bell {
-		color: #5481A4;
+		color: #AAAAAA;
 	}
 	#post {
-		//background: white;
 		margin: auto;
-		//max-height: 85vh;
 		width: max(50%, 500px);
 		padding-left: 10px;
 		padding-right: 10px;
-		//overflow-y: scroll;
-		//box-shadow: 5px 5px 10px #20537A;
 		padding-top: 10px;
 		border-right: 1px solid #e0e0e0;
 		border-left: 1px solid #e0e0e0;
+		
 	}
 	
 	#table {
+		margin: auto;
 		font-size: max(20px, 1.5vw);
-		width: 100%;
-		height: 100%;
+		width: max(50%, 500px);
 		overflow-y: scroll;
 		color: black;
 		border-collapse: collapse;
+		background: #fefefe;
 	}
 	
 	td {
@@ -39,20 +37,20 @@
 		border-radius: max(7vmin, 30px);
 		width: 70px;
 		height: 70px;
-		font-size: max(2vmin, 16px);
+		font-size: 24px;
 	}
 	.chatButton {
-		padding-top: 1vmin;
-      	width: max(3vw, 50px);
-      	height: max(4vmin, 25px);
-      	//border-radius: 5vmin;
-      	font-size: max(2vmin, 16px);
-      	background: white;
-      	color: #20537A;
+		padding-top: 5px;
+      	width: 60px;
+      	height: 40px;
+      	font-size: max(3vmin, 16px);
+      	background: none;
+      	color: black;
+      	border: none;
+      	border-radius: 5px;
 	}
 	.chatButton:hover {
-		background: #20537A;
-		color: white;
+		color: #999999;
 	}
 	
 	.notification-cell1 {
@@ -68,7 +66,7 @@
 	}
 	
 	@media only screen and (max-width: 700px) {
-		#post {
+		#table {
 			width: 90%;
 		}
 	}
@@ -86,8 +84,12 @@
 		td {
 			border-bottom: 1px solid #111111;
 		}
-		#post {
-			background: #222222;
+		#table {
+			background: #444444;
+		}
+		
+		#bar > #top-bell {
+			color: #AAAAAA;
 		}
 		
 	}
@@ -95,9 +97,9 @@
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=0.7">
 <title>Notifications / Staffer</title>
-<div id="post">
+
   <table id = "table"></table>
-</div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -130,9 +132,8 @@
 	getNotifications()
 	
 	var checkEnd = function() {
-		var table = document.getElementById("post")
-  		if (table.scrollTop + table.offsetHeight - table.scrollHeight == 0) {
-  			
+		var table = document.getElementById("table")
+  		if (table.scrollHeight - window.scrollY <= window.innerHeight) {
   			limit += 10;
       		getNotifications()
     	}
@@ -192,8 +193,8 @@
 		cell3.appendChild(button);
 		cell3.style.textAlign = 'center'
   	}
-  	var post = document.getElementById("post")
-  	post.onscroll = checkEnd
+  	
+  	window.onscroll = checkEnd
 	
 	socket.emit('self room', {username: username})
 	socket.on("notification", function() {

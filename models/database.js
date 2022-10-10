@@ -1,4 +1,5 @@
 var utils = require('./utils.js');
+let mockeddb = require('./mockeddb.js')
 var { v4: uuidv4 } = require('uuid');
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -9,7 +10,14 @@ var db
 
 var connect = async function() {
 	var url = process.env.MONGODB_URL
-	db = await utils.connect(url)
+	try {
+		db = await utils.connect(url)
+	} catch (e) {
+		utils = mockeddb
+		db = {Users:[]}
+		console.log("Switched")
+	}
+	
 	console.log("Connected to database")
 }
 
@@ -29,8 +37,7 @@ var addUser = async function(username, password, firstname, lastname, email, pho
 	var p = []
 	p.push(getUser(username));
 	p.push(utils.getItem(db, "Users", {email: email}));
-	
-	return Promise.all(p).then(snapshots => {
+	return Promise.all(p).then((snapshots) => {
 		if (!snapshots[0] && !snapshots[1]) {
 			var obj = {
 				username: username,
@@ -43,10 +50,7 @@ var addUser = async function(username, password, firstname, lastname, email, pho
 				/*birthday: birthday,
 				profilePic: profilePic*/
 			}
-			
-			var promises = []
-			promises.push(utils.postItem(db, "Users", obj));
-			Promise.all(promises);
+			utils.postItem(db, "Users", obj);
 		} else {
 			reject("Email or Username already in use");
 		}

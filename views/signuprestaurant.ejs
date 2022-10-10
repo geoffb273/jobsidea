@@ -3,112 +3,134 @@
 		text-align: center;
 		font-family: Roboto;
 		justify-content: center;
-		background-image: linear-gradient(to bottom, #5481A4, #81A8C6, white);
+		background: #eeeeee;
 		padding: 0;
 		margin: 0;
 	}
+	
 	#title {
 		font-size: max(5.5vw, 48px);
 		width; 100%;
-		border-bottom: solid black;
-		color: white;
-		background-image: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		color: black;
+		background: white;
 		font-family: Roboto;
-	}
-	#container {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		
+		box-shadow: 5px 5px 10px black;
+		border-bottom: 1px solid #3F3F3F;
 	}
 	
 	#signup {
 		box-sizing: border-box; 
 		backdrop-filter: blur(10px); 
-		background: white;
-		width: 40vw;
-		height: 60vmin;
+		background: white; 
+		margin: auto;
+		padding-top: 20px;
+		padding-bottom: 15px;
+		margin-bottom: 20px;
+		
+		width: 500px;
 		display: flex;
 		border-radius: 2vmin;
-		justify-content: space-around;
+		border: 0.5px solid;
 		flex-direction: column;
-		align-items: center;
-		border: 1px solid #20537A;
-		box-shadow: 5px 5px 10px #20537A;
+		border: 1px solid #3F3F3F;
+		box-shadow: 5px 5px 10px black;
+		
 	}
 	
 	#signup > input {
-		border-radius: 1vmin;
-		width: 30vmin;
-		font-size: 3vmin;
-		margin: -10px;
+		border-radius: 10px;
+		width: 300px;
+		font-size: 26px;
+		background: #eeeeee;
+		border: none;
+		color: black;
+		padding-top: 3px;
+		padding-bottom: 2px;
+		padding-left: 10px;
+		margin: auto;
+		margin-bottom: -5px;
 	}
+	
 	#signup > div {
-		margin-bottom: 2.5vmin;
+		margin: auto;
+		margin-bottom: 10px;
 	}
 	#signup > div > select {
-		border-radius: 1vmin;
-		font-size: 2.5vmin;
+		border-radius: 5px;
+		font-size: 24px;
 		border: 0px
 	}
 	
 	#signup > div > label {
 		border-radius: 1vmin;
-		font-size: 3vmin;
-		border: 0px
-	}
-	
-	#signup > #top {
-		margin-top: 2.5vmin;
+		font-size: 24px;
+		border: 0;
+		margin: auto;
 	}
 	
 	#signup > button {
-		border-radius: 1vmin;
-		margin: 0.5vmin;
-		font-size: 2.5vmin;
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		border-radius: 5px;
+		font-size: 28px;
 		color: white;
+		background: #333333;
+		border: 1px solid black;
+		margin: auto;
+		width: 200px;
 	}
 	
 	#signup > button:hover {
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
+		background: #666666;
 	}
 	
 	@media only screen and (max-width: 700px) {
 		#signup {
-			margin-left: 0;
-			padding-left: 0;
-			width: 100%;
-			height: 55vh;
+			width: 95%;
+			
 		}
 		
 		#signup > input {
-			border-radius: 1vmin;
-			width: 50vmin;
-			font-size: max(16px, 4vh);
-			margin: -10px;
+			
 		}
 		
 		#signup > button {
-			border-radius: 1vmin;
-			margin: 0.25vh;
-			font-size: max(16px, 4vh);
-			border: 0.5px solid;
+			
 		}
 		#signup > div > label {
-			border-radius: 1vmin;
-			font-size: max(16px, 3vh);
-			border: 0px;
+			
 		}
 		
 		#signup > div > select {
-			border-radius: 1vmin;
-			font-size: max(12px, 2.5vh);
-			border: 0px;
+			
 		}
 		#signup > div {
-			margin-bottom: 2.5vh;
+			
+		}
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		#title {
+			color: white;
+			background: black;
+		}
+		#signup {
+			background: black;
+		}
+		#signup > input {
+			background: #666666;
+			color: white;
+		}
+		
+		body {
+			background: #333333;
+		}
+		
+		#signup > div > label {
+			color: white;
+		}
+		
+		#signup > div > select {
+			background: #666666;
+			color: white;
 		}
 	}
 
@@ -116,9 +138,8 @@
 <title>Sign Up / Staffer</title>
 <meta name="viewport" content="width=device-width,initial-scale=0.8">
 <p id="title">Staffer</p>
-<div id="container">
 <form id="signup" action="/handle-signup-restaurant" method="post">
-	<input id="top" name='username' placeholder="Username" required><br>
+	<input name='username' placeholder="Username" required><br>
 	<input name='password' type="password" placeholder="Password" required><br>
 	<input name='name' placeholder="Name" required><br>
 	<input name='email' placeholder="Email" type="email" required><br>
@@ -184,4 +205,3 @@
 	<input name='phone' placeholder="Phone Number" required><br>
 	<button type="submit">Sign Up</button>
 </form>
-</div>

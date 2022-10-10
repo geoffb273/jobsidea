@@ -15,7 +15,6 @@ const app = initializeApp(firebaseConfig);
 
 // Get a reference to the database service
 const storage = getStorage(app);
-
 const connect = async (url) => {
     //console.log(url)
     try {

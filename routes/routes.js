@@ -91,11 +91,11 @@ var searchUsers = function(req, res) {
 	})
 }
 
-var getSignUpUser = function(req, res) {
+var getSignUpUser = async function(req, res) {
 	res.render("signup.ejs")
 };
 
-var handleSignUpUser = function(req, res) {
+var handleSignUpUser = async function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = crypto.createHash('sha256').update(req.body.password).digest('hex');
 	var firstname = req.body.firstname;
@@ -103,19 +103,16 @@ var handleSignUpUser = function(req, res) {
 	var email = req.body.email;
 	var phone = req.body.phone;
 	var zipCode = req.body.zipCode;
-	console.log(phone)
 	/*var birthday = req.body.birthday;*/
 	var p = []
-	p.push(db.changeSettings(username, {
+	await db.changeSettings(username, {
 			zipCode: zipCode,
 			username: username,
 			emailNotification: true,
 			textNotification: true,
 			radius: 10
 		})
-	)
-	p.push(db.addUser(username, password, firstname, lastname, email, phone/*, birthday*/))
-	Promise.all(p).then(_ => {
+	await db.addUser(username, password, firstname, lastname, email, phone/*, birthday*/)
 		req.session.username = username;
 		req.session.user = {
 			username: username,
@@ -128,11 +125,6 @@ var handleSignUpUser = function(req, res) {
 		req.session.type = "User";
 		
 		res.redirect("/profile");
-	}).catch(err => {
-		console.log(err)
-		res.redirect("/login");
-	});
-	
 };
 
 var getSignUpRestaurant = function(req, res) {
@@ -187,6 +179,7 @@ var getProfile = function(req, res) {
 		username = req.session.username;
 		ownProfile = true
 	}
+	
 	if (req.session.users) {
 		if (req.session.users[username]) {
 			var user = req.session.users[username]
@@ -196,6 +189,7 @@ var getProfile = function(req, res) {
 				var lastname = user.lastname;
 				res.render("profile.ejs", {username: username, email: email,
 					name: firstname + " " + lastname, user: true, own: ownProfile})
+				
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
 				var street = user.street;

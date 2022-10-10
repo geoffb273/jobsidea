@@ -9,8 +9,8 @@
 		height: 150px;
 		width: 150px;
 		border-radius: 150px;
-		background: linear-gradient(to bottom, #afb8c2, lightgray, white);//#afb8c2;
-		border: 2px solid #B6D0E4;
+		background: #666666;//linear-gradient(to bottom, #afb8c2, lightgray, white);//#afb8c2;
+		border: 2px solid #666666;
 	}
 	
 	#header {
@@ -51,7 +51,7 @@
 	}
 	#header > #rightheader > button {	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 		border: none;
-		background: white;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		background: #eeeeee;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		color: black;
 		border-radius: 5px;
 		width: 105px;
@@ -59,21 +59,21 @@
 	}
 	
 	#header > #rightheader > button:hover {
-		background: linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
+		background: #bbbbbb;//linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
 	}
 	
 	#header > #rightheader > form > #chatButton {
 		border: none;
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
-		color: white;
-		border-radius: 25px;
+		background: #eeeeee;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		color: black;
+		border-radius: 5px;
 		width: 105px;
 		font-size: 14px;
 		margin-top: 60px;
 	}
 	
 	#header > #rightheader > form > #chatButton:hover {
-		background: linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
+		background: #bbbbbb;//linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
 	}
 	
 	#header > #rightheader > #upload {
@@ -82,10 +82,10 @@
 	
 	label {
 		cursor: pointer;
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		background: #eeeeee;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
 		border: none;
-		color: white;
-		border-radius: 25px;
+		color: black;
+		border-radius: 5px;
 		font-size: 14px;
 		padding-top: 2.5px;
 		padding-bottom: 2.5px;
@@ -94,7 +94,7 @@
 	}
 	
 	label:hover {
-		background: linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
+		background: #bbbbbb;//linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
 	}
 
 	#upload-photo {
@@ -209,6 +209,10 @@
 		margin-top: 20px;
 	}
 	
+	#gear {
+		color: white;
+	}
+	
 	@media only screen and (max-width: 700px) {
 		#header {
 			width: 98vw;
@@ -255,7 +259,7 @@
 		.review {
 			//background: black;
 			color: white;
-			border-color: #81A8C6;
+			border-color: white;
 			
 		}
 		#header > #rightheader > button {
@@ -263,6 +267,29 @@
 			color: white;
 		}
 		#header > #rightheader > button:hover {
+			background: #666666;
+			border: 1px black solid;
+		}
+		label {
+			color: white;
+			background: black;
+		}
+		label:hover {
+			background: #666666;
+			border: 1px black solid;
+		}
+		#gear {
+			color: black;
+		}
+		
+		#gear:hover {
+			color: #666666;
+		}
+		#header > #rightheader > form > #chatButton {
+			background: black;
+			color: white;
+		}
+		#header > #rightheader > form > #chatButton:hover {
 			background: #666666;
 			border: 1px black solid;
 		}
@@ -276,11 +303,11 @@
 <%if (own) {%>
 	<style>
 		#bar > #top-user {
-			color: #5481A4;
+			color: #AAAAAA;
 		}
 		@media (prefers-color-scheme: dark) {
 			#bar > #top-user {
-				color: #B6D0E4;
+				color: #AAAAAA;
 			}
 		}
 	</style>
@@ -328,7 +355,7 @@
 	<div id="rightheader">
 		<%if (own) {%>
 				<span style="margin-top: 20px; margin-bottom: -20px; margin-left: auto">
-					<a href='/settings' style='text-decoration:none;color:#38698E;'>
+					<a href='/settings' style='text-decoration:none;' id="gear">
 						<i class="fa-solid fa-gear fa-lg"></i>
 					</a>
 				</span>
