@@ -7,7 +7,8 @@ var crypto = require('crypto');
 
 var getHome = function(req, res) {
 	var username = req.session.username;
-	res.render("main.ejs", {username: username});
+	var postId = req.query.id ? req.query.id : ""
+	res.render("main.ejs", {username: username, id: postId});
 };
 
 var getLogin = function(req, res) {
@@ -599,6 +600,7 @@ var createPost = function(req, res) {
 	var expiration = req.body.expiration
 	var qualification = req.body.qualification
 	var title = req.body.title
+	var postId = uuidv4();
 	var post = {
 		content: content,
 		username: username,
@@ -609,7 +611,8 @@ var createPost = function(req, res) {
 		zipCode: zipCode,
 		expiration: expiration,
 		qualification: qualification,
-		title: title
+		title: title,
+		id: postId
 	}
 	
 	db.putPost(post).then(async (_) => {
@@ -641,7 +644,7 @@ var createPost = function(req, res) {
 		}*/
 		var users = await db.getUsersByLocation(zipCodes)
 		for (var user in users) {
-			db.putNotification(users[user].username, username, username + " in your area has a new post.", "New Post", users[user].settings)
+			db.putNotification(users[user].username, username, username + " in your area has a new post.", "New Post", users[user].settings, postId)
 		}
 		
 	})

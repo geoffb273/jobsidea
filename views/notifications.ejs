@@ -43,7 +43,7 @@
 		padding-top: 5px;
       	width: 60px;
       	height: 40px;
-      	font-size: max(3vmin, 16px);
+      	font-size: 24px;
       	background: none;
       	color: black;
       	border: none;
@@ -182,14 +182,27 @@
 		var cell3 = row.insertCell(2)
 		var chatId = u2
 		var button = document.createElement("button");
-		button.className = "fa-solid fa-message fa-sm chatButton"
-		button.id = "join";
-		button.chatId = chatId
-		button.onclick = (e) => {
-			$.post("/chats/" + e.target.chatId, {}, function(data) {
-				window.location.href = "/chats?chatId=" + data
-			});
+		if (notification.type == "New Message" || notification.type == "New Chat") {
+			button.className = "fa-solid fa-message fa-sm chatButton"
+			button.chatId = chatId
+			button.onclick = (e) => {
+				$.post("/chats/" + e.target.chatId, {}, function(data) {
+					window.location.href = "/chats?chatId=" + data
+				});
+			}
+		} else if (notification.type == "New Post") {
+			button.className = "fa-solid fa-home fa-sm chatButton"
+			button.postId = notification.postId ? notification.postId : ""
+			button.onclick = (e) => {
+				window.location.href = "/?id=" + e.target.postId
+			}
+		} else if (notification.type == "Review") {
+			button.className = "fa-solid fa-user fa-sm chatButton"
+			button.onclick = (e) => {
+				window.location.href = "/profile"
+			}
 		}
+		
 		cell3.appendChild(button);
 		cell3.style.textAlign = 'center'
   	}

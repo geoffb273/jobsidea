@@ -488,7 +488,14 @@
 	
 	updateReviews();
 	
-	
+	var reviewsDiv = document.getElementById("reviews-div")
+	reviewsDiv.onscroll = () => {
+		console.log(reviewsDiv.scrollLeft)
+		console.log(reviewsDiv.offsetWidth)
+		/*if (reviewsDiv.scrollWidth - reviewsDiv.scrollLeft) {
+			
+		}*/
+	}
 </script>
 
 <%if (!own) {%>

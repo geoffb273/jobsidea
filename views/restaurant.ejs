@@ -34,7 +34,7 @@ var getPosts = function() {
     		
     		for (var i = 0; i < posts.length; i++) {
     			var post = posts[i];
-    			var el = createPost(document, post, (id) => {location.href = '/post-page/' + id})
+    			var el = createPost(document, post, (id) => {location.href = '/?id=' + id})
     			postsEl.appendChild(el);
     		}
     		

@@ -168,7 +168,7 @@ var getNotifications = async function(username, limit, callback) {
 	callback(snapshot);
 }
 
-var putNotification = function(username, sender, msg, type, settings) {
+var putNotification = function(username, sender, msg, type, settings, id = undefined) {
 	var url = "https://stafferjobs.herokuapp.com/"
 	if ((!settings) || (settings && settings.textNotification)) {
 		sendText(username, msg + " " + url)
@@ -182,6 +182,9 @@ var putNotification = function(username, sender, msg, type, settings) {
 		username: username,
 		sender: sender
 	}
+	if (type == "New Post" && id) {
+		notificationObj.postId = id
+	}
 	return utils.postItem(db, "Notifications", notificationObj)
 }
 
@@ -194,13 +197,12 @@ var getPostsByRestaurant = function(username) {
 var putPost = function(p) {
 	var date = new Date();
 	var expireDate = new Date(p.expiration)
-	var postId = uuidv4();
 	var postObj = {
 		created: date.toISOString(),
 		content: p.content,
 		expireDate: expireDate.toISOString(),
 		username: p.username,
-		id: postId,
+		id: p.id,
 		name: p.name,
 		zipCode: p.zipCode,
 		title: p.title,
