@@ -1,36 +1,35 @@
 
-
+//Need AJAX, FontAwesome replacement/downloaded version for mocking
 var postItem = async function(database, collection, obj) {
-	console.log(database)
 	if (database[collection]) {
 		database[collection].push(obj)
 	} else {
 		database[collection] = [obj]
 	}
-	console.log("Post")
-	console.log(database)
 	return ""
 }
 
 var getItem = async function(database, collection, find) {
-	console.log(database)
 	if (database[collection]) {
 		let items = database[collection]
 		for (let i = 0; i < items.length; i++) {
 			let tracker = 0
+			let count = 0
 			let item = items[i]
 			for (let key in find) {
+				count += 1
 				if (item[key] && item[key] == find[key]) {
 					tracker += 1
+				} else {
+					break
 				}
 			}
-			if (tracker == find.length - 1) {
+			
+			if (tracker == count) {
 				return item
 			}
 		}
 	}
-	console.log(collection)
-	console.log("Attempt")
 	return
 }
 
@@ -41,14 +40,16 @@ var getList = async function(database, collection, find, sort, limit = 0) {
 		for (let i = 0; i < items.length; i++) {
 			let tracker = 0
 			let item = items[i]
+			let count = 0
 			for (let key in find) {
+				count += 1
 				if (item[key] && item[key] == find[key]) {
 					tracker += 1
 				} else {
 					break
 				}
 			}
-			if (tracker == find.length - 1) {
+			if (tracker == count) {
 				possibles.push(item)
 			}
 		}

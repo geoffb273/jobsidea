@@ -14,7 +14,28 @@ var connect = async function() {
 		db = await utils.connect(url)
 	} catch (e) {
 		utils = mockeddb
-		db = {Users:[]}
+		db = {
+			Users:[
+				{
+					"username":"geoff",
+					"password":"6c0c9335d5aa8d6156bfc296e86e1011ecd5cdeb7a090168486e4c055ccb95e9",
+					"firstname":"Geoffrey",
+					"lastname":"Brandt",
+					"email":"g@m.com",
+					"type":"User",
+					"phone":"8569041158"
+				},
+				{
+					"username":"jordan",
+					"password":"6c0c9335d5aa8d6156bfc296e86e1011ecd5cdeb7a090168486e4c055ccb95e9",
+					"firstname":"Jordan",
+					"lastname":"Brandt",
+					"email":"j@m.com",
+					"type":"User",
+					"phone":"8569041158"
+				}
+			]
+		}
 		console.log("Switched")
 	}
 	
@@ -59,7 +80,9 @@ var addUser = async function(username, password, firstname, lastname, email, pho
 }
 
 var getUser = function(username) {
-	return utils.getItem(db, "Users", {username: username})
+	p = utils.getItem(db, "Users", {username: username})
+	console.log(p)
+	return p
 }
 
 var getUsers = function(search) {
