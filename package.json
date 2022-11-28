@@ -3,7 +3,8 @@
    "description": "Restaurant database",
    "version": "0.0.1",
    "scripts": {
-      "start": "node app.js"
+      "start": "node app.js",
+      "build": "npm install && node app.js"
    },
    "dependencies": {
       "async": "^3.2.2",

@@ -65,7 +65,7 @@ app.get('/notifications', routes.notifications_page);
 app.get('/my-notifications', routes.notifications)
 
 //Reviews
-app.get('/reviews', routes.reviews);
+app.get('/reviews/:username', routes.reviews);
 app.post('/review', routes.add_review);
 
 //Experience

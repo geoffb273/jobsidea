@@ -410,7 +410,9 @@ var getPosts = function(search = "", filter = "", zipCode = "", radius = 10) {
     			postsEl.appendChild(el);
     			el.onclick = (e) => {openPost(e)}
     		}
-    		
+    		if (clicked) {
+    			clicked.scrollIntoView();
+    		}
     })
 }
 

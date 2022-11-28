@@ -80,9 +80,7 @@ var addUser = async function(username, password, firstname, lastname, email, pho
 }
 
 var getUser = function(username) {
-	p = utils.getItem(db, "Users", {username: username})
-	console.log(p)
-	return p
+	return utils.getItem(db, "Users", {username: username})
 }
 
 var getUsers = function(search) {

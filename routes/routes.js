@@ -441,7 +441,7 @@ var deleteExperience = function(req, res) {
 }
 
 var getReviews = function(req, res) {
-	var username = req.query.username;
+	var username = req.params.username;
 	db.getReviews(username, snapshot => {
 		res.send(snapshot)
 	});

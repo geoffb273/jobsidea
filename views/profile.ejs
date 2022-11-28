@@ -402,6 +402,7 @@
 	var reviews = [];
 	var username = '<%- username%>'
 	var own = '<%- own%>'
+	limit = 20
 	
 	if (own && own == true) {
 		var upload = document.getElementById("upload")
@@ -416,7 +417,7 @@
 
 	var updateReviews = function() {
 		var reviewsDiv = document.getElementById("reviews-div")
-		$.get("/reviews?username=" + username, function(data) {
+		$.get("/reviews/" + username + "?limit=" + limit, function(data) {
 			if (!data) {
 				return
 			}
@@ -490,11 +491,9 @@
 	
 	var reviewsDiv = document.getElementById("reviews-div")
 	reviewsDiv.onscroll = () => {
-		console.log(reviewsDiv.scrollLeft)
-		console.log(reviewsDiv.offsetWidth)
-		/*if (reviewsDiv.scrollWidth - reviewsDiv.scrollLeft) {
-			
-		}*/
+		if (reviewsDiv.scrollWidth <= reviewsDiv.scrollLeft + reviewsDiv.offsetWidth) {
+			limit += 15
+		}
 	}
 </script>
 
