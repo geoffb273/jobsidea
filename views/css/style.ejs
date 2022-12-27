@@ -1,15 +1,28 @@
 <style>
+:root {
+	--light-background: #f0f0f0;
+	--light-secondary: #f8f8f8;
+	--dark-background: #333333;
+	--dark-secondary: #191919;
+	--light-text: #eeeeee;
+	--dark-text: #404040;
+	--light-border: #c8c8c8;
+	--dark-border: #4c4c4c;
+}
+
 body {
 	text-align: center;
 	justify-content: center;
 	
 	font-family: Roboto;
 	margin: 0;
-	background: #fcfcfc;
+	background: var(--light-background);
+	
+	color: var(--dark-text);
 }															/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 button {
 	font-family: Roboto; 
-	color: black;
+	color: var(--dark-text);
 }
 
 #top {
@@ -21,9 +34,9 @@ button {
 	position: sticky;
 	top: 0;
 	z-index: 1;
-	background: white;
-	//box-shadow: 5px 5px 10px #20537A;
-	border-bottom: 2px solid #e0e0e0;
+	background: var(--light-secondary);
+	
+	border-bottom: 2px solid var(--light-border);
 }
 
 #grouping {
@@ -49,7 +62,7 @@ button {
 	
 	height: 100%;
 	
-	color: black;
+	color: var(--dark-text);
 }
 
 
@@ -101,7 +114,7 @@ button {
 }
 
 #grouping > #logo {
-	color: black;
+	color: var(--dark-text);
 	font-family: Roboto;
 	font-weight: bolder;
 	text-decoration: none;
@@ -114,7 +127,7 @@ button {
 
 #search {
 	background: none;
-	color: black;
+	color: var(--dark-text);
 }
 
 @media only screen and (max-width: 700px) {
@@ -158,23 +171,23 @@ button {
 
 @media (prefers-color-scheme: dark) {
 	body {
-		background: #333333;
+		background: var(--dark-background);
 	}
 	#top {
-		background: black;
+		background: var(--dark-secondary);
 	}
 	#search {
-		color: white;
+		color: var(--light-text);
 	}
 	#bar > button {
-		color: white;
+		color: var(--light-text);
 	}
 	#grouping > #logo {
-		color: white;
+		color: var(--light-text);
 	}
 	
 	#grouping > #dropdown > input {
-		background: #333333;
+		background: var(--dark-background);
 	}
 }
 

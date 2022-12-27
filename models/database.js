@@ -368,6 +368,16 @@ var deleteSaved = function(username, id) {
 	return utils.deleteItem(db, "Saved", {username: username, id: id})
 }
 
+var getApplied = function(username, id) {
+	return utils.getItem(db, "Applied", {username: username, id: id})
+}
+
+var addApplied = function(username, id) {
+	return utils.postItem(db, "Applied", {username: username, id: id})
+}
+
+
+
 module.exports = {
 	connect: connect,
 	//User + Restaurant
@@ -421,6 +431,9 @@ module.exports = {
 	//Resume
 	getResume: getResume,
 	uploadResume: uploadResume,
-	deleteResume: deleteResume
+	deleteResume: deleteResume,
+	//Applied
+	getApplied: getApplied,
+	addApplied: addApplied
 	
 };

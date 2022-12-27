@@ -26,6 +26,7 @@
       "multer": "^1.4.4",
       "node-fetch": "^2.6.7",
       "nodemailer": "^6.7.5",
+      "sib-api-v3-sdk": "^8.4.2",
       "socket.io": "^4.4.0",
       "twilio": "^3.77.3",
       "utils": "^0.3.1",

@@ -105,7 +105,8 @@ app.get('/saved', routes.saved)
 app.post('/saved/:id', routes.handle_save)
 
 //Apply
-app.post('/apply/:username/:title', routes.apply)
+app.post('/apply/:username/:title/:id', routes.apply)
+app.get('/apply/:id', routes.get_apply)
 
 //Resume
 app.get('/resume/:username', routes.resume)

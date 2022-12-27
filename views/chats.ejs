@@ -10,22 +10,22 @@
 	}
 	#post {
 		display: flex;
-		background: white;
+		background: var(--light-secondary);
 		//box-shadow: 5px 5px 10px #20537A;
 		margin: auto;
 		margin-top: 10px;
 		height: 80vh;
 		width: 750px;
-		border: 1px solid #e0e0e0;
+		border: 1px solid var(--light-border);;
 	}
    	#table {
 		width: 250px;
 		overflow-y: scroll;
 		font-size: 16px;
-		color: black;
-		border-right: 1px #dddddd solid;
+		color: var(--dark-text);
+		border-right: 1px var(--light-border) solid;
 		
-		color: white;
+		color: var(--light-secondary);
 		height: 99%;
 		margin-top: 0;
 		list-style: none;
@@ -39,11 +39,11 @@
 		padding-left: 10px;
 		
 		display: flex;
-		color: black;
+		color: var(--dark-text);
 	}
 	
 	.row:hover {
-		background: #f9f9f9;
+		background: var(--light-border);
 	}
 	
 	.row > .holder {
@@ -83,7 +83,7 @@
 	
 	#chat-page {
 		width: 500px;
-		background: white;
+		background: var(--light-secondary);
 		height: 100%;
 		display: flex;
 		flex-direction: column;
@@ -92,7 +92,7 @@
 	#chat-title {
 		flex: 0 1 60px;
 		line-height: 60px;
-		border-bottom: 1px solid #dddddd;
+		border-bottom: 1px solid var(--light-border);
 		z-index: 1;
 		font-size: 24px;
 	}
@@ -122,8 +122,8 @@
 		border-top-left-radius: 20px;
 		border-bottom-left-radius: 20px;
 		border: none;
-		background: #dddddd;
-		color: black;
+		background: var(--light-border);
+		color: var(--dark-text);
 		padding-top: 5px;
 		padding-bottom: 5px;
 		padding-left: 20px;
@@ -137,17 +137,17 @@
 		border-top-right-radius: 20px;
 		border-bottom-right-radius: 20px;
 		border: none;
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
-		color: white;
+		background: var(--dark-background);
+		color: var(--light-text);
 	}
 	
 	#message-button:hover {
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		background: var(--dark-secondary);
 	}
 	
 	.chat-message {
 		display: flex;
-		border: 1px solid #dddddd;
+		border: 1px solid var(--light-border);
 		border-radius: 20px;
 		margin-top: 5px;
 		margin-right: 5px;
@@ -167,12 +167,12 @@
 	}
 	
 	.clicked-row {
-		background: #dddddd;
+		background: var(--light-border);
 		//border-left: 1px solid black;
 	}
 	
 	.clicked-row:hover {
-		background: #dddddd;
+		background: var(--light-border);
 	}
 	
    	
@@ -218,29 +218,29 @@
 	
 	@media (prefers-color-scheme: dark) {
 		#post {
-			background: black;
+			background: var(--dark-secondary);
 		}
 		#table {
-			background: black;
-			color: white;
-			border: 1px solid #333333;
+			background: var(--dark-secondary);
+			color: var(--light-text);
+			border: 1px solid var(--dark-border);
 		}
 		td {
-			border-bottom: 1px solid #333333;
+			border-bottom: 1px solid var(--dark-border);
 		}
 		#chat-title {
-			border-bottom: 1px solid #333333;
-			color: white;
-			background: black;
+			border-bottom: 1px solid var(--dark-border);
+			color: var(--light-text);
+			background: var(--dark-secondary);
 		}
 		
 		#chat-page {
-			background: black;
-			color: white;
+			background: var(--dark-seconday);
+			color: var(--light-text);
 		}
 		.row {
 			//border-bottom: 1px solid white;
-			color: white;
+			color: var(--light-text);
 		}
 		.row:hover {
 			background: #222222
@@ -248,20 +248,26 @@
 		
 		.clicked-row {
 			background: #333333;
-			border-left: 1px solid white;
+			border-left: 1px solid var(--dark-border);
 		}
 		
 		.clicked-row:hover {
 			background: #333333;
 		}
+		
 		#message-input {
-			color: white;
+			color: var(--light-text);
 			background: #333333;
 		}
 		
-		.chat-message {
-			border: 1px solid #333333
+		#message-button {
+			background: var(--dark-text);
 		}
+		
+		.chat-message {
+			border: 1px solid var(--dark-border);
+		}
+		
 		.right-chat {
 			background: gray;
 			border: none;

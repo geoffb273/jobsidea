@@ -16,7 +16,7 @@
 	
 	top: 70px;
 	bottom: 0;
-	//background: white;
+	
 }
 
 #posts-div {
@@ -30,24 +30,37 @@
 	bottom: 0;
 	width: max(30%, 350px);
 	overflow-y: auto;
-	border-right: 1px solid #dddddd;
+	border-right: 1px solid var(--light-border);
 }
 
 #search-input {
 	width: max(200px, 30vw);
 	font-size: 16px;
 	margin-right: 10px;
-	background: #dddddd;
-	color: black;
+	background: var(--light-border);
+	color: var(--dark-text);
 	padding-left: 10px;
-	border-radius: 10px;
+	border-radius: 20px;
 	border: none;
+}
+
+#location {
+	width: max(150px, 20vw);
+	font-size: 16px;
+	
+	background: var(--light-border);
+	color: var(--dark-text);
+	padding-left: 10px;
+	border-radius: 20px;
+	border: none;
+	margin-left: 0.5vw;
+	
+	margin-right: 5px;
 }
 
 #searchDiv {
 	display: flex;
-	//background: white;
-	border: 1px #dddddd solid;
+	border: 1px var(--light-border) solid;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-left: 20px;
@@ -62,7 +75,7 @@
 }
 
 #sortButton:hover {
-	background: gray;
+	background: var(--light-border);
 }
 
 #dropdownDiv:hover #dropdownSort {
@@ -84,28 +97,24 @@
 	width: max(10vw, 75px);
 	min-height: 30px;
 	font-size: max(1.75vw, 14px);
+	color: var(--dark-text);
 	margin: 0;
 	border-radius: 5px;
 }
 
 .dropResult:hover {
-	background: gray;
+	background: var(--light-secondary);
 }
 
-#location {	
-	margin-left: 0.5vw;
-	width: 19vw;
-	font-size: max(1.75vw, 16px);
-	margin-right: 5px;
-}
+
 
 .clicked {
 	background: #aaaaaa;
-	border-left: 1px solid black;
+	border-left: 1px solid var(--dark-border);
 }
 
 .clicked-button {
-	background: #666666;
+	background: var(--dark-background);
 }
 
 .postProfPic:hover {
@@ -118,8 +127,8 @@
 	padding-left: 15px;
 	text-align: left;
 	height: 150px;
-	color: black;
-	border-bottom: 1px solid #dddddd;
+	color: var(--dark-text);
+	border-bottom: 1px solid var(--light-border);
 }
 
 .post-c0 {
@@ -137,14 +146,14 @@
 }
 
 .post-title {
-	color: black;
+	color: var(--dark-text);
 	font-weight: bold;
 	font-size: 24px;
 }
 
 .post-name {
 	font-size: 16px;
-	color: black
+	color: var(--dark-text);
 }
 
 #display {
@@ -153,7 +162,7 @@
 	left:  max(30%, 350px);
 	top: 70px;
 	bottom: 0;
-	color: black;
+	color: var(--dark-text);
 	padding-left: min(100px, max(20px, 5vw));
 	overflow-y: auto;
 	padding-right: 10px;
@@ -161,7 +170,7 @@
 }
 
 .clicked-display {
-	background: white;
+	background: var(--light-background);
 }
 
 .display-title {
@@ -202,14 +211,14 @@
 	font-size: 20px;
 	padding: 10px 20px;
 	border-radius: 5px;
-	color: white;
+	color: var(--light-text);
 	border: none;
-	background: black;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+	background: var(--dark-text);
 }
 
 .display-button:hover {
-	background: #434343;//linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
-	border: 1px solid black;
+	background: var(--dark-background);
+	border: 1px solid var(--dark-border);
 }
 
 
@@ -219,6 +228,10 @@
 		top: 50px;
 	}
 	#search-input {
+		font-size: 12px;
+	}
+	
+	#location {
 		font-size: 12px;
 	}
 	#dropdownDiv {
@@ -233,6 +246,7 @@
 	
 	#posts {
 		width: 150px;
+		top: 50px;
 	}
 	.ind-post {
 		padding: 5px;
@@ -273,14 +287,14 @@
 
 @media (prefers-color-scheme: dark) {
 	.ind-post {
-		color: white;
-		border-bottom: 1px solid #111111;
+		color: var(--light-text);
+		border-bottom: 1px solid var(--dark-secondary);
 	}
 	.post-title {
-		color: white
+		color: var(--light-text);
 	}
 	.post-name {
-		color: white
+		color: var(--light-text);
 	}
 	
 	#searchDiv {
@@ -291,21 +305,34 @@
 		//background: black;
 	}
 	#posts {
-		border-right: 1px solid #111111;
+		border-right: 1px solid var(--dark-secondary);
 	}
 	#search-input {
-		background: #111111;
-		color: white;
+		background: var(--dark-secondary);
+		color: var(--light-text);
+	}
+	
+	#location {
+		background: var(--dark-secondary);
+		color: var(--light-text);
 	}
 	#display {
-		color: white;
+		color: var(--light-text);
 	}
+	.display-button {
+		color: var(--light-text);
+		background: var(--dark-secondary);
+	}
+	.display-button:hover {
+		background: var(--dark-text);
+	}
+	
 	.clicked {
-		background: black;
-		border-left: 1px white solid;
+		background: var(--dark-secondary);
+		border-left: 1px var(--light-secondary) solid;
 	}
 	.clicked-display {
-		background: black;
+		background: var(--dark-secondary);
 	}
 	#bar > #top-home {
 		color: #AAAAAA;
@@ -320,7 +347,7 @@
 	<div id="searchDiv">
 		<input id="search-input" placeholder="Search" onkeyup="searchPost()"></input>
 		<div id="dropdownDiv">
-			<button id="sortButton">Filter</button>
+			<button id="sortButton">Role</button>
 			<div id="dropdownSort">
 				<button class="dropResult" onclick="waiter(this)">Waiter</button>
 				<button class="dropResult" onclick="busBoy(this)">Busser</button>
@@ -416,17 +443,26 @@ var getPosts = function(search = "", filter = "", zipCode = "", radius = 10) {
     })
 }
 
+let waiting = undefined
 var searchPost = function() {
-	var searchBar = document.getElementById("search-input")
-	var searchVal = searchBar.value
-	var locationBar = document.getElementById("location")
-	var radius = 10
-	var zipCode = locationBar.value
-	if (zipCode.length == 5) {
-		getPosts(searchVal, type, zipCode, radius)
-	} else {
-		getPosts(searchVal, type)
+	if (waiting) {
+		clearTimeout(waiting)
+		waiting = undefined
 	}
+	waiting = setTimeout(() => {
+		var searchBar = document.getElementById("search-input")
+		var searchVal = searchBar.value
+		var locationBar = document.getElementById("location")
+		var radius = 10
+		var zipCode = locationBar.value
+	
+		if (zipCode.length == 5) {
+			getPosts(searchVal, type, zipCode, radius)
+		} else {
+			getPosts(searchVal, type)
+		}
+		waiting = undefined
+	}, 100)
 }
 
 var waiter = function(e) {
@@ -561,17 +597,27 @@ var openPost = function(e) {
 	
 	var applyButton = document.createElement("button")
 	applyButton.id = post.title
+	applyButton.postId = post.id
 	applyButton.username = post.username
 	applyButton.className = "display-button"
 	applyButton.textContent = "Apply"
-	applyButton.onclick = (e) => {
-		var title = e.target.id
-		var username = e.target.username
-		$.post("/apply/" + username + "/" + title, {}, function(data) {
-			e.target.textContent = "Applied"
-			e.target.onclick = () => {}
-		})
-	}
+	$.get("/apply/" + post.id, function(applied) {
+		console.log(applied)
+		if (!applied) {
+			applyButton.onclick = (e) => {
+				var title = e.target.id
+				var username = e.target.username
+				var id = e.target.postId
+				$.post("/apply/" + username + "/" + title + "/" + id, {}, function(data) {
+				e.target.textContent = "Applied"
+					e.target.onclick = () => {}
+				})
+			}
+		} else {
+			applyButton.textContent = "Applied"
+		}
+	})
+	
 	
 	
 	descrDiv.appendChild(time)

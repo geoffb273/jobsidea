@@ -9,22 +9,22 @@
 		height: 150px;
 		width: 150px;
 		border-radius: 150px;
-		background: #666666;//linear-gradient(to bottom, #afb8c2, lightgray, white);//#afb8c2;
+		background: #666666;
 		border: 2px solid #666666;
 	}
 	
 	#header {
-		//position: absolute;
+		
 		
 		width: min(900px, 95%);
 		display: flex;
-		//box-shadow: 5px 5px 10px #20537A;
+		
 		background: transparent;
-		//border-radius: 25px;
+		
 		margin: auto;
 		margin-top: 10px;
 		height: 200px;
-		border-bottom: 1px solid #dddddd;
+		border-bottom: 1px solid var(--light-border);
 	}
 	#header > #info {
 		text-align: center;
@@ -51,21 +51,21 @@
 	}
 	#header > #rightheader > button {	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
 		border: none;
-		background: #eeeeee;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
-		color: black;
+		background: var(--dark-text);
+		color: var(--light-text);
 		border-radius: 5px;
 		width: 105px;
 		font-size: 100%;
 	}
 	
 	#header > #rightheader > button:hover {
-		background: #bbbbbb;//linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
+		background: var(--light-border);
 	}
 	
 	#header > #rightheader > form > #chatButton {
 		border: none;
-		background: #eeeeee;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
-		color: black;
+		background: var(--dark-text);
+		color: var(--light-text);
 		border-radius: 5px;
 		width: 105px;
 		font-size: 14px;
@@ -73,7 +73,7 @@
 	}
 	
 	#header > #rightheader > form > #chatButton:hover {
-		background: #bbbbbb;//linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
+		background: var(--light-border);
 	}
 	
 	#header > #rightheader > #upload {
@@ -82,9 +82,10 @@
 	
 	label {
 		cursor: pointer;
-		background: #eeeeee;//linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		background: var(--dark-text);
+		color: var(--light-text);
 		border: none;
-		color: black;
+		
 		border-radius: 5px;
 		font-size: 14px;
 		padding-top: 2.5px;
@@ -94,7 +95,7 @@
 	}
 	
 	label:hover {
-		background: #bbbbbb;//linear-gradient(to bottom right, #cedde9, #81A8C6, #5481A4);
+		background: var(--light-border);
 	}
 
 	#upload-photo {
@@ -111,8 +112,8 @@
 		font-size: 14px;
 		margin: auto;
 		margin-top: 10px;
-		border-right: 1px solid #e0e0e0;
-		border-left: 1px solid #e0e0e0;
+		border-right: 1px solid var(--light-border);
+		border-left: 1px solid var(--light-border);
 	}
 	.review {
 		margin-top: 0px;
@@ -178,9 +179,9 @@
 		padding: 5vh 2.5vw 5vh 2.5vw;
 		width: 45vw;
 		height: 40vh;
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
-		box-shadow: 5px 5px 10px #20537A;
-		border: 2px solid #20537A;
+		background: var(--light-background);
+		box-shadow: 5px 5px 10px var(--dark-text);
+		border: 2px solid var(--light-border);
 	}
 	
 	#review-input {
@@ -188,18 +189,20 @@
 		height: 30vh;
 		border-radius: 20px;
 		padding: 2.5vh 1vw 2.5vh 1vw;
+		border: 1px solid var(--light-border);
+		color: var(--dark-text)
 	}
 	
 	#review-submit {
 		width: 38vw;
-		background: linear-gradient(to top left, #20537A, #38698E, #5481A4, #81A8C6);
-		color: white;
+		background: var(--dark-text);
+		color: var(--light-text);
 		margin-top: 5vh;
 		padding: 2.5vh 1vw 2.5vh 1vw;
 	}
 	
 	#review-submit:hover {
-		background: linear-gradient(to bottom right, #20537A, #38698E, #5481A4, #81A8C6);
+		background: var(--light-border);
 	}
 	
 	#create-post {
@@ -210,7 +213,11 @@
 	}
 	
 	#gear {
-		color: white;
+		color: var(--dark-text);
+	}
+	
+	#gear:hover {
+		color: var(--light-border)
 	}
 	
 	@media only screen and (max-width: 700px) {
@@ -254,44 +261,45 @@
 	@media (prefers-color-scheme: dark) {
 		#header {
 			//background: black;
-			color: white;
+			color: var(--light-text);
 		}
 		.review {
-			//background: black;
-			color: white;
-			border-color: white;
+			
+			color: var(--light-text);
+			border-color: var(--light-border);
 			
 		}
 		#header > #rightheader > button {
-			background: black;
-			color: white;
+			background: var(--dark-secondary);
+			color: var(--light-text);
 		}
 		#header > #rightheader > button:hover {
 			background: #666666;
-			border: 1px black solid;
+			border: 1px var(--dark-background) solid;
 		}
 		label {
-			color: white;
-			background: black;
+			background: var(--dark-secondary);
+			color: var(--light-text);
 		}
 		label:hover {
 			background: #666666;
-			border: 1px black solid;
+			border: 1px var(--dark-background) solid;
 		}
 		#gear {
 			color: black;
+			
 		}
 		
 		#gear:hover {
-			color: #666666;
+			color: var(--dark-text);
 		}
 		#header > #rightheader > form > #chatButton {
-			background: black;
-			color: white;
+			background: var(--dark-secondary);
+			color: var(--light-text);
 		}
 		#header > #rightheader > form > #chatButton:hover {
 			background: #666666;
-			border: 1px black solid;
+			border: 1px var(--dark-background) solid;
 		}
 	}
 	

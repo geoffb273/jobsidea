@@ -839,7 +839,7 @@ var postSaved = function(req, res) {
 					db.deleteSaved(username, id).then(_ => {
 						res.send("Delete")
 					})
-				return
+					return
 				}
 			}
 		}
@@ -853,10 +853,34 @@ var postApply = async function(req, res) {
 	var sender = req.session.username
 	var title = req.params.title
 	var username = req.params.username
+	var id = req.params.id
 	var settings = await db.getSettings(username)
-	db.putNotification(username, sender, sender + " has applied to your " + title + " post", "Application", settings).then(_ => {
-		res.send("Done")
-	});
+	db.addApplied(sender, id).then(_ => {
+		db.putNotification(username, sender, sender + " has applied to your " + title + " post", "Application", settings).then(_ => {
+			res.send("Done")
+		})
+	})
+	
+}
+
+var getApply = async function(req, res) {
+	
+	var username = req.session.username
+	var id = req.params.id
+	if (req.session.applied) {
+		if (req.session.applied[id]) {
+			res.send(req.session.applied[id])
+		}
+	}
+	db.getApplied(username, id).then(applied => {
+		if (!req.session.applied) {
+			req.session.applied = {}
+		}
+		req.session.applied = applied
+		
+		res.send(applied)
+	})
+	
 }
 
 var getResume = async function(req, res) {
@@ -965,6 +989,7 @@ var routes = {
 	handle_save: postSaved,
 	//Apply
 	apply: postApply,
+	get_apply: getApply,
 	//Resume
 	resume: getResume,
 	upload_resume: uploadResume,
