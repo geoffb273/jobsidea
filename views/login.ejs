@@ -1,9 +1,20 @@
 <style>	/* #20537A #38698E #5481A4 #81A8C6 #B6D0E4 */
+
+	:root {
+		--light-background: #f0f0f0;
+		--light-secondary: #f8f8f8;
+		--dark-background: #333333;
+		--dark-secondary: #191919;
+		--light-text: #eeeeee;
+		--dark-text: #404040;
+		--light-border: #c8c8c8;
+		--dark-border: #4c4c4c;
+	}
 	body {
 		text-align: center;
 		font-family: Roboto;
 		justify-content: center;
-		background: #eeeeee;
+		background: var(--light-background);
 		padding: 0;
 		margin: 0;
 	}
@@ -11,14 +22,14 @@
 	#title {
 		font-size: max(5.5vw, 48px);
 		font-family: Roboto;
-		color: black;
+		color: var(--dark-text);
 	}
 	#title-div {
 		width: 100%;
-		background: white;
+		background: var(--light-secondary);
 		max-height: 100px;
-		box-shadow: 5px 5px 10px black;
-		border-bottom: 1px solid #3F3F3F;
+		
+		border-bottom: 2px solid var(--light-border);
 	}
 	
 	#container {
@@ -31,10 +42,10 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		background: white;
+		background: var(--light-secondary);
 		border-radius: 2vmin;
-		border: 1px solid #3F3F3F;
-		box-shadow: 5px 5px 10px black;
+		border: 1px solid var(--light-border);
+		
 		
 	}
 	
@@ -53,9 +64,9 @@
 		width: 375px;
 		font-size: 36px;
 		padding-left: 5px;
-		background: #eeeeee;
-		color: black;
-		border: none;
+		background: var(--light-background);
+		color: var(--dark-text);
+		border: 1px solid var(--light-border);
 		padding-left: 10px;
 	}
 	
@@ -69,13 +80,13 @@
 		border-radius: 5px;
 		margin: 0.5vmin;
 		font-size: max(2.5vw, 32px);
-		border: 1px solid black;
-		background: #333333;
-		color: white;
+		border: 1px solid var(--dark-border);
+		background: var(--dark-background);
+		color: var(--light-text);
 	}
 	
 	#login > button:hover {
-		background: #666666
+		background: var(--dark-text);
 	}
 	
 	#signup {
@@ -87,13 +98,13 @@
 		margin: 0.5vmin;
 		font-size: 28px;
 		width: 200px;
-		border: 1px solid black;
-		background: #333333;
-		color: white;
+		border: 1px solid var(--dark-border);
+		background: var(--dark-background);
+		color: var(--light-text);
 	}
 	
 	#signup > form > button:hover {
-		background: #666666
+		background: var(--dark-text);
 	}
 	
 	@media only screen and (max-width: 700px) {
@@ -118,21 +129,21 @@
 	
 	@media (prefers-color-scheme: dark) {
 		#title-div {
-			background: black;
+			background: var(--dark-secondary);
 		}
 		#title {
-			color: white;
+			color: var(--light-text);
 		}
 		#container {
-			background: black;
+			background: var(--dark-secondary);
 		}
 		body {
-			background: #333333;
+			background: var(--dark-background);
 		}
 		
 		#login > input {
-			background: #666666;
-			color: white;
+			background: var(--dark-background);
+			color: var(--light-text);
 		}
 	}
 

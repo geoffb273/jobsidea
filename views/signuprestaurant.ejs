@@ -1,9 +1,20 @@
 <style>
+	:root {
+		--light-background: #f0f0f0;
+		--light-secondary: #f8f8f8;
+		--dark-background: #333333;
+		--dark-secondary: #191919;
+		--light-text: #eeeeee;
+		--dark-text: #404040;
+		--light-border: #c8c8c8;
+		--dark-border: #4c4c4c;
+	}
+
 	body {
 		text-align: center;
 		font-family: Roboto;
 		justify-content: center;
-		background: #eeeeee;
+		background: var(--light-background);
 		padding: 0;
 		margin: 0;
 	}
@@ -11,17 +22,17 @@
 	#title {
 		font-size: max(5.5vw, 48px);
 		width; 100%;
-		color: black;
-		background: white;
+		color: var(--dark-text);
+		background: var(--light-secondary);
 		font-family: Roboto;
-		box-shadow: 5px 5px 10px black;
-		border-bottom: 1px solid #3F3F3F;
+		
+		border-bottom: 1px solid var(--light-border);
 	}
 	
 	#signup {
 		box-sizing: border-box; 
 		backdrop-filter: blur(10px); 
-		background: white; 
+		background: var(--light-secondary); 
 		margin: auto;
 		padding-top: 20px;
 		padding-bottom: 15px;
@@ -32,8 +43,8 @@
 		border-radius: 2vmin;
 		border: 0.5px solid;
 		flex-direction: column;
-		border: 1px solid #3F3F3F;
-		box-shadow: 5px 5px 10px black;
+		border: 1px solid var(--light-border);
+		
 		
 	}
 	
@@ -41,9 +52,9 @@
 		border-radius: 10px;
 		width: 300px;
 		font-size: 26px;
-		background: #eeeeee;
-		border: none;
-		color: black;
+		background: var(--light-background);
+		color: var(--dark-text);
+		border: 1px solid var(--light-border);
 		padding-top: 3px;
 		padding-bottom: 2px;
 		padding-left: 10px;
@@ -109,28 +120,28 @@
 	
 	@media (prefers-color-scheme: dark) {
 		#title {
-			color: white;
-			background: black;
+			color: var(--light-text);
+			background: var(--dark-secondary);
 		}
 		#signup {
-			background: black;
+			background: var(--dark-secondary);
 		}
 		#signup > input {
-			background: #666666;
-			color: white;
+			background: var(--dark-background);
+			color: var(--light-text);
 		}
 		
 		body {
-			background: #333333;
+			background: var(--dark-background);
 		}
 		
 		#signup > div > label {
-			color: white;
+			color: var(--light-text);
 		}
 		
 		#signup > div > select {
-			background: #666666;
-			color: white;
+			background: var(--dark-background);
+			color: var(--light-text);
 		}
 	}
 
