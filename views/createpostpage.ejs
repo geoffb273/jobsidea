@@ -9,39 +9,63 @@
 		margin-top: 20px;
 		margin-left: 20px;
 		font-size: 20px;
+		background: var(--light-secondary);
+		border: 1px solid var(--light-border);
+		border-radius: 5px;
+		padding: 5px 10px;
+		color: var(--dark-text);
+	}
+	
+	#cancel:hover {
+		background: var(--light-border)
 	}
 	
 	#post-form {
-		width: 80%;
+		width: 75%;
 		margin: auto;
 		margin-top: 10px;
-		padding: 10px;
-		padding-left: 10px;
-		padding-right: 10px;
-		background: white;
-		color: black;
+		padding: 20px 1.75% 20px 3.25%;
+		
+		background: var(--light-secondary);
+		color: var(--dark-text);
+		border: 1px solid var(--light-border);
+		border-radius: 20px;
+		
 	}
 	
 	#post-form > table {
+		color: var(--dark-text);
 		width: 100%;
 	}
 	
 	
-	.first {
+	.titles {
 		vertical-align: top; 
 		font-size: 20px;
+		width: 50%;
 	}
 	
 	#post-title {
-		width: 100%;
+		width: 95%;
 		font-size: 20px;
+		padding: 10px;
+		padding-left: 10px;
+		background: var(--light-background);
+		border: 1px solid var(--light-border);
+		border-radius: 10px;
+		margin-bottom: 30px;
 	}
 	
 	textarea {
-		width: 100%;
-		height: 75px;
+		width: 95%;
+		height: 120px;
 		resize: none;
 		font-size: 16px;
+		background: var(--light-background);
+		border: 1px solid var(--light-border);
+		border-radius: 20px;
+		padding: 10px;
+		margin-bottom: 30px;
 	}
 	
 	#checkboxes {
@@ -53,13 +77,89 @@
 		margin-right: 20px;
 	}
 	
+	#post-expiration {
+		background: var(--light-background);
+		border: 1px solid var(--light-border);
+		font-size: 16px;
+		border-radius: 10px;
+		padding: 5px;
+	}
+	
+	#post-submit {
+		margin-top: 20px;
+		
+		font-size: 20px;
+		background: var(--light-secondary);
+		border: 1px solid var(--light-border);
+		border-radius: 5px;
+		padding: 5px 20px;
+		color: var(--dark-text);
+	}
+	
+	#post-submit:hover {
+		background: var(--light-border)
+	}
+	
 	@media only screen and (max-width: 700px) {
+		#post-form {
+			width: 90%;
+		}
+	}
+	
+@media (prefers-color-scheme: dark) {
+	#cancel {
+		
+		background: var(--dark-secondary);
+		border: 1px solid var(--dark-border);
+		
+		color: var(--light-text);
+	}
+	
+	#cancel:hover {
+		background: var(--dark-border)
+	}
+	#post-form {
+		background: var(--dark-secondary);
+		border: 1px solid var(--dark-border);
+	}
+	
+	#post-form > table {
+		color: var(--light-text);
 		
 	}
 	
-	@media (prefers-color-scheme: dark) {
+	#post-title {
+		
+		background: var(--dark-background);
+		border: 1px solid var(--dark-border);
+		color: var(--light-text);
 		
 	}
+	
+	textarea {
+		
+		background: var(--dark-background);
+		border: 1px solid var(--dark-border);
+		
+	}
+	
+	#post-expiration {
+		background: var(--dark-background);
+		border: 1px solid var(--dark-border);
+	}
+	
+	#post-submit {
+		
+		background: var(--dark-background);
+		border: 1px solid var(--dark-border);
+		
+		color: var(--light-text);
+	}
+	
+	#post-submit:hover {
+		background: var(--dark-border)
+	}
+}
 	
 </style>
 
@@ -67,54 +167,78 @@
 <form id="post-form" action="/posts" method="POST">
 	<table>
 		<tr>
-			<td class="first">
-				<label for="post-title">Job Title:</label>
+			<td class="titles">
+				<label for="post-title">Job Title</label>
 			</td>
+			<td>
+				
+			</td>
+		</tr>
+		<tr>
 			<td>
 				<input id="post-title" name="title" placeholder="Title" required/>
 			</td>
-		</tr>
-		<tr>
-			<td class="first">
-				<label for="post-description">Job Description:</label>
 			<td>
-				<textarea id="post-description" name="content" placeholder="Description" required></textarea>
+				
 			</td>
 		</tr>
 		<tr>
-			<td class="first">
-				<label for="post-qualification">Job Qualifications:</label>
-			<td>
-				<textarea id="post-qualification" name="qualification" placeholder="Necessary experience" required></textarea>
-			</td>
-		</tr>
-		<tr>
-			<td class="first">
-				<label for="post-expiration">Application Deadline (optional):</label>
-			<td>
-				<input type="date" name="expiration" id="post-expiration" />
+			<td class="titles">
+				<label for="post-description">Job Description</label>
+				
+			<td class="titles">
+				<label for="post-qualification">Job Qualifications</label>
+				
+				
 			</td>
 		</tr>
 		
 		<tr>
-			<td class="first">
-				Job Type:
-			</td>
+			<td >
+				
+				<textarea id="post-description" name="content" placeholder="Description" required></textarea>
 			<td>
-				<div id="checkboxes" >
-					<label for="post-waiter">Waiter: </label>
-					<input type="checkbox" name="waiter" id="post-waiter" /><br>
-					<label for="post-busser">Busser: </label>
-					<input type="checkbox" name="busser" id="post-busser" /><br>
-					<label for="post-washer">Dish Washer: </label>
-					<input type="checkbox" name="washer" id="post-washer" /><br>
-					<label for="post-other">Other: </label>
-					<input type="checkbox" name="other" id="post-other" /><br>
-				</div>
+				
+				<textarea id="post-qualification" name="qualification" placeholder="Necessary experience" required></textarea>
 			</td>
 		</tr>
 		<tr>
-			<td class="first">
+			<td class="titles">
+				Job Type
+			</td>
+			<td class = "titles">
+				<label for="post-expiration">Application Deadline</label>
+				
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				
+				<div id="checkboxes" >
+					<div style="margin-right:10px">
+						<label for="post-waiter">Waiter </label>
+						<input type="checkbox" name="waiter" id="post-waiter" />
+					
+						<label for="post-busser">Busser </label>
+						<input type="checkbox" name="busser" id="post-busser" />
+					</div>
+					<div>
+						<label for="post-washer">Dish Washer </label>
+						<input type="checkbox" name="washer" id="post-washer" />
+					
+						<label for="post-other">Other </label>
+						<input type="checkbox" name="other" id="post-other" />
+					</div>
+				</div>
+			</td>
+			<td>
+				<input type="date" name="expiration" id="post-expiration" />
+				
+			</td>
+		</tr>
+		<tr>
+			<td class="titles">
 				<input type="submit" id="post-submit" value="Post" />
 			</td>
 		</tr>

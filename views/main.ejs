@@ -1,6 +1,5 @@
 <head>
 	<%- include('css/style'); %>
-	
 </head>
 
 <style>
@@ -365,6 +364,11 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src = "post.js"></script>
+<%if(type == "Restaurant") {%>
+	<script>
+	
+	</script>
+<%}%>
 <script>
 
 var postsEl = document.getElementById("posts")
@@ -374,6 +378,7 @@ var type = ""
 var clicked = undefined
 var postId = '<%- id%>'
 var first = true
+var username = '<%- username%>'
 
 var getPosts = function(search = "", filter = "", zipCode = "", radius = 10) {
 	var url = "/posts?limit=" + limit
@@ -595,30 +600,37 @@ var openPost = function(e) {
 	var date = new Date(post.created)
 	time.innerHTML = "<b>Posted on</b><br> " + date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
 	
+	
 	var applyButton = document.createElement("button")
-	applyButton.id = post.title
 	applyButton.postId = post.id
-	applyButton.username = post.username
-	applyButton.className = "display-button"
-	applyButton.textContent = "Apply"
-	$.get("/apply/" + post.id, function(applied) {
-		console.log(applied)
-		if (!applied) {
-			applyButton.onclick = (e) => {
-				var title = e.target.id
-				var username = e.target.username
-				var id = e.target.postId
-				$.post("/apply/" + username + "/" + title + "/" + id, {}, function(data) {
-				e.target.textContent = "Applied"
-					e.target.onclick = () => {}
-				})
-			}
-		} else {
-			applyButton.textContent = "Applied"
+	if (username == post.username) {
+		applyButton.textContent = "Edit"
+		applyButton.className = "display-button"
+		applyButton.onclick = (e) => {
+			var id = e.target.postId
 		}
-	})
-	
-	
+	} else {
+		applyButton.id = post.title
+		applyButton.username = post.username
+		applyButton.className = "display-button"
+		applyButton.textContent = "Apply"
+		$.get("/apply/" + post.id, function(applied) {
+			console.log(applied)
+			if (!applied) {
+				applyButton.onclick = (e) => {
+					var title = e.target.id
+					var username = e.target.username
+					var id = e.target.postId
+					$.post("/apply/" + username + "/" + title + "/" + id, {}, function(data) {
+					e.target.textContent = "Applied"
+						e.target.onclick = () => {}
+					})
+				}
+			} else {
+				applyButton.textContent = "Applied"
+			}
+		})
+	}
 	
 	descrDiv.appendChild(time)
 	descrDiv.appendChild(jobDescr)

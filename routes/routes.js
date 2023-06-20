@@ -8,7 +8,7 @@ var crypto = require('crypto');
 var getHome = function(req, res) {
 	var username = req.session.username;
 	var postId = req.query.id ? req.query.id : ""
-	res.render("main.ejs", {username: username, id: postId});
+	res.render("main.ejs", {username: username, id: postId, type: req.session.type});
 };
 
 var getLogin = function(req, res) {
