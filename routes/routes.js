@@ -1,17 +1,17 @@
-var db = require('../models/database.js');
+let db = require('../models/database.js');
 const axios = require('axios')
 const fs = require('fs');
-var { v4: uuidv4 } = require('uuid');
-var crypto = require('crypto'); 
+let { v4: uuidv4 } = require('uuid');
+let crypto = require('crypto'); 
 
 
-var getHome = function(req, res) {
+const getHome = function(req, res) {
 	var username = req.session.username;
 	var postId = req.query.id ? req.query.id : ""
 	res.render("main.ejs", {username: username, id: postId, type: req.session.type});
 };
 
-var getLogin = function(req, res) {
+const getLogin = function(req, res) {
 	var username = req.session.username
 	if (username) {
 		req.session.destroy();
@@ -20,20 +20,24 @@ var getLogin = function(req, res) {
 	res.render("login.ejs");
 };
 
-var logout = function(req, res) {
+const logout = function(req, res) {
 	req.session.destroy();
 	res.redirect("/login");
 }
 
-var handleLogin = function(req, res) {
+const handleLogin = function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = req.body.password;
-	db.getUser(username).then(async(snapshot) => {
+	db.getUser(username).then((snapshot) => {
 		if (snapshot) {
 			var user = snapshot;
 			var userPassword = user.password;
 			if (userPassword == crypto.createHash('sha256').update(password).digest('hex')) {
-				req.session.username = user.username;
+				user.password = undefined
+				user._id = undefined
+				res.status(200)
+				res.send(user)
+				/*req.session.username = user.username;
 				req.session.user = user
 				req.session.type = user.type;
 				if (user.type == "User") {
@@ -51,18 +55,23 @@ var handleLogin = function(req, res) {
 					radius: user.type == "User" ? undefined: 10
 				}
 				res.redirect("/profile");
+			*/
 			} else {
-				res.redirect("/login");
+				res.status(401)
+				res.send("Incorrect Username or Password")
 			}
 		} else {
-			res.redirect("/login")
+			res.status(401)
+			res.send("Username not found")
 		}
-	}, _ => {
-		res.redirect("/login");
+	}).catch(err => {
+		res.status(500)
+		res.send(err)
 	})
+
 };
 
-var searchUsers = function(req, res) {
+const searchUsers = function(req, res) {
 	var search = req.params.search
 	db.getUsers(search).then(async function(snapshot) {
 		var users = []
@@ -92,11 +101,11 @@ var searchUsers = function(req, res) {
 	})
 }
 
-var getSignUpUser = async function(req, res) {
+const getSignUpUser = async function(req, res) {
 	res.render("signup.ejs")
 };
 
-var handleSignUpUser = async function(req, res) {
+const handleSignUpUser = async function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = crypto.createHash('sha256').update(req.body.password).digest('hex');
 	var firstname = req.body.firstname;
@@ -128,11 +137,11 @@ var handleSignUpUser = async function(req, res) {
 		res.redirect("/profile");
 };
 
-var getSignUpRestaurant = function(req, res) {
+const getSignUpRestaurant = function(req, res) {
 	res.render("signuprestaurant.ejs")
 };
 
-var handleSignUpRestaurant = function(req, res) {
+const handleSignUpRestaurant = function(req, res) {
 	var username = req.body.username.toLowerCase();
 	var password = crypto.createHash('sha256').update(req.body.password).digest('hex');
 	var name = req.body.name;
@@ -173,23 +182,19 @@ var handleSignUpRestaurant = function(req, res) {
 	
 };
 
-var getProfile = function(req, res) {
+const getProfile = function(req, res) {
 	var username = req.params.username;
-	var ownProfile = false
-	if (!username || (username && username == req.session.username)) {
-		username = req.session.username;
-		ownProfile = true
-	}
 	
 	if (req.session.users) {
 		if (req.session.users[username]) {
 			var user = req.session.users[username]
-			var email = user.email;
+			res.status(200)
+			res.send(user)
+			/*var email = user.email;
 			if (user.type == "User") {
 				var firstname = user.firstname;
 				var lastname = user.lastname;
-				res.render("profile.ejs", {username: username, email: email,
-					name: firstname + " " + lastname, user: true, own: ownProfile})
+				
 				
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
@@ -199,7 +204,7 @@ var getProfile = function(req, res) {
 				var zipCode = user.zipCode;
 				res.render("profile.ejs", {username: username, email: email, name: name, street: street,
 					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
-			}
+			}*/
 			return
 		}
 	}
@@ -213,18 +218,19 @@ var getProfile = function(req, res) {
 				req.session.users[username] = snapshot
 			}
 			var user = snapshot;
-			var email = user.email;
-			/*
+			res.status(200)
+			res.send(user)
+			/*var email = user.email;
+			
 			var phone = user.phone;
 			var profilePic = user.profilePic;
 			 */
-			if (user.type == "User") {
+			/*if (user.type == "User") {
 				var firstname = user.firstname;
 				var lastname = user.lastname;
-				/**var birthday = user.birthday */
 				
-				res.render("profile.ejs", {username: username, email: email,
-					name: firstname + " " + lastname, user: true, own: ownProfile})
+				
+				
 			} else if (user.type == "Restaurant") {
 				var name = user.name;
 				var street = user.street;
@@ -233,49 +239,61 @@ var getProfile = function(req, res) {
 				var zipCode = user.zipCode;
 				res.render("profile.ejs", {username: username, email: email, name: name, street: street,
 					city: city, state: state, zipCode: zipCode, user: false, own: ownProfile});
-			}
+			}*/
 			
 		} else {
-			res.redirect("/login");
+			res.status(404)
+			res.send("")
 		}
 	}).catch(_ => {
-		res.redirect("/login");
+		res.status(500)
+		res.send("")
 	});
 	
 };
 
-var getChats = function(req, res) {
-	var username = req.session.username;
-	var limit = parseInt(req.query.limit);
+const getChats = function(req, res) {
+	const username = req.params.username;
+	const limit = req.query.limit ? parseInt(req.query.limit): 10;
 	db.getChats(username, limit, snapshot => {
+		res.status(200)
 		res.send(snapshot);
+	}).catch(err => {
+		res.send(500)
+		res.send(err)
 	});
 	
 };
 
-var getChatsPage = function(req, res) {
-	var username = req.session.username
-	var chatId = req.query.chatId
+const getChatsPage = function(req, res) {
+	let username = req.session.username
+	let chatId = req.query.chatId
 	res.render("chats.ejs", {username: username, chatId: chatId});
 }
 
-var getChat = async function(req, res) {
-	var chatId = req.params.chatId;
-	var username = req.session.username;
-	var users = chatId.split("@")
-	if (username != users[0] && username != users[1]) {
-		res.send({})
-		return
+const getChat = async function(req, res) {
+	let {chatId} = req.params;
+	try {
+		let chat = await db.getChat(chatId)
+		if (chat) {
+			res.status(200)
+			res.send(chat)
+		} else {
+			res.status(404)
+			res.send("Chat not found")
+		}
+		
+	} catch (err) {
+		res.status(500)
+		res.send(err)
 	}
 	
-	var chat = await db.getChat(chatId)
-	res.send(chat)
 }
 
-var handleChats = function(req, res) {
-	var username = req.session.username;
-	var username2 = req.params.username;
-	var chatId = username + "@" + username2
+const handleChats = function(req, res) {
+	let {username} = req.session;
+	let {username2} = req.params;
+	let chatId = username + "@" + username2
 	if (username > username2) {
 		chatId = username2 + "@" + username
 	}
@@ -294,11 +312,15 @@ var handleChats = function(req, res) {
 	})
 }
 
-var getMessages = function(req, res) {
-	var chatId = req.query.chatId;
-	var limit = req.query.limit ? parseInt(req.query.limit) : 20;
+const getMessages = function(req, res) {
+	let { chatId } = req.params;
+	let limit = req.query.limit ? parseInt(req.query.limit) : 20;
 	db.getMessages(chatId, limit).then(snapshot => {
-		res.send(JSON.stringify(snapshot))
+		res.status(200)
+		res.send(snapshot)
+	}).catch(err => {
+		res.status(500)
+		res.send(err)
 	})
 }
 
@@ -752,6 +774,7 @@ var getUserProfilePic = function(req, res) {
 	var username = req.params.username
 	if (req.session.pics) {
 		if (req.session.pics[username]) {
+			res.status(200)
 			res.send(req.session.pics[username])
 			return
 		}
@@ -765,15 +788,11 @@ var getUserProfilePic = function(req, res) {
 					req.session.pics = {}
 					req.session.pics[username] = url
 				}
+				res.status(200)
 				res.send(url)
 			})
 		} else {
-			if (req.session.pics) {
-				req.session.pics[username] = ""
-			} else {
-				req.session.pics = {}
-				req.session.pics[username] = ""
-			}
+			res.status(404)
 			res.send("")
 		}
 	})
@@ -894,8 +913,11 @@ var getResume = async function(req, res) {
 	}
 	if (user.resume) {
 		var url = await db.getResume(user.resume)
+		res.status(200)
 		res.send(url)
-		
+	} else {
+		res.status(404)
+		res.send("")
 	}
 }
 

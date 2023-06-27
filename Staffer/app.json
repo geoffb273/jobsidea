@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Staffer",
+    "slug": "Staffer",
+    "version": "1.0.0",
+    "scheme": "staffer",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": ""
+    }
+  }
+}
