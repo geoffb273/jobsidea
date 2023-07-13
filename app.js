@@ -2,13 +2,15 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 let http = require('http').Server(app);
-let io = require('socket.io')(http);
+let io = require('socket.io')(http, {
+	cors: {
+        origin: "http://localhost:19006"
+    }
+});
 require('dotenv').config();
 let routes = require('./routes/routes.js');
 let db = require('./models/database.js');
-let nodeMailer = require('nodemailer')
 let session = require('express-session');
-let cookieParser = require('cookie-parser');
 let MemoryStore = require('memorystore')(session)
 let multer = require('multer');
 
@@ -31,6 +33,12 @@ app.use(cors({
 	allowedHeaders: ["content-type"]
 }));
 
+app.use((_, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+    next();
+});
+
 /*app.all('*', function(req, res, next) {
   if (req.path !== '/handle-login' && req.path !== '/signup-user' && req.path !== '/login' && req.path !== '/signup-restaurant'
       && req.path !== '/handle-signup-user' && req.path !== '/handle-signup-restaurant'
@@ -48,6 +56,7 @@ app.use(cors({
 app.post('/handle-login', routes.handle_login);
 app.get('/logout', routes.logout) //Change for REACT purposes - prob based on req.session
 app.get('/search-users/:search', routes.search_users);
+app.get('/users', routes.get_users)
 //app.get('/signup-user', routes.signup_user);
 app.post('/handle-signup-user', routes.handle_signup_user); //Change for REACT purposes - return user info not render
 //app.get('/signup-restaurant', routes.signup_restaurant);
@@ -161,17 +170,14 @@ app.delete('/resume', routes.delete_resume) //Change for REACT purposes - prob b
 io.on('connection', (socket) => {
 	
 	socket.on('chat message', (msg) => {
-		socket.to(msg.chatId).emit('chat message', {message: msg.message, username: msg.username});
-		var set = io.sockets.adapter.rooms.get(msg.chatId)
-		
+		socket.to(msg.chatId).emit('chat message', msg);
+		let set = io.sockets.adapter.rooms.get(msg.chatId)
 		if (set && set.size == 1) {
-			var missingUser = msg.chatId.split("@").filter(function(name) {
+			const missingUser = msg.chatId.split("@").filter(function(name) {
 				return name != msg.username
 			})[0]
-			var promises = []
+			let promises = []
 			
-			socket.to(missingUser).emit('notification', {})
-			socket.to(missingUser).emit('update chats', {chatId: msg.chatId})
 			promises.push(db.putNotification(missingUser, msg.username, msg.username + " sent you a message", "New Message"))
 			//sendMail(msg.username, missingUser, "New Message")
 			promises.push(db.changeUnread(msg.chatId, missingUser))
@@ -195,19 +201,7 @@ io.on('connection', (socket) => {
 		socket.to(msg.chatId).emit('user left', {username: msg.username})
 		socket.leave(msg.chatId);
 	});
-	socket.on('self room', (msg) => {
-		 Array.from(socket.rooms).filter(room => room !== socket.id).forEach(id => { 
-			socket.leave(id);
-		});
-		socket.join(msg.username);
-	});
 	
-	socket.on('logged out', () => {
-		 Array.from(socket.rooms).filter(room => room !== socket.id).forEach(id => { 
-			socket.leave(id);
-			socket.removeAllListeners('self room');
-		});
-	});
 });
 
 

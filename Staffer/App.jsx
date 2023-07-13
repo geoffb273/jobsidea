@@ -7,13 +7,21 @@ import ChatScreen from './components/ChatScreen';
 import * as Linking from 'expo-linking'
 import { Appearance } from 'react-native';
 import BackgroundStyle from './styles/BackgroundStyle'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer, useMemo } from 'react';
+import { Text } from 'react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import HomeScreen from './components/HomeScreen';
+import CryptoJS from "react-native-crypto-js";
+import AuthContext from './AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from './api';
+import SignupScreen from './components/SignupScreen';
 
 const prefix = Linking.createURL('/');
+const client = new QueryClient()
 
 export default function App() {
   let [dark, setDark] = useState(Appearance.getColorScheme() != "light")
-  console.log(dark)
   useEffect(() => {
     Appearance.addChangeListener(() => {
         setDark(!dark)
@@ -23,10 +31,12 @@ export default function App() {
   const contentStyle = dark ? BackgroundStyle.dark: BackgroundStyle.light
   const config = {
     screens: {
+      Signup: "/signup",
       Login: "",
       Chats: ':username/chats',
-      Profile: ':username',
-      Chat: ':username/chats/:chatId'
+      Profile: ':username/profile',
+      Chat: ':username/chats/:chatId',
+      Home: ':username'
     },
   };
   const linking = {
@@ -34,23 +44,146 @@ export default function App() {
     config
   };
 
+  const [state, dispatch] = useReducer(
+    (prevState, action) => {
+      switch (action.type) {
+        case 'RESTORE_USER':
+          return {
+            ...prevState,
+            username: action.username,
+            password: action.password,
+            isLoading: false,
+          };
+        case 'SIGN_IN':
+          return {
+            ...prevState,
+            isSignout: false,
+            username: action.username,
+            password: action.password
+          };
+        case 'SIGN_OUT':
+          return {
+            ...prevState,
+            isSignout: true,
+            username: null,
+            password: null
+          };
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      username: null,
+      password: null
+    }
+  );
 
+
+  useEffect(() => {
+    const checkLogin = async() => {
+
+      let username_stored, encrypted
+      try {
+          username_stored = await AsyncStorage.getItem("username")
+          encrypted = await AsyncStorage.getItem("password")
+      } catch (err) {
+          return null
+      }
+      
+      if (username_stored && encrypted) {
+          let decrypt = CryptoJS.AES.decrypt(encrypted, "grbrandt@190054")
+          let password = decrypt.toString(CryptoJS.enc.Utf8)
+          try {
+              let user = await api.handle_login(username_stored, password)
+              if (user) {
+                dispatch({ type: 'RESTORE_USER', username: username_stored, password: password });
+                return user
+              }
+              return null
+          } catch (err) {
+              return null
+          }
+      } else {
+          return null
+      }
+  }
+
+    checkLogin();
+  }, []);
+  const authContext = useMemo(
+    () => ({
+      signIn: async (username, password) => {
+        try {
+          
+          let user = await api.handle_login(username, password)
+          if (user) {
+            try {
+              await AsyncStorage.setItem("username", username)
+              await AsyncStorage.setItem("password", CryptoJS.AES.encrypt(password, "grbrandt@190054"))
+            } catch (err) {
+
+            }
+            dispatch({ type: 'SIGN_IN', username: username, password: password });
+          }
+        } catch(err) {
+
+        }
+        
+      },
+      signOut: async () => {
+        try {
+          await AsyncStorage.removeItem("username")
+          await AsyncStorage.removeItem("password")
+        } catch(err) {
+
+        }
+        dispatch({ type: 'SIGN_OUT' })
+      },
+      signUp: async (data) => {
+        let user = data
+        try {
+          await AsyncStorage.setItem("username", user.username)
+          await AsyncStorage.setItem("password", CryptoJS.AES.encrypt(user.password, "grbrandt@190054"))
+        } catch(err) {
+
+        }
+        try {
+          await api.post_user(user)
+          dispatch({ type: 'SIGN_IN', username: user.username, password: user.password });
+        } catch(err) {
+
+        }
+      },
+    }),
+    []
+  );
   return (
+    
     <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
+      <AuthContext.Provider value={authContext}>
+      <QueryClientProvider client={client}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
           contentStyle: contentStyle
         }}
       >
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-        />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Chats" component={ChatsScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
+        { !state.username && !state.password ?
+          <>
+            <Stack.Screen name="Login" component={LoginScreen}/>
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </>
+          : 
+          <>
+            <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{username: state.username}}/>
+            <Stack.Screen name="Chats" component={ChatsScreen} />
+            <Stack.Screen name="Chat" component={ChatScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+          </>
+        }
       </Stack.Navigator>
+      </QueryClientProvider>
+      </AuthContext.Provider>
     </NavigationContainer>
   );
 }

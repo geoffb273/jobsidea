@@ -2,9 +2,10 @@ import { Appearance, GestureResponderEvent, StyleProp, StyleSheet, Text, Touchab
 import ButtonStyle from "../styles/ButtonStyle"
 import { useEffect, useState } from "react"
 
-const Button = ({title, style, onPress}: {title: string, style?: StyleProp<ViewStyle> | undefined, onPress:((event: GestureResponderEvent)=>any) | undefined}) => {
+const Button = ({title, style, onPress}: 
+    {title: string, style?: StyleProp<ViewStyle> | undefined, onPress:((event: GestureResponderEvent)=>any) | undefined}) => {
     let [dark, setDark] = useState(Appearance.getColorScheme() != "light")
-    let textStyle = StyleSheet.flatten([dark? ButtonStyle.dark: ButtonStyle.light, style || {}])
+    let textStyle = StyleSheet.flatten([style || {}, dark? ButtonStyle.dark: ButtonStyle.light])
     useEffect(() => {
         Appearance.addChangeListener(() => {
             setDark(!dark)
@@ -12,7 +13,7 @@ const Button = ({title, style, onPress}: {title: string, style?: StyleProp<ViewS
     }, [])
     return (
         <TouchableOpacity onPress={onPress}>
-            <View style={style? style: ButtonStyle.normal}><Text style={textStyle}>{title}</Text></View>
+            <View style={ButtonStyle.normal}><Text style={textStyle}>{title}</Text></View>
         </TouchableOpacity>
         
     )

@@ -28,7 +28,7 @@ const connect = async (url) => {
     }
 }
 
-var postItem = async function(db, collection, obj) {
+const postItem = async function(db, collection, obj) {
 	try {
 		return await db.collection(collection).insertOne(obj)
 	} catch(err) {
@@ -37,7 +37,7 @@ var postItem = async function(db, collection, obj) {
 	}
 }
 
-var getItem = async function(db, collection, find) {
+const getItem = async function(db, collection, find) {
 	try {
 		return await db.collection(collection).findOne(find)
 	} catch(err) {
@@ -47,16 +47,16 @@ var getItem = async function(db, collection, find) {
 	
 }
 
-var getList = async function(db, collection, find, sort, limit = 0) {
+const getList = async function(db, collection, find, sort, limit = 0, offset = 0) {
 	try {
-		return (await db.collection(collection).find(find).sort(sort).limit(limit)).toArray()
+		return (await db.collection(collection).find(find).sort(sort).limit(limit).skip(offset)).toArray()
 	} catch(err) {
 		console.error(err)
         throw new Error("Could not get list from collection " + collection)
 	}
 }
 
-var replaceItem = async function(db, collection, find, obj) {
+const replaceItem = async function(db, collection, find, obj) {
 	try {
 		return await db.collection(collection).replaceOne(find, obj, {upsert: true})
 	} catch(err) {
@@ -65,7 +65,7 @@ var replaceItem = async function(db, collection, find, obj) {
 	}
 }
 
-var updateItem = async function(db, collection, find, obj) {
+const updateItem = async function(db, collection, find, obj) {
 	try {
 		return await db.collection(collection).updateOne(find, obj)
 	} catch(err) {
@@ -74,7 +74,7 @@ var updateItem = async function(db, collection, find, obj) {
 	}
 }
 
-var deleteItem = async function(db, collection, find) {
+const deleteItem = async function(db, collection, find) {
 	try {
 		return await db.collection(collection).deleteOne(find)
 	} catch(err) {
@@ -83,22 +83,22 @@ var deleteItem = async function(db, collection, find) {
 	}
 }
 
-var getImage = function(path, id) {
+const getImage = function(path, id) {
 	var r = ref(storage, path + "/" + id);
 	return getDownloadURL(r)
 }
 
-var uploadImage = function(path, id, file, metadata = {}) {
+const uploadImage = function(path, id, file, metadata = {}) {
 	var r = ref(storage, path + "/" + id);
 	return uploadBytes(r, file, metadata)
 }
 
-var deleteImage = function(path, id) {
+const deleteImage = function(path, id) {
 	var r = ref(storage, path + "/" + id);
 	return deleteObject(r)
 }
 
-var getPDF = function(path, id) {
+const getPDF = function(path, id) {
 	var r = ref(storage, path + "/" + id);
 	return getDownloadURL(r)
 }

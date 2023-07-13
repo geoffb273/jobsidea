@@ -1,30 +1,29 @@
-import {FlatList, ListRenderItem} from 'react-native';
+import {FlatList, ListRenderItem, SafeAreaView} from 'react-native';
 import { ChatsScreenProps } from '../types/NavStackTypes';
 import api from '../api';
-import { useEffect, useState } from 'react';
 import TabBar from './TabBar';
 import { Chat } from '../types/Chat';
 import ChatComponent from './ChatComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from "react-native-crypto-js";
 import Button from './Button';
+import { useQuery } from '@tanstack/react-query'
+import TextWrapper from './Text';
 
 const ChatsScreen = ({route, navigation} : ChatsScreenProps) => {
     let username: string = route.params.username
-    let [chats, setChats] = useState<Array<Chat>>([])
-
+    
     const checkLogin = async() => {
         let username_stored, encrypted
         try {
             username_stored = await AsyncStorage.getItem("username")
             encrypted = await AsyncStorage.getItem("password")
         } catch (err) {
-            navigation.navigate("Login")
+            return
         }
         
         if (username_stored && encrypted) {
             if (username_stored != username) {
-                navigation.navigate("Profile", {username: username})
                 return
             }
             let decrypt = CryptoJS.AES.decrypt(encrypted, "grbrandt@190054")
@@ -32,30 +31,34 @@ const ChatsScreen = ({route, navigation} : ChatsScreenProps) => {
             try {
                 let user = await api.handle_login(username_stored, password)
                 if (!user) {
-                    navigation.navigate("Login")
+                    return
                 }
+                return user
             } catch (err) {
-                navigation.navigate("Login")
+                return
             }
         } else {
-            navigation.navigate("Login")
+            return
         }
     }
 
-    const setUpChats = function(chats: Array<Chat>) {
-        setChats(chats)
+    const { isLoading, isError, data: user, error } = useQuery({
+        queryKey: ['checkLogin'],
+        queryFn: checkLogin,
+    })
+    const { isLoading: loading, isError: hasError, data: chatData, error: err } = useQuery({
+        queryKey: ["chats", username],
+        queryFn: () => api.get_chats(username),
+    })
+    if (isLoading || loading) {
+        return <TextWrapper text='Loading...'/>
     }
-
-    useEffect(() => {
-        checkLogin().then(() => {
-            api.get_chats(username).then(chats => {
-                setUpChats(chats)
-            })
-        })
-        
-    }, [])
-
-
+    if (isError || hasError) {
+        navigation.navigate("Login")
+        return <></>
+    }
+    
+    
     const logout = async function() {
         try {
             await AsyncStorage.removeItem("username")
@@ -63,7 +66,7 @@ const ChatsScreen = ({route, navigation} : ChatsScreenProps) => {
         } catch(err) {
 
         }
-        navigation.popToTop()
+        navigation.navigate("Login")
     }
 
     const renderChatComponent: ListRenderItem<Chat> = ({item}: {item: Chat}) => {
@@ -75,15 +78,15 @@ const ChatsScreen = ({route, navigation} : ChatsScreenProps) => {
         )
     }
     return (
-        <>
+        <SafeAreaView style={{width: "100%", height: "100%"}}>
             <Button title='Log Out' onPress={logout}/>
             <FlatList 
-                data={chats}
+                data={chatData}
                 renderItem={renderChatComponent}
                 keyExtractor={item => item.id}
             />
             <TabBar username = {username} navigation={navigation}></TabBar>
-        </>
+        </SafeAreaView>
     );
   };
 

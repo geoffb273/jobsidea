@@ -7,6 +7,7 @@
       "build": "npm install && node app.js"
    },
    "dependencies": {
+      "@apollo/server": "^4.7.5",
       "async": "^3.2.2",
       "aws-sdk": "^2.1029.0",
       "axios": "^0.27.2",
@@ -18,6 +19,7 @@
       "express": "^4.17.1",
       "express-session": "^1.17.2",
       "firebase": "^9.6.7",
+      "graphql": "^16.7.1",
       "json5": "^2.2.0",
       "memorystore": "^1.6.6",
       "mnemonist": "^0.39.0",
@@ -33,5 +35,9 @@
       "utils": "^0.3.1",
       "uuid": "^8.3.2",
       "xmlhttprequest": "^1.8.0"
+   },
+   "devDependencies": {
+      "@types/node": "^20.4.2",
+      "typescript": "^5.1.6"
    }
 }

@@ -6,8 +6,8 @@ let crypto = require('crypto');
 
 
 const getHome = function(req, res) {
-	var username = req.session.username;
-	var postId = req.query.id ? req.query.id : ""
+	let username = req.session.username;
+	let postId = req.query.id || ""
 	res.render("main.ejs", {username: username, id: postId, type: req.session.type});
 };
 
@@ -26,8 +26,8 @@ const logout = function(req, res) {
 }
 
 const handleLogin = function(req, res) {
-	var username = req.body.username.toLowerCase();
-	var password = req.body.password;
+	let username = req.body.username.toLowerCase();
+	let password = req.body.password;
 	db.getUser(username).then((snapshot) => {
 		if (snapshot) {
 			var user = snapshot;
@@ -101,40 +101,55 @@ const searchUsers = function(req, res) {
 	})
 }
 
+const getUsers = async function(req, res) {
+	const { zipCode, limit, offset } = req.query
+	try {
+		let users = await db.getUsersByLocation([zipCode], parseInt(limit) || 10, parseInt(offset) || 0)
+		let us = []
+		for (let user of users) {
+			us.push(user.username)
+		}
+		res.status(200)
+		res.send(us)
+	} catch (err) {
+		res.status(500)
+		res.send(err)
+	}
+	
+}
+
 const getSignUpUser = async function(req, res) {
 	res.render("signup.ejs")
 };
 
 const handleSignUpUser = async function(req, res) {
-	var username = req.body.username.toLowerCase();
-	var password = crypto.createHash('sha256').update(req.body.password).digest('hex');
-	var firstname = req.body.firstname;
-	var lastname = req.body.lastname;
-	var email = req.body.email;
-	var phone = req.body.phone;
-	var zipCode = req.body.zipCode;
+	let username = req.body.username.toLowerCase();
+	let password = crypto.createHash('sha256').update(req.body.password).digest('hex');
+	let firstname = req.body.firstname;
+	let lastname = req.body.lastname;
+	let email = req.body.email;
+	let phone = req.body.phone;
+	let zipCode = req.body.zipCode;
 	/*var birthday = req.body.birthday;*/
 	var p = []
-	await db.changeSettings(username, {
+	try {
+		await db.changeSettings(username, {
 			zipCode: zipCode,
 			username: username,
 			emailNotification: true,
 			textNotification: true,
 			radius: 10
 		})
-	await db.addUser(username, password, firstname, lastname, email, phone/*, birthday*/)
-		req.session.username = username;
-		req.session.user = {
-			username: username,
-			firstname: firstname,
-			lastname: lastname,
-			email: email,
-			phone: phone
-		}
-		req.session.name = firstname + " " + lastname
-		req.session.type = "User";
-		
-		res.redirect("/profile");
+		await db.addUser(username, password, firstname, lastname, email, phone)
+		res.status(200)
+		res.send({username: username, password: req.body.password})
+	} catch(err) {
+		res.status(500)
+		res.send(err)
+	}
+	
+	
+	
 };
 
 const getSignUpRestaurant = function(req, res) {
@@ -324,17 +339,24 @@ const getMessages = function(req, res) {
 	})
 }
 
-var putMessage = function(req, res) {
-	var chatId = req.body.chatId;
-	var message = req.body.content;
-	var username = req.session.username;
-	var promises = []
+const putMessage = function(req, res) {
+	let {chatId, content, author} = req.body;
+	let promises = []
+	promises.push(db.putMessage(chatId, author, content));
 	promises.push(db.updateTime(chatId));
-	promises.push(db.putMessage(chatId, username, message));
-	Promise.all(promises).then(_ => {
-		res.send("Done");
+	
+	Promise.all(promises).then(rets => {
+		if (rets && rets[0]) {
+			res.status(200)
+			res.send(rets[0]);
+		} else {
+			res.status(404)
+			res.send("Could not put message")
+		}
+		
 	}).catch(err => {
-		console.log(err)
+		res.status(500)
+		res.send(err)
 	});
 }
 
@@ -592,14 +614,14 @@ var getCreatePostPage = function(req, res) {
 	res.render("createpostpage.ejs")
 }
 
-var getPostPage = function(req, res) {
+const getPostPage = function(req, res) {
 	var id = req.params.id
 	db.getPost(id).then(post => {
 		res.render('postpage.ejs', {post: JSON.stringify(post)})
 	})
 }
 
-var createPost = function(req, res) {
+const createPost = function(req, res) {
 	var user = req.session.user
 	var location = user.street + " "
 	var content = req.body.content
@@ -902,17 +924,15 @@ var getApply = async function(req, res) {
 	
 }
 
-var getResume = async function(req, res) {
-	var username = req.params.username
-	var user = await db.getUser(username)
-	if (req.session.resumes) {
-		if (req.session.resumes[username]) {
-			res.send(req.session.resumes[username])
-			return
-		}
+const getResume = async function(req, res) {
+	const {username} = req.params
+	let user = await db.getUser(username)
+	if (req.session.resumes && req.session.resumes[username]) {
+		res.send(req.session.resumes[username])
+		return
 	}
 	if (user.resume) {
-		var url = await db.getResume(user.resume)
+		let url = await db.getResume(user.resume)
 		res.status(200)
 		res.send(url)
 	} else {
@@ -948,12 +968,12 @@ var deleteResume = function(req, res) {
 }
 
 
-var connect = function() {
+const connect = function() {
 	db.connect()
 }
 
 
-var routes = {
+const routes = {
 	connect: connect,
 	//User
 	login: getLogin,
@@ -962,6 +982,7 @@ var routes = {
 	signup_user: getSignUpUser,
 	handle_signup_user: handleSignUpUser,
 	search_users: searchUsers,
+	get_users: getUsers,
 	signup_restaurant: getSignUpRestaurant,
 	handle_signup_restaurant: handleSignUpRestaurant,
 	profile: getProfile,

@@ -13,6 +13,7 @@
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+    "@tanstack/react-query": "^4.29.19",
     "expo": "~48.0.18",
     "expo-linking": "~4.0.1",
     "expo-status-bar": "~1.4.4",
@@ -20,12 +21,16 @@
     "react-dom": "^18.2.0",
     "react-native": "0.71.8",
     "react-native-crypto-js": "^1.0.0",
+    "react-native-document-picker": "^9.0.1",
+    "react-native-gesture-handler": "^2.12.0",
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",
-    "react-native-web": "^0.18.12"
+    "react-native-web": "^0.18.12",
+    "socket.io-client": "^4.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@tanstack/eslint-plugin-query": "^4.29.9",
     "@tsconfig/react-native": "^3.0.2",
     "@types/jest": "^29.5.2",
     "@types/react": "^18.2.13",

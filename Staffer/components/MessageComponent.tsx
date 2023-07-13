@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Message } from "../types/Message";
+import Text from "./Text"
 
 
 const style = StyleSheet.create({
@@ -19,7 +20,7 @@ const style = StyleSheet.create({
 const MessageComponent = ({message, other}: {message: Message, other: boolean}) => {
     return (
         <View style={{width: "100%"}}>
-            <Text style={[style.both, other? style.other: style.self]}>{message.content}</Text>
+            <Text text={message.content} style={[style.both, other? style.other: style.self]} />
         </View>
     )
 }
