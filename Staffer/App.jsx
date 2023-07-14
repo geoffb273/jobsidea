@@ -16,10 +16,21 @@ import AuthContext from './AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './api';
 import SignupScreen from './components/SignupScreen';
+import { ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 
 const prefix = Linking.createURL('/');
-const client = new QueryClient()
+const client = new ApolloClient({
+  uri: "http://localhost:8000/",
+  cache: new InMemoryCache()
+})
 
+const GET_USER = gql`
+    query USER ($username: String!) {
+        user(username: $username) {
+            password
+        }
+    }
+`
 export default function App() {
   let [dark, setDark] = useState(Appearance.getColorScheme() != "light")
   useEffect(() => {
@@ -91,10 +102,13 @@ export default function App() {
       }
       
       if (username_stored && encrypted) {
-          let decrypt = CryptoJS.AES.decrypt(encrypted, "grbrandt@190054")
+          let decrypt = CryptoJS.SHA256.decrypt(encrypted, "grbrandt@190054")
           let password = decrypt.toString(CryptoJS.enc.Utf8)
           try {
-              let user = await api.handle_login(username_stored, password)
+              let user = await client.query({
+                query: GET_USER,
+                variables: { username: username_stored}
+              })
               if (user) {
                 dispatch({ type: 'RESTORE_USER', username: username_stored, password: password });
                 return user
@@ -119,7 +133,7 @@ export default function App() {
           if (user) {
             try {
               await AsyncStorage.setItem("username", username)
-              await AsyncStorage.setItem("password", CryptoJS.AES.encrypt(password, "grbrandt@190054"))
+              await AsyncStorage.setItem("password", CryptoJS.SHA256.encrypt(password, "grbrandt@190054"))
             } catch (err) {
 
             }
@@ -143,12 +157,12 @@ export default function App() {
         let user = data
         try {
           await AsyncStorage.setItem("username", user.username)
-          await AsyncStorage.setItem("password", CryptoJS.AES.encrypt(user.password, "grbrandt@190054"))
+          await AsyncStorage.setItem("password", CryptoJS.SHA256.encrypt(user.password, "grbrandt@190054"))
         } catch(err) {
 
         }
         try {
-          await api.post_user(user)
+          //await api.post_user(user)
           dispatch({ type: 'SIGN_IN', username: user.username, password: user.password });
         } catch(err) {
 
@@ -161,7 +175,7 @@ export default function App() {
     
     <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
       <AuthContext.Provider value={authContext}>
-      <QueryClientProvider client={client}>
+      <ApolloProvider client={client}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -182,7 +196,7 @@ export default function App() {
           </>
         }
       </Stack.Navigator>
-      </QueryClientProvider>
+      </ApolloProvider>
       </AuthContext.Provider>
     </NavigationContainer>
   );

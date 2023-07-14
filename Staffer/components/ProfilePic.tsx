@@ -1,14 +1,20 @@
-
-import { useQuery } from "@tanstack/react-query"
 import { Appearance, StyleProp, StyleSheet, Text, ImageStyle, Image, View, ActivityIndicator } from "react-native"
-import api from "../api"
+import { useQuery, gql } from '@apollo/client';
+
+const GET_USER = gql`
+    query USER ($username: String!) {
+        user(username: $username) {
+            pic
+        }
+    }
+`
+
 const ProfilePic = ({username, style}: {username: string, style?: StyleProp<ImageStyle>}) =>{
-    const {isLoading, isError, data: url, error} = useQuery({
-        queryKey: ["profilePic", username],
-        queryFn: () => api.get_pic(username) 
+    const {loading, data: user, error} = useQuery(GET_USER, {
+       variables: { username }
     })
 
-    if (isLoading) {
+    if (loading) {
         return (
             <View style={style}>
                 <ActivityIndicator size="large"/>
@@ -16,14 +22,14 @@ const ProfilePic = ({username, style}: {username: string, style?: StyleProp<Imag
         )
     }
 
-    if (isError) {
+    if (error) {
         return (
             <View style={style}/>
         )
     }
 
     return (
-        <Image source={{uri: url}} style={style}/>
+        <Image source={{uri: user.pic}} style={style}/>
     )
 }
 

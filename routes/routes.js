@@ -35,6 +35,7 @@ const handleLogin = function(req, res) {
 			if (userPassword == crypto.createHash('sha256').update(password).digest('hex')) {
 				user.password = undefined
 				user._id = undefined
+				
 				res.status(200)
 				res.send(user)
 				/*req.session.username = user.username;

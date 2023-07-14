@@ -1,7 +1,7 @@
 
-const {initializeApp} = require('firebase/app');
-const { MongoClient } = require("mongodb")
-const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, getBytes } = require('firebase/storage')
+import { initializeApp } from 'firebase/app';
+import { MongoClient } from "mongodb"
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, getBytes } from 'firebase/storage'
 const firebaseConfig = {
   apiKey: "AIzaSyDAYfUUgg1MN4sTHLxD1mm2QBJvnK-QIXg",
   authDomain: "jobsidea.firebaseapp.com",
@@ -147,7 +147,7 @@ var queryLimit = function(tableName, path, orderKey, limit, ascending = true, st
 
 
 
-module.exports = {
+export default {
 	connect: connect,
 	getItem: getItem,
 	postItem: postItem,

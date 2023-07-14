@@ -1,13 +1,21 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, gql } from '@apollo/client';
 import { Appearance, StyleProp, StyleSheet, ImageStyle, Image, View, ActivityIndicator } from "react-native"
 import api from "../api"
+
+const GET_USER = gql`
+    query USER ($username: String!) {
+        user(username: $username) {
+            resume
+        }
+    }
+`
+
 const Resume = ({username, style}: {username: string, style?: StyleProp<ImageStyle>}) =>{
-    const {isLoading, isError, data: url, error} = useQuery({
-        queryKey: ["resume", username],
-        queryFn: () => api.get_resume(username) 
+    const {loading, data: user, error} = useQuery(GET_USER, {
+        variables: { username }
     })
 
-    if (isLoading) {
+    if (loading) {
         return (
             <View style={[style, {backgroundColor:"white"}]}>
                 <ActivityIndicator size="large" color="black"/>
@@ -15,13 +23,13 @@ const Resume = ({username, style}: {username: string, style?: StyleProp<ImageSty
         )
     }
 
-    if (isError) {
+    if (error) {
         return (
             <View style={style}/>
         )
     }
     return (
-        <Image source={{uri: url}} style={[style, {backgroundColor:"white"}]}/>
+        <Image source={{uri: user.resume}} style={[style, {backgroundColor:"white"}]}/>
     )
 }
 

@@ -18,35 +18,6 @@ const ChatScreen = ({route, navigation} : ChatScreenProps) => {
     let messages = useRef<Array<Message>>([])
     let [content, setContent] = useState("")
 
-    const checkLogin = async() => {
-        let username_stored, encrypted
-        try {
-            username_stored = await AsyncStorage.getItem("username")
-            encrypted = await AsyncStorage.getItem("password")
-        } catch (err) {
-            return
-        }
-        
-        if (username_stored && encrypted) {
-            if (username_stored != username) {
-                return
-            }
-            let decrypt = CryptoJS.AES.decrypt(encrypted, "grbrandt@190054")
-            let password = decrypt.toString(CryptoJS.enc.Utf8)
-            try {
-                let user = await api.handle_login(username_stored, password)
-                if (!user) {
-                    return
-                }
-                return user
-            } catch (err) {
-                return
-            }
-        } else {
-            return
-        }
-    }
-
     const checkChat = async () => {
         try {
             let chat: Chat = await api.get_chat(chatId)

@@ -1,42 +1,16 @@
-let utils = require('./utils.js');
-let mockeddb = require('./mockeddb.js')
-let { v4: uuidv4 } = require('uuid');
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require('twilio')(accountSid, authToken);
+import utils from './utils.js';
+import { v4 } from 'uuid'
+
+
+
 let db
-
-
 
 const connect = async function() {
 	var url = process.env.MONGODB_URL
 	try {
 		db = await utils.connect(url)
 	} catch (e) {
-		utils = mockeddb
-		db = {
-			Users:[
-				{
-					"username":"geoff",
-					"password":"6c0c9335d5aa8d6156bfc296e86e1011ecd5cdeb7a090168486e4c055ccb95e9",
-					"firstname":"Geoffrey",
-					"lastname":"Brandt",
-					"email":"g@m.com",
-					"type":"User",
-					"phone":"8569041158"
-				},
-				{
-					"username":"jordan",
-					"password":"6c0c9335d5aa8d6156bfc296e86e1011ecd5cdeb7a090168486e4c055ccb95e9",
-					"firstname":"Jordan",
-					"lastname":"Brandt",
-					"email":"j@m.com",
-					"type":"User",
-					"phone":"8569041158"
-				}
-			]
-		}
-		console.log("Switched")
+
 	}
 	
 	console.log("Connected to database")
@@ -45,11 +19,11 @@ const connect = async function() {
 const sendText = async function(rec, msg) {
 	var reciever = await getUser(rec)
 	if (reciever && reciever.phone) {
-		client.messages.create({ 
+		/*client.messages.create({ 
 			body: msg,  
 			messagingServiceSid: 'MG633bfe4facc0db49a4d4543b93def291',
 			to: reciever.phone 
-		})
+		})*/
 	}
 	
 }
@@ -128,9 +102,8 @@ const addRestaurant = async function(username, password, name, email, street, ci
 	})
 }
 
-const getChats = async function(username, limit, callback) {
-	let snapshot = await utils.getList(db, "Chats", {users: username}, {lastAccessed: -1}, limit)
-	callback(snapshot)
+const getChats = function(username, limit = -1) {
+	return utils.getList(db, "Chats", {users: username}, {lastAccessed: -1}, limit)
 }
 
 const getChat = function(chatId) {
@@ -166,7 +139,7 @@ const changeUnread = function(chatId, reciever) {
 }
 
 const putMessage = function(chatId, author, msg) {
-	let msgId = uuidv4();
+	let msgId = v4();
 	let msgObj ={
 		created: (new Date()).toISOString(),
 		author: author,
@@ -191,7 +164,7 @@ const putNotification = function(username, sender, msg, type, settings, id = und
 	if ((!settings) || (settings && settings.textNotification)) {
 		sendText(username, msg + " " + url)
 	}
-	var notificationId = uuidv4();
+	var notificationId = v4();
 	var notificationObj = {
 		content: msg,
 		created: (new Date()).toISOString(),
@@ -375,7 +348,7 @@ const addApplied = function(username, id) {
 
 
 
-module.exports = {
+export default {
 	connect: connect,
 	//User + Restaurant
 	addUser: addUser,

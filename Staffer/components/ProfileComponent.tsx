@@ -2,22 +2,31 @@ import { ActivityIndicator, ImageProps, StyleProp, View } from "react-native"
 import ProfilePic from "./ProfilePic"
 import Resume from "./Resume"
 import TextWrapper from "./Text"
-import { useQuery } from "@tanstack/react-query";
-import api from "../api"
+import { useQuery, gql } from '@apollo/client';
+
+const GET_USER = gql`
+    query USER ($username: String!) {
+        user(username: $username) {
+            username
+            firstname
+            lastname
+            email
+        }
+    }
+`
 
 const ProfileComponent = ({username, style}: {username: string, style?: StyleProp<ImageProps>}) => {
-    const { isLoading, isError, data: user, error } = useQuery({
-        queryKey: ['username', username],
-        queryFn: () => api.get_user(username),
-    })
-    if (isLoading) {
+    const { loading, data: user, error } = useQuery(GET_USER, 
+        {variables: {username} }
+    )
+    if (loading) {
         return (
             <View style={style}>
                 <ActivityIndicator size="large"/>
             </View>
         )
     }
-    if (isError) {
+    if (error) {
        return (
             <View style={style}>
                 <TextWrapper text="User not found" />
