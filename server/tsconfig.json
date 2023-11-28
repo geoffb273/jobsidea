@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2017",
+    "rootDir": "./",
+    "esModuleInterop": true,
+    "types": ["node", "@types/jest", "jest"],
+    "outDir": "build",
+    "strict": true
+  },
+  "ts-node": {
+    "files": true
+  },
+  "include": [
+    "*"
+  ],
+}
