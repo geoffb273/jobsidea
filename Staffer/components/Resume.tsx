@@ -5,13 +5,14 @@ import api from "../api"
 const GET_USER = gql`
     query USER ($username: String!) {
         user(username: $username) {
+            username
             resume
         }
     }
 `
 
 const Resume = ({username, style}: {username: string, style?: StyleProp<ImageStyle>}) =>{
-    const {loading, data: user, error} = useQuery(GET_USER, {
+    const {loading, data, error} = useQuery(GET_USER, {
         variables: { username }
     })
 
@@ -28,6 +29,7 @@ const Resume = ({username, style}: {username: string, style?: StyleProp<ImageSty
             <View style={style}/>
         )
     }
+    const { user } = data
     return (
         <Image source={{uri: user.resume}} style={[style, {backgroundColor:"white"}]}/>
     )

@@ -8,7 +8,7 @@ import ProfilePic from "./ProfilePic";
 
 
 const ChatComponent = ({chat, username, onPress}: {chat: Chat, username: string, onPress: () => void}) => {
-    const other = chat.users[0] == username ? chat.users[1]: chat.users[0]
+    const other = chat.users[0].username == username ? chat.users[1].username: chat.users[0].username
     
     return (
         <TouchableOpacity onPress={onPress}>

@@ -3,5 +3,5 @@ export interface Message {
     author: string,
     content: string,
     id: string,
-    chatId: string
+    chat: { id: string }
 }

@@ -1,0 +1,24 @@
+schema:
+  - http://localhost:8000/graphql:
+documents: './graphql/*.graphql'
+generates:
+  ./generated/graphql.ts:
+    plugins:
+      - add
+      - typescript
+      - typescript-operations
+      - typescript-react-query
+    config:
+      content:
+        - // @ts-nocheck
+      fetcher: graphql-request
+      exposeDocument: true
+      exposeQueryKeys: true
+      exposeMutationKeys: true
+      exposeFetcher: true
+      addInfiniteQuery: true
+      skipTypeNameForRoot: true
+      skipTypename: true
+      scalars:
+        DateTime: string
+        JSON: object

@@ -1,6 +1,6 @@
 import { ActivityIndicator, SafeAreaView, View } from "react-native";
 import { HomeScreenProps } from "../types/NavStackTypes";
-import { useQuery } from "@tanstack/react-query";
+import { gql, useLazyQuery } from "@apollo/client";
 import api from "../api";
 import { useContext, useRef, useState } from "react";
 import ProfileComponent from "./ProfileComponent";
@@ -8,6 +8,17 @@ import Button from "./Button";
 import TabBar from "./TabBar";
 import AuthContext from "../AuthContext";
 
+const GET_USER = gql`
+    query Users($zipCode: String!) {
+        users(zipCode: $zipCode) {
+            username
+            firstname
+            lastname
+            email
+            zipCode
+        }
+    }
+`
 
 const HomeScreen = ({route, navigation} : HomeScreenProps) => {
     const { username } = route.params
@@ -16,20 +27,9 @@ const HomeScreen = ({route, navigation} : HomeScreenProps) => {
     const limit = 1
     const { signOut } = useContext(AuthContext)
 
-    const {
-        isLoading,
-        isError,
-        error,
-        data,
-        isFetching,
-        isPreviousData
-    } = useQuery({
-        queryKey: ["get_users", Math.floor(position / limit) * limit],
-        queryFn: () => api.get_users("08043", Math.floor(position / limit) * limit, limit),
-        keepPreviousData : true
-    })
-    if (isError) {
-        navigation.navigate("Login")
+    const [getUsers, {loading, data, error}] = useLazyQuery(GET_USER)
+    if (error) {
+        signOut()
     }
     if(data && !data.every((value: string) => people.current.includes(value))) {
         people.current = people.current.concat(data)
@@ -39,7 +39,7 @@ const HomeScreen = ({route, navigation} : HomeScreenProps) => {
       <SafeAreaView style={{position: "absolute", height:"100%", width:"100%"}}>
         <Button title='Log Out' onPress={signOut}/>
         <View>
-            { isLoading || isFetching ? 
+            { loading ? 
                 <ActivityIndicator size="large"/> :
                 <>
                     <ProfileComponent username={people.current[position]}/>

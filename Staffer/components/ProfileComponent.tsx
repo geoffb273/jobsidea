@@ -16,7 +16,7 @@ const GET_USER = gql`
 `
 
 const ProfileComponent = ({username, style}: {username: string, style?: StyleProp<ImageProps>}) => {
-    const { loading, data: user, error } = useQuery(GET_USER, 
+    const { loading, data, error } = useQuery(GET_USER, 
         {variables: {username} }
     )
     if (loading) {
@@ -34,6 +34,7 @@ const ProfileComponent = ({username, style}: {username: string, style?: StylePro
             </View>
         )
     }
+    const { user } = data
     return (
         <View style={style}>
             <ProfilePic style={{width: "50px", height:"50px", borderRadius:50}} username={username}/>

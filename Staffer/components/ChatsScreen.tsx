@@ -4,70 +4,44 @@ import api from '../api';
 import TabBar from './TabBar';
 import { Chat } from '../types/Chat';
 import ChatComponent from './ChatComponent';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import CryptoJS from "react-native-crypto-js";
 import Button from './Button';
-import { useQuery } from '@tanstack/react-query'
 import TextWrapper from './Text';
+import { useQuery, gql } from '@apollo/client';
+import { useContext } from 'react';
+import AuthContext from '../AuthContext';
+
+const GET_USER_CHATS = gql`
+    query USER ($username: String!) {
+        user(username: $username) {
+            username
+            chats {
+                id
+                lastAccessed
+                unread
+                users {
+                    username
+                }
+            }
+        }
+    }
+`
 
 const ChatsScreen = ({route, navigation} : ChatsScreenProps) => {
+    let { signOut } = useContext(AuthContext)
     let username: string = route.params.username
-    
-    const checkLogin = async() => {
-        let username_stored, encrypted
-        try {
-            username_stored = await AsyncStorage.getItem("username")
-            encrypted = await AsyncStorage.getItem("password")
-        } catch (err) {
-            return
-        }
-        
-        if (username_stored && encrypted) {
-            if (username_stored != username) {
-                return
-            }
-            let decrypt = CryptoJS.AES.decrypt(encrypted, "grbrandt@190054")
-            let password = decrypt.toString(CryptoJS.enc.Utf8)
-            try {
-                let user = await api.handle_login(username_stored, password)
-                if (!user) {
-                    return
-                }
-                return user
-            } catch (err) {
-                return
-            }
-        } else {
-            return
-        }
-    }
 
-    const { isLoading, isError, data: user, error } = useQuery({
-        queryKey: ['checkLogin'],
-        queryFn: checkLogin,
+    const { loading, data, error } = useQuery(GET_USER_CHATS, {
+       variables: {username}
     })
-    const { isLoading: loading, isError: hasError, data: chatData, error: err } = useQuery({
-        queryKey: ["chats", username],
-        queryFn: () => api.get_chats(username),
-    })
-    if (isLoading || loading) {
+    if (loading) {
         return <TextWrapper text='Loading...'/>
     }
-    if (isError || hasError) {
-        navigation.navigate("Login")
+    if (error) {
+        signOut()
         return <></>
     }
-    
-    
-    const logout = async function() {
-        try {
-            await AsyncStorage.removeItem("username")
-            await AsyncStorage.removeItem("password")
-        } catch(err) {
 
-        }
-        navigation.navigate("Login")
-    }
+    let { user } = data
 
     const renderChatComponent: ListRenderItem<Chat> = ({item}: {item: Chat}) => {
         const onPress = () => {
@@ -79,9 +53,9 @@ const ChatsScreen = ({route, navigation} : ChatsScreenProps) => {
     }
     return (
         <SafeAreaView style={{width: "100%", height: "100%"}}>
-            <Button title='Log Out' onPress={logout}/>
+            <Button title='Log Out' onPress={signOut}/>
             <FlatList 
-                data={chatData}
+                data={user.chats}
                 renderItem={renderChatComponent}
                 keyExtractor={item => item.id}
             />

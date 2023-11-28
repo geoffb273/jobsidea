@@ -4,13 +4,14 @@ import { useQuery, gql } from '@apollo/client';
 const GET_USER = gql`
     query USER ($username: String!) {
         user(username: $username) {
+            username
             pic
         }
     }
 `
 
 const ProfilePic = ({username, style}: {username: string, style?: StyleProp<ImageStyle>}) =>{
-    const {loading, data: user, error} = useQuery(GET_USER, {
+    const {loading, data, error} = useQuery(GET_USER, {
        variables: { username }
     })
 
@@ -27,7 +28,7 @@ const ProfilePic = ({username, style}: {username: string, style?: StyleProp<Imag
             <View style={style}/>
         )
     }
-
+    const { user } = data
     return (
         <Image source={{uri: user.pic}} style={style}/>
     )

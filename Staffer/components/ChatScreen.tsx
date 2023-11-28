@@ -1,16 +1,44 @@
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { ChatScreenProps } from "../types/NavStackTypes"
-import CryptoJS from "react-native-crypto-js";
-import api from "../api";
 import { useRef, useState } from "react";
-import { Chat } from "../types/Chat";
 import { Message } from "../types/Message";
 import { ActivityIndicator, FlatList, SafeAreaView, TextInput, View } from "react-native";
 import MessageComponent from "./MessageComponent";
 import Button from "./Button";
-import socket from "../socket";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import TextWrapper from "./Text";
+import { useQuery, useMutation, gql } from "@apollo/client";
+
+const GET_CHAT = gql`
+    query Chat($id: String!) {
+        chat(id: $id) {
+            id
+            users {
+                username
+            }
+            messages {
+                created
+                author
+                content
+                id
+            }
+        }
+    
+    }
+`
+
+const PUT_MESSAGE = gql`
+    mutation Message($message: MessageInput!) {
+        message(message: $message) {
+            id
+            content
+            author
+            created
+            chat {
+                id
+            }
+        }
+    }
+
+`
+
 
 const ChatScreen = ({route, navigation} : ChatScreenProps) => {
     let { username } = route.params
@@ -18,46 +46,32 @@ const ChatScreen = ({route, navigation} : ChatScreenProps) => {
     let messages = useRef<Array<Message>>([])
     let [content, setContent] = useState("")
 
-    const checkChat = async () => {
-        try {
-            let chat: Chat = await api.get_chat(chatId)
-            if (!chat.users.includes(username)) {
-                return
-            }
-            return chat
-        } catch (err) {
-            return
-        }
-    }
-    const { isLoading, isError, data: user, error } = useQuery({
-        queryKey: ['checkLogin'],
-        queryFn: checkLogin,
+
+    const {loading, data, error, refetch} = useQuery( GET_CHAT, {
+        variables: {id: chatId}
     })
 
-    const {isLoading: chatLoading, isError: chatError, data: chat, error: chErr} = useQuery({
-        queryKey: ["checkChat"],
-        queryFn: checkChat
-    })
-
-    const { isLoading: loading, isError: hasError, data: msgData, error: err } = useQuery({
-        queryKey: ["chats", username, chatId],
-        queryFn: () => api.get_messages(username, chatId),
-    })
-    if (isLoading || loading || chatLoading) {
+    const [putMessage] = useMutation(PUT_MESSAGE)
+    
+    if ( loading) {
         return <ActivityIndicator size="large"/>
     }
-    if (isError) {
-        navigation.navigate("Login")
-        return <></>
-    }
-    if (chatError || hasError) {
+    
+    if (error) {
         navigation.navigate("Chats", {username: username})
         return <></>
     }
-    
+    const { chat } = data
+
+
     
     if (chat) {
-        socket.emit("joined", {username: username, chatId: chat.id, unread: chat.unread})
+        let ms = []
+        for (let m of chat.messages) {
+            ms.push(m)
+        }
+        messages.current = ms.reverse()
+        /*socket.emit("joined", {username: username, chatId: chat.id, unread: chat.unread})
         socket.on("joined", (data) =>{
             const msg: Message = {
                 created: new Date().toISOString(),
@@ -91,21 +105,28 @@ const ChatScreen = ({route, navigation} : ChatScreenProps) => {
             }
             messages.current.push(msg)
             setContent(content)
-        })
+        })*/
     }
     
-    messages.current = msgData
+    
     const renderMessageComponent = ({item}: {item: Message}) => {
         return <MessageComponent message={item} other={item.author != username}></MessageComponent>
     }
 
     const sendMessage = () => {
         if (content) {
-            api.post_message({chatId: chatId, author: username, content: content}).then(ret => {
-                messages.current.push(ret)
-                socket.emit('chat message', ret);
-                setContent("")
+            putMessage({
+                variables: {
+                    message: {
+                        author: username,
+                        content: content,
+                        chatId: chatId
+                    }
+                }
+            }).then(() => {
+                refetch()
             }).catch(err => {
+                console.log(err)
                 navigation.navigate("Chats", {username: username})
             })
         }

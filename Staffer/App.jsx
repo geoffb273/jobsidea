@@ -9,24 +9,35 @@ import { Appearance } from 'react-native';
 import BackgroundStyle from './styles/BackgroundStyle'
 import { useState, useEffect, useReducer, useMemo } from 'react';
 import { Text } from 'react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import HomeScreen from './components/HomeScreen';
 import CryptoJS from "react-native-crypto-js";
 import AuthContext from './AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from './api';
 import SignupScreen from './components/SignupScreen';
-import { ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, gql} from '@apollo/client';
 
 const prefix = Linking.createURL('/');
 const client = new ApolloClient({
   uri: "http://localhost:8000/",
-  cache: new InMemoryCache()
+  cache: new InMemoryCache({
+    typePolicies : {
+      User: {
+        keyFields: ["username"]
+      },
+      Chat: {
+        keyFields: ["id"]
+      },
+      Message: {
+        keyFields: ["id"]
+      }
+    }
+  })
 })
 
 const GET_USER = gql`
-    query USER ($username: String!) {
-        user(username: $username) {
+    query Login ($username: String!, $password: String!) {
+        login(username: $username, password: $password) {
+            username
             password
         }
     }
@@ -89,7 +100,6 @@ export default function App() {
     }
   );
 
-
   useEffect(() => {
     const checkLogin = async() => {
 
@@ -100,15 +110,16 @@ export default function App() {
       } catch (err) {
           return null
       }
-      
       if (username_stored && encrypted) {
-          let decrypt = CryptoJS.SHA256.decrypt(encrypted, "grbrandt@190054")
+          let decrypt = CryptoJS.AES.decrypt(encrypted, "grbrandt@190054")
           let password = decrypt.toString(CryptoJS.enc.Utf8)
           try {
-              let user = await client.query({
+              let { data } = await client.query({
                 query: GET_USER,
-                variables: { username: username_stored}
+                variables: { username: username_stored, password: password}
               })
+
+              let { login: user } = data
               if (user) {
                 dispatch({ type: 'RESTORE_USER', username: username_stored, password: password });
                 return user
@@ -129,18 +140,23 @@ export default function App() {
       signIn: async (username, password) => {
         try {
           
-          let user = await api.handle_login(username, password)
+          let { data } = await client.query({
+            query: GET_USER,
+            variables: { username: username, password: password}
+          })
+          let { login: user } = data
+          
           if (user) {
             try {
               await AsyncStorage.setItem("username", username)
-              await AsyncStorage.setItem("password", CryptoJS.SHA256.encrypt(password, "grbrandt@190054"))
+              await AsyncStorage.setItem("password", CryptoJS.AES.encrypt(password, "grbrandt@190054"))
             } catch (err) {
 
             }
             dispatch({ type: 'SIGN_IN', username: username, password: password });
           }
         } catch(err) {
-
+          console.log(err)
         }
         
       },
@@ -157,7 +173,7 @@ export default function App() {
         let user = data
         try {
           await AsyncStorage.setItem("username", user.username)
-          await AsyncStorage.setItem("password", CryptoJS.SHA256.encrypt(user.password, "grbrandt@190054"))
+          await AsyncStorage.setItem("password", CryptoJS.AES.encrypt(user.password, "grbrandt@190054"))
         } catch(err) {
 
         }

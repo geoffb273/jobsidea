@@ -4,5 +4,5 @@ export interface Chat {
     lastAccessed: string,
     id: string,
     unread: string,
-    users: [string, string]
+    users: [{username: string}, {username: string}]
 }
