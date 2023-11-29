@@ -1,25 +1,22 @@
-import { ActivityIndicator, SafeAreaView } from 'react-native';
-import { ProfileScreenProps } from '../types/NavStackTypes';
-import TabBar from './TabBar';
+import type { FC } from 'react';
+import { SafeAreaView } from 'react-native';
+
 import Button from './Button';
 import ProfileComponent from './ProfileComponent';
-import { useContext } from 'react';
-import AuthContext from '../AuthContext';
+import TabBar from './TabBar';
+import { useAuthContext } from '../contexts/AuthContext';
+import type { ProfileScreenProps } from '../types/RootStackTypes';
 
+const ProfileScreen: FC<ProfileScreenProps> = ({ route: { params } }) => {
+  const { signOut, state } = useAuthContext();
 
-const ProfileScreen = ({route, navigation} : ProfileScreenProps) => {
-    let username: string = route.params.username
-    let { signOut } = useContext(AuthContext)
-    return (
-        <SafeAreaView style={{width: "100%", height: "100%"}}>
-            <Button title='Log Out' onPress={signOut}/>
-            <ProfileComponent username={username}/>
-            <TabBar username = {username} navigation={navigation}></TabBar>
-        </SafeAreaView>
-    );
+  return (
+    <SafeAreaView style={{ width: '100%', height: '100%' }}>
+      <Button title="Log Out" onPress={signOut} />
+      <ProfileComponent username={params?.username ?? state.username ?? ''} />
+      <TabBar />
+    </SafeAreaView>
+  );
+};
 
-}
-    
-    
-
-export default ProfileScreen
+export default ProfileScreen;

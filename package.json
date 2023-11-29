@@ -1,25 +1,35 @@
 {
-   "name": "jobidea",
-   "description": "Restaurant database",
-   "version": "0.0.1",
-   "type": "module",
-   "scripts": {
-      "start": "node app.js"
-   },
-   "dependencies": {
-      "@types/node": "^18.13.0"
-   },
-   "devDependencies": {
-      "@types/jest": "^28.1.6",
-      "@typescript-eslint/eslint-plugin": "^5.23.0",
-      "@typescript-eslint/parser": "^5.23.0",
-      "eslint": "^8.15.0",
-      "eslint-config-prettier": "^8.5.0",
-      "eslint-plugin-import": "^2.26.0",
-      "eslint-plugin-jest": "^26.8.0",
-      "eslint-plugin-prettier": "^4.0.0",
-      "pre-commit": "^1.2.2",
-      "pre-push": "^0.1.2",
-      "prettier": "2.6.2"
-   }
+  "name": "jobidea",
+  "description": "Restaurant database",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "lint": "tsc --noEmit && eslint $(git diff --name-only HEAD --diff-filter=ACMR | xargs) --ext .ts,.tsx --quiet",
+    "fix-lint": "eslint . --fix",
+    "build": "tsc --build server/"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "pre-push": [
+    "lint",
+    "build"
+  ],
+  "dependencies": {
+    "@types/node": "^18.13.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^28.1.6",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.8.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "pre-commit": "^1.2.2",
+    "pre-push": "^0.1.2",
+    "prettier": "2.6.2"
+  }
 }

@@ -53,9 +53,10 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.js', '.ts'],
+        extensions: ['.js', '.ts', '.jsx', '.tsx'],
       },
     },
+    'import/ignore': ['node_modules/react-native/index\\.js$'],
   },
   ignorePatterns: [
     '*.js',
@@ -65,7 +66,7 @@ module.exports = {
     'tsconfig.json',
     '*.graphql',
     '*.json',
-    '.eslintrc.js',
-    '*.yml'
+    '.eslintrc.cjs',
+    '*.yml',
   ],
 };

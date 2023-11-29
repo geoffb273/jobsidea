@@ -1,13 +1,13 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import { Color } from '../constants/colorConstants';
 
 const style = StyleSheet.create({
-    light: {
-        color: "black",
-    },
+  dark: {
+    color: Color.WHITE,
+  },
+  light: {
+    color: Color.BLACK,
+  },
+});
 
-    dark: {
-        color: "white",
-    }
-})
-
-export default style
+export default style;

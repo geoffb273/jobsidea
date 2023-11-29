@@ -1,20 +1,33 @@
+import { useEffect, useState } from 'react';
 
-import { Appearance, StyleProp, StyleSheet, Text, TextStyle } from "react-native"
-import TextSt from "../styles/TextStyle"
-import { useEffect, useState } from "react"
+import {
+  Appearance,
+  type StyleProp,
+  StyleSheet,
+  Text,
+  type TextStyle,
+} from 'react-native';
 
-const TextWrapper = ({text, style}: { text: string, style?: StyleProp<TextStyle>}) => {
-    let [dark, setDark] = useState(Appearance.getColorScheme() != "light")
-    let textStyle = StyleSheet.flatten([ style || {}, dark? TextSt.dark: TextSt.light])
-    useEffect(() => {
-        Appearance.addChangeListener(() => {
-            setDark(!dark)
-        })
-    }, [])
-    return (
-        <Text style={textStyle}>{text}</Text>
-        
-    )
-}
+import TextSt from '../styles/TextStyle';
 
-export default TextWrapper
+const TextWrapper = ({
+  text,
+  style,
+}: {
+  text: string;
+  style?: StyleProp<TextStyle>;
+}) => {
+  const [dark, setDark] = useState(Appearance.getColorScheme() != 'light');
+  const textStyle = StyleSheet.flatten([
+    style || {},
+    dark ? TextSt.dark : TextSt.light,
+  ]);
+  useEffect(() => {
+    Appearance.addChangeListener(() => {
+      setDark(!dark);
+    });
+  }, []);
+  return <Text style={textStyle}>{text}</Text>;
+};
+
+export default TextWrapper;

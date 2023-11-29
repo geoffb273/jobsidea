@@ -1,28 +1,24 @@
-import { StyleSheet } from "react-native";
-
+import { StyleSheet } from 'react-native';
+import { Color } from '../constants/colorConstants';
 
 const style = StyleSheet.create({
-    tab: {
-        flex: 1
-    },
+  dark: {
+    backgroundColor: Color.BLACK,
+    color: Color.WHITE,
+    textAlign: 'center',
+  },
+  light: {
+    backgroundColor: Color.WHITE,
+    color: Color.BLACK,
+    textAlign: 'center',
+  },
+  normal: {
+    alignContent: 'center',
+    minWidth: '100px',
+  },
+  tab: {
+    flex: 1,
+  },
+});
 
-    normal: {
-        alignContent: "center",
-        minWidth: "100px"
-    },
-
-    light: {
-        backgroundColor: "white",
-        color: "black",
-        textAlign: "center"
-    },
-
-    dark: {
-        backgroundColor: "black",
-        color: "white",
-        textAlign: "center"
-    }
-
-
-})
-export default style
+export default style;

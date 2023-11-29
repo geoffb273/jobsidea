@@ -1,111 +1,88 @@
-import {getChat, getChats, getMessages, getProfilePic, getResume, getUser, getUsers, putMessage} from "../models/database"
-import crypto from "crypto"
+import crypto from 'crypto';
+
+import {
+  getChat,
+  getChats,
+  getMessages,
+  getProfilePic,
+  getResume,
+  getUser,
+  getUsers,
+  putMessage,
+} from '../models/database';
 
 const resolvers = {
-    Query: {
-        login: async(_parent: never, {username, password}: {username: string; password: string}) => {
-            try {
-                let user = await getUser(username)
-                if (user && user.password == crypto.createHash('sha256').update(password).digest('hex')) {
-                    return user
-                }
-            } catch(err) {
-
-            }
-        },
-        users: async (_parent: never, {search}: {search: string}) => {
-            try {
-                return getUsers(search)
-            } catch (err) {
-                return []
-            }
-        },
-        user : async (_parent: never, {username}: {username: string}) => {
-            try {
-                return getUser(username)
-            } catch (err) {
-                
-            }
-        },
-        chat: async (_parent: never, {id}: {id: string}) => {
-            try {
-                return getChat(id)
-            } catch (err) {
-
-            }
-        },
-        messages: async (_parent: never, {chatId}: {chatId: string}) => {
-
-            try {
-                return getMessages(chatId)
-            } catch (err) {
-                return []
-            }
-        }
+  Query: {
+    login: async (
+      _parent: never,
+      { username, password }: { username: string; password: string },
+    ) => {
+      const user = await getUser(username);
+      if (
+        user &&
+        user.password ===
+          crypto.createHash('sha256').update(password).digest('hex')
+      ) {
+        return user;
+      }
     },
-    User : {
-        chats: async ({username}: {username: string}) => {
-            try {
-                return getChats(username)
-            } catch (err) {
-                return []
-            }
-        },
-        pic: async ({pic}: {pic?: string |  null}) => {
-            if (pic != null) {
-                try {
-                    return getProfilePic(pic)
-                } catch (err) {
-
-                }
-            }
-            return ""
-        },
-        resume: async({resume}: {resume?: string |  null}) => {
-            if (resume) {
-                try {
-                    return getResume(resume)
-                } catch (err) {
-
-                }
-            }
-            return ""
-        }
+    users: (_parent: never, { search }: { search: string }) => {
+      return getUsers(search);
     },
-    Mutation: {
-        message: async(_parent: never, { content, author, chatId }: {content: string; author: string; chatId: string}) => {
-            return putMessage(chatId, author, content)
-        }
+    user: (_parent: never, { username }: { username: string }) => {
+      return getUser(username);
     },
-    Chat : {
-        messages: async ({id}: {id: string}) => {
-            try {
-                return getMessages(id)
-            } catch (err) {
-                return []
-            }
-        },
-        users: async ({users}: {users: string[]}) => {
-
-            try {
-                let u1 = await getUser(users[0])
-                let u2 = await getUser(users[1])
-                return [u1, u2]
-            } catch (err) {
-                return []
-            }
-        }
+    chat: (_parent: never, { id }: { id: string }) => {
+      return getChat(id);
     },
-    Message : {
-        chat: async ({chatId}: {chatId: string}) => {
-            try {
-                return getChat(chatId)
-            } catch(err) {
+    messages: (_parent: never, { chatId }: { chatId: string }) => {
+      return getMessages(chatId);
+    },
+  },
+  User: {
+    chats: ({ username }: { username: string }) => {
+      return getChats(username);
+    },
+    pic: ({ pic }: { pic?: string | null }) => {
+      if (pic != null) {
+        return getProfilePic(pic);
+      }
+      return null;
+    },
+    resume: ({ resume }: { resume?: string | null }) => {
+      if (resume != null) {
+        return getResume(resume);
+      }
+      return '';
+    },
+  },
+  Mutation: {
+    message: async (
+      _parent: never,
+      {
+        content,
+        author,
+        chatId,
+      }: { content: string; author: string; chatId: string },
+    ) => {
+      return putMessage(chatId, author, content);
+    },
+  },
+  Chat: {
+    messages: ({ id }: { id: string }) => {
+      return getMessages(id);
+    },
+    users: async ({ users }: { users: string[] }) => {
+      const u1 = await getUser(users[0]);
+      const u2 = await getUser(users[1]);
+      return [u1, u2];
+    },
+  },
+  Message: {
+    chat: ({ chatId }: { chatId: string }) => {
+      return getChat(chatId);
+    },
+  },
+};
 
-            }
-        }
-    }
-}
-
-
-export default resolvers
+export default resolvers;

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2017",
+    "target": "es6",
     "rootDir": "./",
     "esModuleInterop": true,
     "types": ["node", "@types/jest", "jest"],
@@ -11,7 +11,5 @@
   "ts-node": {
     "files": true
   },
-  "include": [
-    "*"
-  ],
+  "include": ["*"]
 }

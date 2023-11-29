@@ -1,29 +1,36 @@
-import { StyleSheet, View } from "react-native";
-import { Message } from "../types/Message";
-import Text from "./Text"
+import { StyleSheet, View } from 'react-native';
 
+import Text from './Text';
+import type { Message } from '../types/Message';
+import { useAuthContext } from '../contexts/AuthContext';
+import { Color } from '../constants/colorConstants';
+
+const MessageComponent = ({ message }: { message: Message }) => {
+  const {
+    state: { username },
+  } = useAuthContext();
+  const other = username !== message.author;
+  return (
+    <View style={{ width: '100%' }}>
+      <Text
+        text={message.content}
+        style={[style.both, other ? style.other : style.self]}
+      />
+    </View>
+  );
+};
 
 const style = StyleSheet.create({
-    self: {
-        textAlign: "left"
-    },
-    other: {
-        textAlign: "right"
-    },
-    both: {
-        color: "white",
-        width: "100%"
-    }
-})
+  both: {
+    color: Color.WHITE,
+    width: '100%',
+  },
+  other: {
+    textAlign: 'right',
+  },
+  self: {
+    textAlign: 'left',
+  },
+});
 
-
-const MessageComponent = ({message, other}: {message: Message, other: boolean}) => {
-    return (
-        <View style={{width: "100%"}}>
-            <Text text={message.content} style={[style.both, other? style.other: style.self]} />
-        </View>
-    )
-}
-
-
-export default MessageComponent
+export default MessageComponent;
